@@ -1,4 +1,5 @@
 #include "assets.h"
+#include "general_board.h"
 #include "testing.h"
 
 template<int N>
@@ -211,6 +212,25 @@ void run_tests() {
     }
 
     {
+        test_board_tuple_hash<4, 16>([](array<array<u8, 4>, 4> board, u16 mask) {
+            Board<4> b(board);
+            return b.tuple_hash(mask, 16);
+        });
+        test_board_tuple_hash<4, 18>([](array<array<u8, 4>, 4> board, u16 mask) {
+            Board<4> b(board);
+            return b.tuple_hash(mask, 18);
+        });
+        test_board_tuple_hash<3, 16>([](array<array<u8, 3>, 3> board, u16 mask) {
+            Board<3> b(board);
+            return b.tuple_hash(mask, 16);
+        });
+        test_board_tuple_hash<3, 11>([](array<array<u8, 3>, 3> board, u16 mask) {
+            Board<3> b(board);
+            return b.tuple_hash(mask, 11);
+        });
+    }
+
+    {
         test_board_fill<4, 16>([](array<array<u8, 4>, 4> board) {
             Board<4> b(board);
             return b.filled().to_array();
@@ -231,7 +251,7 @@ void run_tests() {
 }
 
 int main() {
-    srand(43);
+    srand(42);
 
     /*auto start_time = time_now();
     u32 N = 1000;
