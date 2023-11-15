@@ -57,8 +57,6 @@ u32 play_random_game() {
     return game.score;
 }
 
-#include "testing.h"
-
 void run_tests() {
     {
         test_line_hash<4, 16>([](array<u8, 4> line) {
@@ -245,7 +243,6 @@ int main() {
     cout << "Time: " << time_since(start_time) / 1e6 << endl;*/
 
     run_tests();
-
 
     return 0;
 }

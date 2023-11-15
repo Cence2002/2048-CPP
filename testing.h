@@ -271,6 +271,7 @@ public:
         if (empty == 0) { return; }
         u8 pos = random(empty);
         u8 val = random(10) == 0 ? 2 : 1;
+        //if (random(10) == 0 && empty > 1) { empty--; }
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; ++j) {
                 if (rows[i][j] > 0) { continue; }
@@ -315,8 +316,8 @@ template<int N, int BASE>
 vector<array<u8, N>> generate_lines() {
     vector<array<u8, N>> res;
     array<u8, N> line;
-    for (int mask = 0; mask < power(BASE, N); mask++) {
-        int m = mask;
+    for (u64 mask = 0; mask < power(BASE, N); mask++) {
+        u64 m = mask;
         for (int i = 0; i < N; i++) {
             line[i] = m % BASE;
             m /= BASE;
@@ -430,103 +431,120 @@ void test_board_empty_mask(array<array<bool, N>, N> (*empty_mask)(array<array<u8
     cout << "test_board_empty_mask<" << N << ", " << BASE << "> passed" << endl;
 }
 
-float chi_squared_test(vector<pair<float, float>> &data) {
-    float res = 0;
+double chi_squared_test(vector<pair<double, double>> &data) {
+    double res = 0;
     for (auto [observed, expected]: data) {
-        res += (observed - expected) * (observed - expected) / expected;
+        double rel_freq = (observed - expected) * (observed - expected) / expected;
+        res += rel_freq;
     }
     return res;
 }
 
-float incomplete_gamma(float s, float x) {
-    float sum = 0;
-    float term = pow(x, s) * exp(-x) / s;
-    for (int t = 1; t <= 1000; t++) {
+double incomplete_gamma(double s, double x) {
+    double sum = 0;
+    double term = pow(x, s) * exp(-x) / s;
+    double threshold = min(term, 1e-20);
+    bool converged = false;
+    for (int k = 1; k <= 200; k++) {
+        if (term == 0) break;
         sum += term;
-        term *= x / (s + float(t));
-        if (term < 1e-9f) { break; }
+        term *= x / (s + double(k));
+        if (term < threshold) {
+            converged = true;
+            break;
+        }
+    }
+    if (!converged) {
+        return tgamma(s);
     }
     return sum;
 }
 
-float p_value_from_chi_squared(float x, float k) {
-    return 1.0f - incomplete_gamma(k / 2, x / 2) / tgamma(k / 2);
+double p_value_from_chi_squared(double x, double k) {
+    return incomplete_gamma(k / 2, x / 2) / tgamma(k / 2);
 }
 
-float p_from_z(float z_score) {
-    return 0.5f * erfcf(z_score / sqrt(2.0f));
+double p_from_z(double z_score) {
+    return erfc(z_score / sqrt(2)) / 2;
 }
 
-float z_from_p(float p_value) {
-    //use binary search
-    float lo = -10;
-    float hi = 10;
-    while (hi - lo > 1e-6f) {
-        float mid = (lo + hi) / 2;
-        float p = p_from_z(mid);
+double z_from_p(double p_value) {
+    double lo = -20;
+    double hi = 20;
+    while (hi - lo > 1e-20) {
+        double mid = (lo + hi) / 2;
+        double p = p_from_z(mid);
         if (p > p_value) {
+            if (lo == mid) break;
             lo = mid;
         } else {
+            if (hi == mid) break;
             hi = mid;
         }
     }
     return (lo + hi) / 2;
 }
 
-float total_p_value(vector<float> &p_values) {
-    float z_sum = 0;
-    for (float p: p_values) { z_sum += z_from_p(p); }
-    float z_avg = z_sum / sqrt(float(p_values.size()));
+double total_p_value(vector<double> &p_values) {
+    double z_sum = 0;
+    for (double p: p_values) {
+        double z = z_from_p(p);
+        z_sum += z;
+    }
+    double z_avg = z_sum / sqrt(double(p_values.size()));
     return p_from_z(z_avg);
 }
 
 template<int N, int BASE>
 void test_board_fill(array<array<u8, N>, N> (*fill)(array<array<u8, N>, N>)) {
-    vector<float> p_values;
-    for (array<array<u8, N>, N> board: generate_boards<N, BASE>(10)) {
+    vector<double> p_values;
+    for (array<array<u8, N>, N> board: generate_boards<N, BASE>(100)) {
         u8 empty = Board<N>(board).count_empty();
-        vector<pair<float, float>> data(empty * 2);
+        vector<pair<double, double>> data(empty * 2);
 
-        int k = 1000000;
+        int k = 100000;
         for (int i = 0; i < empty; i++) {
-            data[i].second = float(k) * (0.9f / float(empty));
-            data[empty + i].second = float(k) * (0.1f / float(empty));
+            data[i].second = double(k) * (0.9 / double(empty));
+            data[empty + i].second = double(k) * (0.1 / double(empty));
         }
         for (int t = 0; t < k; t++) {
             array<array<u8, N>, N> filled = fill(board);
-            u8 ind = 0;
+            bool found = false;
+            u8 index = 0;
+            u8 value = 0;
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
-                    if (board[i][j] != 0) { continue; }
-                    if (filled[i][j] == 0) {
-                        ind++;
-                    } else if (filled[i][j] == 1) {
-                        data[ind].first++;
-                        ind++;
-                    } else if (filled[i][j] == 2) {
-                        data[empty + ind].first++;
-                        ind++;
-                    } else {
-                        assert(false);
+                    if (board[i][j] != 0) {
+                        assert(filled[i][j] == board[i][j]);
+                        continue;
                     }
+                    if (found) {
+                        assert(filled[i][j] == 0);
+                        continue;
+                    }
+                    if (filled[i][j] == 0) {
+                        index++;
+                        continue;
+                    }
+                    assert(filled[i][j] == 1 || filled[i][j] == 2);
+                    found = true;
+                    value = filled[i][j];
                 }
             }
+            assert(found);
+            if (value == 1) {
+                data[index].first++;
+            } else {
+                data[empty + index].first++;
+            }
         }
-        float chi_squared = chi_squared_test(data);
+        double chi_squared = chi_squared_test(data);
         int df = empty * 2 - 1;
-        float p_value = p_value_from_chi_squared(chi_squared, float(df));
+        double p_value = p_value_from_chi_squared(chi_squared, double(df));
         p_values.push_back(p_value);
-
-        //Board<N>(board).print();
-        //cout << "p = " << p_value << endl;
-        //for (auto [observed, expected]: data) {
-        //    cout << observed << " " << expected << endl;
-        //}
     }
     sort(p_values.begin(), p_values.end());
-    //for (float p: p_values) { cout << p << " "; }
-    //cout << endl;
-    float total_p = total_p_value(p_values);
-    assert(total_p > 0.05f);
+    double total_p = total_p_value(p_values);
+    assert(total_p < 0.1);
     cout << "test_board_fill<" << N << ", " << BASE << "> passed: p = " << total_p << endl;
 }
