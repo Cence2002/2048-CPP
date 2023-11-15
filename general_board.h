@@ -9,9 +9,7 @@ private:
     array<u8, N> cells;
 
 public:
-    Line() {
-        cells.fill(0);
-    }
+    Line() { cells.fill(0); }
 
     Line(const array<u8, N> cells) : cells(cells) {}
 
@@ -144,8 +142,6 @@ public:
             this->rows[i] = Line<N>(rows[i]);
         }
     }
-
-    Board(const array<Line<N>, N> &rows) : rows(rows) {}
 
     Board(const Board &board) : rows(board.rows) {}
 
@@ -311,5 +307,51 @@ public:
         for (int i = 0; i < N; i++) {
             rows[i].print();
         }
+    }
+};
+
+template<int N>
+struct Game {
+    Board<N> board;
+    u32 moves;
+    u32 score;
+
+    Game() : board(Board<N>()), moves(0), score(0) {
+        board.fill();
+        board.fill();
+    }
+
+    Game &operator=(const Game &game) {
+        board = game.board;
+        moves = game.moves;
+        score = game.score;
+        return *this;
+    }
+
+    bool move(Direction dir) {
+        Board<N> afterstate = board.moved(dir);
+        if (afterstate == board) { return false; }
+        moves++;
+        score += board.reward(dir);
+        board = afterstate.filled();
+        return true;
+    }
+
+    Game<N> moved(Direction dir) {
+        Game<N> res(*this);
+        res.move(dir);
+        return res;
+    }
+
+    bool is_over() {
+        for (int i = 0; i < 4; i++) {
+            if (board.moved(Direction(i)) != board) { return false; }
+        }
+        return true;
+    }
+
+    void print() {
+        board.print();
+        cout << score << endl;
     }
 };

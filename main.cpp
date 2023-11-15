@@ -3,53 +3,6 @@
 #include "testing.h"
 
 template<int N>
-struct Game {
-    Board<N> board;
-    u32 score;
-
-    Game() : board(Board<N>()), score(0) {
-        board.fill();
-        board.fill();
-    }
-
-    Game(const Board<N> &board, u32 score) : board(board), score(score) {}
-
-    Game(const Game &game) : board(game.board), score(game.score) {}
-
-    Game &operator=(const Game &game) {
-        board = game.board;
-        score = game.score;
-        return *this;
-    }
-
-    bool move(Direction dir) {
-        Board<N> afterstate = board.moved(dir);
-        if (afterstate == board) { return false; }
-        score += board.reward(dir);
-        board = afterstate.filled();
-        return true;
-    }
-
-    Game<N> moved(Direction dir) {
-        Game<N> res(*this);
-        res.move(dir);
-        return res;
-    }
-
-    bool is_over() {
-        for (int i = 0; i < 4; i++) {
-            if (board.moved(Direction(i)) != board) { return false; }
-        }
-        return true;
-    }
-
-    void print() {
-        board.print();
-        cout << score << endl;
-    }
-};
-
-template<int N>
 u32 play_random_game() {
     Game<N> game;
     while (!game.is_over()) {
@@ -252,17 +205,16 @@ void run_tests() {
 
 int main() {
     srand(42);
+    run_tests();
 
-    /*auto start_time = time_now();
-    u32 N = 1000;
+    auto start_time = time_now();
+    u32 N = 10000;
     float avg_score = 0;
     for (int i = 0; i < N; i++) {
         avg_score += play_random_game<4>();
     }
     cout << "Average score: " << avg_score / N << endl;
-    cout << "Time: " << time_since(start_time) / 1e6 << endl;*/
-
-    run_tests();
+    cout << "Time: " << time_since(start_time) / 1e6 << endl;
 
     return 0;
 }
