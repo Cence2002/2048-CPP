@@ -19,7 +19,7 @@ vector<array<u8, N>> generate_lines() {
 }
 
 template<int N, int BASE>
-void test_line_hash(u32 (*hash)(array<u8, N>)) {
+void test_line_hash(u32 (*hash)(const array<u8, N>)) {
     for (auto &line: generate_lines<N, BASE>()) {
         u32 expected = Line<N>(line).hash(BASE);
         u32 res = hash(line);
@@ -29,7 +29,7 @@ void test_line_hash(u32 (*hash)(array<u8, N>)) {
 }
 
 template<int N, int BASE>
-void test_line_left_move(array<u8, N> (*left_move)(array<u8, N>)) {
+void test_line_left_move(array<u8, N> (*left_move)(const array<u8, N>)) {
     for (auto &line: generate_lines<N, BASE>()) {
         array<u8, N> expected = Line<N>(line).left_moved().to_array();
         array<u8, N> res = left_move(line);
@@ -39,7 +39,7 @@ void test_line_left_move(array<u8, N> (*left_move)(array<u8, N>)) {
 }
 
 template<int N, int BASE>
-void test_line_right_move(array<u8, N> (*right_move)(array<u8, N>)) {
+void test_line_right_move(array<u8, N> (*right_move)(const array<u8, N>)) {
     for (auto &line: generate_lines<N, BASE>()) {
         array<u8, N> expected = Line<N>(line).right_moved().to_array();
         array<u8, N> res = right_move(line);
@@ -49,7 +49,7 @@ void test_line_right_move(array<u8, N> (*right_move)(array<u8, N>)) {
 }
 
 template<int N, int BASE>
-void test_line_reward(u32 (*reward)(array<u8, N>)) {
+void test_line_reward(u32 (*reward)(const array<u8, N>)) {
     for (auto &line: generate_lines<N, BASE>()) {
         u32 expected = Line<N>(line).reward();
         u32 res = reward(line);
@@ -59,18 +59,17 @@ void test_line_reward(u32 (*reward)(array<u8, N>)) {
 }
 
 template<int N, int BASE>
-vector<array<array<u8, N>, N>> generate_boards(int n = 10000) {
+vector<array<array<u8, N>, N>> generate_boards(int n = 100000) {
     vector<array<array<u8, N>, N>> res;
     for (int t = 0; t < n; t++) {
         array<array<u8, N>, N> board;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; ++j) {
-                bool empty = random(2);
-                if (empty) {
+                if (random(2) == 0) {
                     board[i][j] = 0;
-                } else {
-                    board[i][j] = random(BASE);
+                    continue;
                 }
+                board[i][j] = random(BASE - 2) + 1;
             }
         }
         res.push_back(board);
@@ -79,11 +78,11 @@ vector<array<array<u8, N>, N>> generate_boards(int n = 10000) {
 }
 
 template<int N, int BASE>
-void test_board_move(array<array<u8, N>, N> (*move)(array<array<u8, N>, N>, Direction)) {
+void test_board_move(array<array<u8, N>, N> (*move)(const array<array<u8, N>, N>, Dir)) {
     for (auto &board: generate_boards<N, BASE>()) {
-        for (auto dir: DIRS) {
-            array<array<u8, N>, N> expected = Board<N>(board).moved(Direction(dir)).to_array();
-            array<array<u8, N>, N> res = move(board, Direction(dir));
+        for (auto d: Dirs) {
+            array<array<u8, N>, N> expected = Board<N>(board).moved(d).to_array();
+            array<array<u8, N>, N> res = move(board, d);
             assert(res == expected);
         }
     }
@@ -91,11 +90,11 @@ void test_board_move(array<array<u8, N>, N> (*move)(array<array<u8, N>, N>, Dire
 }
 
 template<int N, int BASE>
-void test_board_reward(u32 (*reward)(array<array<u8, N>, N>, Direction)) {
+void test_board_reward(u32 (*reward)(const array<array<u8, N>, N>, Dir)) {
     for (auto &board: generate_boards<N, BASE>()) {
-        for (auto dir: DIRS) {
-            u32 expected = Board<N>(board).reward(Direction(dir));
-            u32 res = reward(board, Direction(dir));
+        for (auto d: Dirs) {
+            u32 expected = Board<N>(board).reward(Dir(d));
+            u32 res = reward(board, Dir(d));
             assert(res == expected);
         }
     }
@@ -103,7 +102,7 @@ void test_board_reward(u32 (*reward)(array<array<u8, N>, N>, Direction)) {
 }
 
 template<int N, int BASE>
-void test_board_count_empty(u8 (*count_empty)(array<array<u8, N>, N>)) {
+void test_board_count_empty(u8 (*count_empty)(const array<array<u8, N>, N>)) {
     for (auto &board: generate_boards<N, BASE>()) {
         u8 expected = Board<N>(board).count_empty();
         u8 res = count_empty(board);
@@ -113,7 +112,7 @@ void test_board_count_empty(u8 (*count_empty)(array<array<u8, N>, N>)) {
 }
 
 template<int N, int BASE>
-void test_board_empty_mask(u16 (*empty_mask)(array<array<u8, N>, N>)) {
+void test_board_empty_mask(u16 (*empty_mask)(const array<array<u8, N>, N>)) {
     for (auto &board: generate_boards<N, BASE>()) {
         u16 expected = Board<N>(board).empty_mask();
         u16 res = empty_mask(board);
@@ -123,10 +122,10 @@ void test_board_empty_mask(u16 (*empty_mask)(array<array<u8, N>, N>)) {
 }
 
 template<int N, int BASE>
-void test_board_tuple_hash(u32 (*tuple_hash)(array<array<u8, N>, N>, u16)) {
+void test_board_tuple_hash(u32 (*tuple_hash)(const array<array<u8, N>, N>, u16)) {
     for (auto &board: generate_boards<N, BASE>(100)) {
         for (u32 mask = 0; mask < power(2, N * N); mask++) {
-            if (__builtin_popcount(mask) > 6) continue;
+            if (popcnt(mask) > 6) continue;
             u32 expected = Board<N>(board).tuple_hash(mask, BASE);
             u32 res = tuple_hash(board, mask);
             assert(res == expected);
@@ -200,13 +199,14 @@ double total_p_value(vector<double> &p_values) {
 }
 
 template<int N, int BASE>
-void test_board_fill(array<array<u8, N>, N> (*fill)(array<array<u8, N>, N>)) {
+void test_board_fill(array<array<u8, N>, N> (*fill)(const array<array<u8, N>, N>)) {
     vector<double> p_values;
-    for (array<array<u8, N>, N> board: generate_boards<N, BASE>(20)) {
+    for (array<array<u8, N>, N> board: generate_boards<N, BASE>(100)) {
+        if (Board<N>(board).count_empty() == 0) continue;
         u8 empty = Board<N>(board).count_empty();
         vector<pair<double, double>> data(empty * 2);
 
-        int k = 100000;
+        int k = 10000;
         for (int i = 0; i < empty; i++) {
             data[i].second = double(k) * (0.9 / double(empty));
             data[empty + i].second = double(k) * (0.1 / double(empty));
@@ -249,6 +249,7 @@ void test_board_fill(array<array<u8, N>, N> (*fill)(array<array<u8, N>, N>)) {
     }
     sort(p_values.begin(), p_values.end());
     double total_p = total_p_value(p_values);
+    //cout << "p = " << total_p << endl;
     assert(total_p > 0.01);
     cout << "test_board_fill<" << N << ", " << BASE << "> passed: p = " << total_p << endl;
 }

@@ -20,21 +20,13 @@ public:
         return *this;
     }
 
-    u8 &operator[](const u8 i) {
-        return cells[i];
-    }
+    u8 &operator[](const u8 i) { return cells[i]; }
 
-    bool operator==(const Line &line) const {
-        return cells == line.cells;
-    }
+    bool operator==(const Line &line) const { return cells == line.cells; }
 
-    bool operator!=(const Line &line) const {
-        return cells != line.cells;
-    }
+    bool operator!=(const Line &line) const { return cells != line.cells; }
 
-    array<u8, N> to_array() {
-        return cells;
-    }
+    array<u8, N> to_array() { return cells; }
 
     // C3 C2 C1 C0
     u32 hash(u8 base) {
@@ -133,9 +125,7 @@ private:
     array<Line<N>, N> rows;
 
 public:
-    Board() {
-        rows.fill(Line<N>());
-    }
+    Board() { rows.fill(Line<N>()); }
 
     Board(const array<array<u8, N>, N> &rows) {
         for (int i = 0; i < N; i++) {
@@ -150,17 +140,11 @@ public:
         return *this;
     }
 
-    Line<N> &operator[](const u8 i) {
-        return rows[i];
-    }
+    Line<N> &operator[](const u8 i) { return rows[i]; }
 
-    bool operator==(const Board &board) const {
-        return rows == board.rows;
-    }
+    bool operator==(const Board &board) const { return rows == board.rows; }
 
-    bool operator!=(const Board &board) const {
-        return rows != board.rows;
-    }
+    bool operator!=(const Board &board) const { return rows != board.rows; }
 
     array<array<u8, N>, N> to_array() {
         array<array<u8, N>, N> res;
@@ -178,26 +162,26 @@ public:
         }
     }
 
-    void move(Direction dir) {
-        switch (dir) {
-            case LEFT:
+    void move(Dir d) {
+        switch (d) {
+            case Left:
                 for (int i = 0; i < N; i++) {
                     rows[i].left_move();
                 }
                 break;
-            case UP:
+            case Up:
                 transpose();
                 for (int i = 0; i < N; i++) {
                     rows[i].left_move();
                 }
                 transpose();
                 break;
-            case RIGHT:
+            case Right:
                 for (int i = 0; i < N; i++) {
                     rows[i].right_move();
                 }
                 break;
-            case DOWN:
+            case Down:
                 transpose();
                 for (int i = 0; i < N; i++) {
                     rows[i].right_move();
@@ -209,23 +193,23 @@ public:
         }
     }
 
-    Board<N> moved(Direction dir) {
+    Board<N> moved(Dir d) {
         Board<N> res(*this);
-        res.move(dir);
+        res.move(d);
         return res;
     }
 
-    u32 reward(Direction dir) {
+    u32 reward(Dir d) {
         u32 res = 0;
-        switch (dir) {
-            case LEFT:
-            case RIGHT:
+        switch (d) {
+            case Left:
+            case Right:
                 for (int i = 0; i < N; i++) {
                     res += rows[i].reward();
                 }
                 break;
-            case UP:
-            case DOWN:
+            case Up:
+            case Down:
                 transpose();
                 for (int i = 0; i < N; i++) {
                     res += rows[i].reward();
@@ -328,24 +312,24 @@ struct Game {
         return *this;
     }
 
-    bool move(Direction dir) {
-        Board<N> afterstate = board.moved(dir);
+    bool move(Dir d) {
+        Board<N> afterstate = board.moved(d);
         if (afterstate == board) { return false; }
         moves++;
-        score += board.reward(dir);
+        score += board.reward(d);
         board = afterstate.filled();
         return true;
     }
 
-    Game<N> moved(Direction dir) {
+    Game<N> moved(Dir d) {
         Game<N> res(*this);
-        res.move(dir);
+        res.move(d);
         return res;
     }
 
     bool is_over() {
         for (int i = 0; i < 4; i++) {
-            if (board.moved(Direction(i)) != board) { return false; }
+            if (board.moved(Dir(i)) != board) { return false; }
         }
         return true;
     }
@@ -355,3 +339,23 @@ struct Game {
         cout << score << endl;
     }
 };
+
+template<u8 N>
+void print(const array<array<u8, N>, N> &board) {
+    for (int y = 0; y < N; y++) {
+        for (int x = 0; x < N; ++x) {
+            cout << setw(2) << int(board[y][x]) << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+template<int N>
+u32 play_random_game_0() {
+    Game<N> game;
+    while (!game.is_over()) {
+        game.move(Dir(random(4) + 1));
+    }
+    return game.score;
+}
