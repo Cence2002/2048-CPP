@@ -235,7 +235,7 @@ void init_zeroes() {
 template<u8 N>
 void init_moves_0() {
     for (u32 line = 0; line < E(N * 4); line++) {
-        u8 cells[3];
+        u8 cells[N];
         u16 rev_line = 0;
         u32 reward = 0;
         for (u8 i = 0; i < N; i++) {

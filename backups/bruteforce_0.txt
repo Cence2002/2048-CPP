@@ -1,0 +1,793 @@
+Init time: 0.006067
+
+Move mode: 0
+Fill mode: 0
+Metric: 0
+Eval: 1011
+States: 48713519
+Afterstates: 31431379
+Time: 82.5239
+
+Move mode: 0
+Fill mode: 0
+Metric: 1
+Eval: 16352
+States: 48713519
+Afterstates: 31431379
+Time: 88.4884
+
+Move mode: 0
+Fill mode: 0
+Metric: 2
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 91.739
+
+Move mode: 0
+Fill mode: 0
+Metric: 3
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 88.2739
+
+Move mode: 0
+Fill mode: 0
+Metric: 4
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 91.3912
+
+Move mode: 0
+Fill mode: 0
+Metric: 5
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 91.4408
+
+Move mode: 0
+Fill mode: 0
+Metric: 6
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 90.8581
+
+Move mode: 0
+Fill mode: 0
+Metric: 7
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 90.8528
+
+Move mode: 0
+Fill mode: 0
+Metric: 8
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 90.4822
+
+Move mode: 0
+Fill mode: 0
+Metric: 9
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 89.5999
+
+Move mode: 0
+Fill mode: 0
+Metric: 10
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 90.7044
+
+Move mode: 0
+Fill mode: 1
+Metric: 0
+Eval: 22
+States: 48713519
+Afterstates: 31431379
+Time: 90.8235
+
+Move mode: 0
+Fill mode: 1
+Metric: 1
+Eval: 164
+States: 48713519
+Afterstates: 31431379
+Time: 90.7946
+
+Move mode: 0
+Fill mode: 1
+Metric: 2
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 91.0695
+
+Move mode: 0
+Fill mode: 1
+Metric: 3
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 89.7831
+
+Move mode: 0
+Fill mode: 1
+Metric: 4
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 90.9915
+
+Move mode: 0
+Fill mode: 1
+Metric: 5
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 91.2442
+
+Move mode: 0
+Fill mode: 1
+Metric: 6
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 91.5001
+
+Move mode: 0
+Fill mode: 1
+Metric: 7
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 90.9404
+
+Move mode: 0
+Fill mode: 1
+Metric: 8
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 91.5867
+
+Move mode: 0
+Fill mode: 1
+Metric: 9
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 91.7032
+
+Move mode: 0
+Fill mode: 1
+Metric: 10
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 91.8763
+
+Move mode: 0
+Fill mode: 2
+Metric: 0
+Eval: 366.741
+States: 48713519
+Afterstates: 31431379
+Time: 91.3192
+
+Move mode: 0
+Fill mode: 2
+Metric: 1
+Eval: 5468.46
+States: 48713519
+Afterstates: 31431379
+Time: 91.1463
+
+Move mode: 0
+Fill mode: 2
+Metric: 2
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 92.2267
+
+Move mode: 0
+Fill mode: 2
+Metric: 3
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 92.3725
+
+Move mode: 0
+Fill mode: 2
+Metric: 4
+Eval: 0.999999
+States: 48713519
+Afterstates: 31431379
+Time: 92.3829
+
+Move mode: 0
+Fill mode: 2
+Metric: 5
+Eval: 0.999999
+States: 48713519
+Afterstates: 31431379
+Time: 92.359
+
+Move mode: 0
+Fill mode: 2
+Metric: 6
+Eval: 0.999999
+States: 48713519
+Afterstates: 31431379
+Time: 88.0269
+
+Move mode: 0
+Fill mode: 2
+Metric: 7
+Eval: 0.999999
+States: 48713519
+Afterstates: 31431379
+Time: 88.6966
+
+Move mode: 0
+Fill mode: 2
+Metric: 8
+Eval: 0.995707
+States: 48713519
+Afterstates: 31431379
+Time: 90.5372
+
+Move mode: 0
+Fill mode: 2
+Metric: 9
+Eval: 0.736771
+States: 48713519
+Afterstates: 31431379
+Time: 88.2344
+
+Move mode: 0
+Fill mode: 2
+Metric: 10
+Eval: 0.0113378
+States: 48713519
+Afterstates: 31431379
+Time: 87.9061
+
+Move mode: 1
+Fill mode: 0
+Metric: 0
+Eval: 28
+States: 48713519
+Afterstates: 31431379
+Time: 89.2163
+
+Move mode: 1
+Fill mode: 0
+Metric: 1
+Eval: 164
+States: 48713519
+Afterstates: 31431379
+Time: 89.4708
+
+Move mode: 1
+Fill mode: 0
+Metric: 2
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 89.4115
+
+Move mode: 1
+Fill mode: 0
+Metric: 3
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 89.2285
+
+Move mode: 1
+Fill mode: 0
+Metric: 4
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 88.2891
+
+Move mode: 1
+Fill mode: 0
+Metric: 5
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 88.3896
+
+Move mode: 1
+Fill mode: 0
+Metric: 6
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 88.3795
+
+Move mode: 1
+Fill mode: 0
+Metric: 7
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 88.2231
+
+Move mode: 1
+Fill mode: 0
+Metric: 8
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 89.5561
+
+Move mode: 1
+Fill mode: 0
+Metric: 9
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 89.998
+
+Move mode: 1
+Fill mode: 0
+Metric: 10
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 90.3419
+
+Move mode: 1
+Fill mode: 1
+Metric: 0
+Eval: 7
+States: 48713519
+Afterstates: 31431379
+Time: 89.1359
+
+Move mode: 1
+Fill mode: 1
+Metric: 1
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 81.9272
+
+Move mode: 1
+Fill mode: 1
+Metric: 2
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 77.9813
+
+Move mode: 1
+Fill mode: 1
+Metric: 3
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 83.7502
+
+Move mode: 1
+Fill mode: 1
+Metric: 4
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 80.4139
+
+Move mode: 1
+Fill mode: 1
+Metric: 5
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 84.6199
+
+Move mode: 1
+Fill mode: 1
+Metric: 6
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 80.1848
+
+Move mode: 1
+Fill mode: 1
+Metric: 7
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 82.4617
+
+Move mode: 1
+Fill mode: 1
+Metric: 8
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 77.47
+
+Move mode: 1
+Fill mode: 1
+Metric: 9
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 79.7893
+
+Move mode: 1
+Fill mode: 1
+Metric: 10
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 80.0462
+
+Move mode: 1
+Fill mode: 2
+Metric: 0
+Eval: 12.0332
+States: 48713519
+Afterstates: 31431379
+Time: 78.9853
+
+Move mode: 1
+Fill mode: 2
+Metric: 1
+Eval: 24.71
+States: 48713519
+Afterstates: 31431379
+Time: 81.3362
+
+Move mode: 1
+Fill mode: 2
+Metric: 2
+Eval: 0.995
+States: 48713519
+Afterstates: 31431379
+Time: 79.6786
+
+Move mode: 1
+Fill mode: 2
+Metric: 3
+Eval: 0.629094
+States: 48713519
+Afterstates: 31431379
+Time: 86.0642
+
+Move mode: 1
+Fill mode: 2
+Metric: 4
+Eval: 0.00544232
+States: 48713519
+Afterstates: 31431379
+Time: 65.3068
+
+Move mode: 1
+Fill mode: 2
+Metric: 5
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.5131
+
+Move mode: 1
+Fill mode: 2
+Metric: 6
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.7411
+
+Move mode: 1
+Fill mode: 2
+Metric: 7
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.7343
+
+Move mode: 1
+Fill mode: 2
+Metric: 8
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.6013
+
+Move mode: 1
+Fill mode: 2
+Metric: 9
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.6182
+
+Move mode: 1
+Fill mode: 2
+Metric: 10
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.3261
+
+Move mode: 2
+Fill mode: 0
+Metric: 0
+Eval: 84.4146
+States: 48713519
+Afterstates: 31431379
+Time: 60.6201
+
+Move mode: 2
+Fill mode: 0
+Metric: 1
+Eval: 940.732
+States: 48713519
+Afterstates: 31431379
+Time: 60.5785
+
+Move mode: 2
+Fill mode: 0
+Metric: 2
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 61.0753
+
+Move mode: 2
+Fill mode: 0
+Metric: 3
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 61.1704
+
+Move mode: 2
+Fill mode: 0
+Metric: 4
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 60.5489
+
+Move mode: 2
+Fill mode: 0
+Metric: 5
+Eval: 1
+States: 48713519
+Afterstates: 31431379
+Time: 60.7681
+
+Move mode: 2
+Fill mode: 0
+Metric: 6
+Eval: 0.990592
+States: 48713519
+Afterstates: 31431379
+Time: 61.1936
+
+Move mode: 2
+Fill mode: 0
+Metric: 7
+Eval: 0.697093
+States: 48713519
+Afterstates: 31431379
+Time: 61.0603
+
+Move mode: 2
+Fill mode: 0
+Metric: 8
+Eval: 0.0677401
+States: 48713519
+Afterstates: 31431379
+Time: 59.9903
+
+Move mode: 2
+Fill mode: 0
+Metric: 9
+Eval: 6.14262e-06
+States: 48713519
+Afterstates: 31431379
+Time: 60.2434
+
+Move mode: 2
+Fill mode: 0
+Metric: 10
+Eval: 1.99873e-18
+States: 48713519
+Afterstates: 31431379
+Time: 60.308
+
+Move mode: 2
+Fill mode: 1
+Metric: 0
+Eval: 11.426
+States: 48713519
+Afterstates: 31431379
+Time: 60.1015
+
+Move mode: 2
+Fill mode: 1
+Metric: 1
+Eval: 37.076
+States: 48713519
+Afterstates: 31431379
+Time: 59.9254
+
+Move mode: 2
+Fill mode: 1
+Metric: 2
+Eval: 0.333333
+States: 48713519
+Afterstates: 31431379
+Time: 59.9293
+
+Move mode: 2
+Fill mode: 1
+Metric: 3
+Eval: 0.863571
+States: 48713519
+Afterstates: 31431379
+Time: 60.3369
+
+Move mode: 2
+Fill mode: 1
+Metric: 4
+Eval: 0.353764
+States: 48713519
+Afterstates: 31431379
+Time: 60.8758
+
+Move mode: 2
+Fill mode: 1
+Metric: 5
+Eval: 0.00818056
+States: 48713519
+Afterstates: 31431379
+Time: 60.491
+
+Move mode: 2
+Fill mode: 1
+Metric: 6
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.2245
+
+Move mode: 2
+Fill mode: 1
+Metric: 7
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 59.9762
+
+Move mode: 2
+Fill mode: 1
+Metric: 8
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.2709
+
+Move mode: 2
+Fill mode: 1
+Metric: 9
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 60.4073
+
+Move mode: 2
+Fill mode: 1
+Metric: 10
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 61.148
+
+Move mode: 2
+Fill mode: 2
+Metric: 0
+Eval: 30.4608
+States: 48713519
+Afterstates: 31431379
+Time: 60.7902
+
+Move mode: 2
+Fill mode: 2
+Metric: 1
+Eval: 178.744
+States: 48713519
+Afterstates: 31431379
+Time: 60.8133
+
+Move mode: 2
+Fill mode: 2
+Metric: 2
+Eval: 0.996944
+States: 48713519
+Afterstates: 31431379
+Time: 61.0161
+
+Move mode: 2
+Fill mode: 2
+Metric: 3
+Eval: 0.998814
+States: 48713519
+Afterstates: 31431379
+Time: 61.1758
+
+Move mode: 2
+Fill mode: 2
+Metric: 4
+Eval: 0.953771
+States: 48713519
+Afterstates: 31431379
+Time: 61.3089
+
+Move mode: 2
+Fill mode: 2
+Metric: 5
+Eval: 0.612584
+States: 48713519
+Afterstates: 31431379
+Time: 60.8478
+
+Move mode: 2
+Fill mode: 2
+Metric: 6
+Eval: 0.0921864
+States: 48713519
+Afterstates: 31431379
+Time: 61.2555
+
+Move mode: 2
+Fill mode: 2
+Metric: 7
+Eval: 0.000264891
+States: 48713519
+Afterstates: 31431379
+Time: 61.0593
+
+Move mode: 2
+Fill mode: 2
+Metric: 8
+Eval: 1.05506e-11
+States: 48713519
+Afterstates: 31431379
+Time: 61.3686
+
+Move mode: 2
+Fill mode: 2
+Metric: 9
+Eval: 2.93792e-30
+States: 48713519
+Afterstates: 31431379
+Time: 61.6511
+
+Move mode: 2
+Fill mode: 2
+Metric: 10
+Eval: 0
+States: 48713519
+Afterstates: 31431379
+Time: 61.3404

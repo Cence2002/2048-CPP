@@ -1,0 +1,27 @@
+move-fill (metric) => eval
+
+max-ran (moves) => 366.741
+max-ran (score) => 5468.46
+max-ran (p_7) => 0.999999
+max-ran (p_8) => 0.995707
+max-ran (p_9) => 0.736771
+max-ran (p_A) => 0.0113378
+
+max-max (moves) => 1011
+max-max (score) => 16352
+
+min-min (moves) => 7
+min-min (score) => 0
+
+max-min (moves) => 22
+max-min (score) => 164
+max-min (p_5) => 1
+max-min (p_6) => 0
+
+min-max (moves) => 28
+min-max (score) => 164
+min-max (p_4) => 1
+min-max (p_5) => 0
+
+ran-ran (moves) => 30.4608
+ran-ran (score) => 178.744
