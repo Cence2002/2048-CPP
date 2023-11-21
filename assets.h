@@ -11,7 +11,7 @@ using u32 = uint32_t;
 using u64 = uint64_t;
 
 enum Dir : u8 {
-    none = 0,
+    None = 0,
     Left = 1,
     Up = 2,
     Right = 3,
@@ -49,3 +49,5 @@ u64 power(u64 base, u8 exp) {
     }
     return res;
 }
+
+u64 cnt = 0;

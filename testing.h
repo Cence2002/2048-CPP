@@ -1,6 +1,5 @@
 #pragma once
 
-#include "assets.h"
 #include "general_board.h"
 
 template<int N, int BASE>
@@ -206,7 +205,7 @@ void test_board_fill(array<array<u8, N>, N> (*fill)(const array<array<u8, N>, N>
         u8 empty = Board<N>(board).count_empty();
         vector<pair<double, double>> data(empty * 2);
 
-        int k = 10000;
+        int k = 100000;
         for (int i = 0; i < empty; i++) {
             data[i].second = double(k) * (0.9 / double(empty));
             data[empty + i].second = double(k) * (0.1 / double(empty));

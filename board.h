@@ -127,9 +127,9 @@ u64 down_0_3[E(12)];
 u64 down_1_3[E(12)];
 u64 down_2_3[E(12)];
 
-template<u8 mode>
+template<u8 N>
 inline void move_board(u64 &board, const Dir d) {
-    if constexpr (mode == 4) {
+    if constexpr (N == 4) {
         switch (d) {
             case Left:
                 board ^= left_0_4[get_row<4, 0>(board)] ^

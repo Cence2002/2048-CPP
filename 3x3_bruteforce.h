@@ -1,6 +1,5 @@
 #pragma once
 
-#include "assets.h"
 #include "board.h"
 
 u32 to_hash(u64 board) {

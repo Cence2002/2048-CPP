@@ -1,7 +1,5 @@
-#include "assets.h"
-#include "board.h"
-#include "3x3_bruteforce.h"
 #include "testing.h"
+#include "learn.h"
 
 template<u8 N>
 u32 play_random_game() {
@@ -295,63 +293,8 @@ int main() {
     run_tests();
     cout << "Time: " << time_since(start_time) / 1e6 << endl << endl;*/
 
-
-    /*start_time = time_now();
-    u32 N = 10000;
-    float avg_score = 0;
-    for (u32 i = 0; i < N; i++) {
-        avg_score += play_random_game<4>();
-    }
-    cout << "Average score: " << avg_score / N << endl;
-    cout << "Time: " << time_since(start_time) / 1e6 << endl << endl;*/
-
-    for (u8 move_mode = 0; move_mode < 3; ++move_mode) {
-        for (u8 fill_mode = 0; fill_mode < 3; ++fill_mode) {
-            for (u8 metric = 0; metric < 11; ++metric) {
-                Bruteforce bf(move_mode, fill_mode, metric);
-                /*start_time = time_now();
-                cout << "Move mode: " << u32(move_mode) << endl;
-                cout << "Fill mode: " << u32(fill_mode) << endl;
-                cout << "Metric: " << u32(metric) << endl;
-                cout << "Eval: " << bf.eval_game() << endl;
-                cout << "States: " << bf.state_cache.size() << endl;
-                cout << "Afterstates: " << bf.afterstate_cache.size() << endl;
-                cout << "Time: " << time_since(start_time) / 1e6 << endl;*/
-                cout << u32(move_mode) << "-" << u32(fill_mode) << " (" << u32(metric) << ") => " << bf.eval_game() << endl;
-            }
-        }
-    }
-
-
-    /*start_time = time_now();
-
-    vector<pair<Bruteforce, float>> bruteforces;
-
-    for (u8 move_mode = 0; move_mode < 3; ++move_mode) {
-        for (u8 fill_mode = 0; fill_mode < 3; ++fill_mode) {
-            for (u8 metric = 0; metric < 11; ++metric) {
-                bruteforces.emplace_back(Bruteforce(move_mode, fill_mode, metric), 0);
-            }
-        }
-    }
-    vector<thread> threads;
-    for (u32 i = 0; i < bruteforces.size(); ++i) {
-        threads.emplace_back([&](u32 index) {
-            bruteforces[index].second = bruteforces[index].first.eval_game();
-        }, i);
-    }
-    for (auto &t: threads) { t.join(); }
-    for (const auto &[bf, eval]: bruteforces) {
-        cout << "Move mode: " << u32(bf.move_mode) << endl;
-        cout << "Fill mode: " << u32(bf.fill_mode) << endl;
-        cout << "Metric: " << u32(bf.metric) << endl;
-        cout << "Eval: " << eval << endl;
-        cout << endl;
-    }
-    cout << "Time: " << time_since(start_time) / 1e6 << endl << endl;*/
-
-    //Bruteforce bf(1, 1, 2);
-    //cout << bf.eval_game() << endl;
+    learn<4>(10000, 1);
+    cout << learn<4>(10000, 10000) << endl;
 
     return 0;
 }
