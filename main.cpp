@@ -1,28 +1,66 @@
 #include "testing.h"
 #include "learn.h"
 
+void init() {
+    auto start = time_now();
+
+    init_zeroes();
+    init_moves_0<4>();
+    init_moves_0<3>();
+    init_moves_123();
+
+    for (auto &t: tuples_4) {
+        t.weights.fill(tuple_init / (8 * tuples_4.size()));
+    }
+    for (auto &t: tuples_3) {
+        t.weights.fill(tuple_init / (8 * tuples_3.size()));
+    }
+
+    cout << "Init time: " << time_since(start) / 1e6 << endl << endl;
+}
+
 template<u8 N>
-u32 play_random_game() {
-    u64 board = 0;
-    u16 score = 0;
-    u16 moves = 0;
+s_t play_random_game() {
+    b_t board = 0;
+    s_t score = 0;
     fill_board<N>(board);
     fill_board<N>(board);
-    u8 cnt = 0;
-    while (cnt < 10) {
+    while (!game_over<N>(board)) {
         Dir d = Dir(random(4) + 1);
-        u64 afterstate = moved_board<N>(board, d);
-        if (afterstate == board) {
-            cnt++;
-            continue;
-        }
-        moves++;
-        cnt = 0;
+        b_t afterstate = moved_board<N>(board, d);
+        if (afterstate == board) { continue; }
         score += get_reward<N>(board, d);
         board = afterstate;
         fill_board<N>(board);
     }
-    return moves;
+    return score;
+}
+
+void perf_test(u64 N) {
+    auto start = time_now();
+    r_t sum = 0;
+    for (u32 i = 0; i < N; ++i) {
+        sum += r_t(play_random_game<4>());
+    }
+    cout << "Average score: " << sum / r_t(N) << endl;
+    cout << "Time: " << time_since(start) / 1e6 << endl << endl;
+}
+
+template<u8 N>
+s_t play_game() {
+    b_t board = 0;
+    s_t score = 0;
+    fill_board<N>(board);
+    fill_board<N>(board);
+    while (!game_over<N>(board)) {
+        const auto [dir, eval, reward, afterstate] =
+                limited_states_player<N>(board, 1000);
+        if (dir == None) { break; }
+        score += reward;
+        board = afterstate;
+        fill_board<N>(board);
+    }
+    return score;
 }
 
 void run_tests() {
@@ -279,22 +317,151 @@ void run_tests() {
     }
 }
 
+void save_array(const string &filename, const char *arr, const size_t size) {
+    cout << "Saving " << filename << " started" << endl;
+    auto start = time_now();
+    ofstream file("../weights_backups/" + filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Error opening: " << filename << endl;
+        return;
+    }
+    file.write(arr, size);
+    file.close();
+    cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
+}
+
+template<u8 N>
+void save_all_weights(const string &ts_str) {
+    const string dir = "../weights_backups";
+    if constexpr (N == 4) {
+        for (auto &t: tuples_4) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            save_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    } else {
+        for (auto &t: tuples_3) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            save_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    }
+    cout << endl;
+}
+
+void load_array(const string &filename, char *arr, const size_t size) {
+    cout << "Loading " << filename << " started" << endl;
+    auto start = time_now();
+    ifstream file("../weights_backups/" + filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Error opening: " << filename << endl;
+        return;
+    }
+    file.read(arr, size);
+    file.close();
+    cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
+}
+
+template<u8 N>
+void load_all_weights(const string &ts_str) {
+    const string dir = "../weights_backups";
+    if constexpr (N == 4) {
+        for (auto &t: tuples_4) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            load_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    } else {
+        for (auto &t: tuples_3) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            load_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    }
+    cout << endl;
+}
+
+string get_time_str() {
+    auto ts = time(nullptr);
+    auto local_ts = *localtime(&ts);
+    ostringstream temp;
+    temp << put_time(&local_ts, "%m%d-%H-%M-%S");
+    return temp.str();
+}
+
+template<u8 N>
+void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games) {
+    learning_rate = LR;
+    run_learning<N>(episodes, training_games, testing_games);
+    string ts_str = get_time_str();
+    cout << "Saving weights: " << ts_str << endl;
+    save_all_weights<N>(ts_str);
+}
+
+template<u8 N>
+void run() {
+    load_all_weights<N>("1216-21-10-12");
+    run_testing_episodes<4>(1000);
+
+    //interactive_learn(1000, 100);
+    //for (u32 i = 0; i < 2; ++i) { fixed_learn<N>(0.1, 10, 10000, 1000); }
+}
+
 int main() {
     srand(42);
-    auto start_time = time_now();
 
-    init_zeroes();
-    init_moves_0<4>();
-    init_moves_0<3>();
-    init_moves_123();
-    cout << "Init time: " << time_since(start_time) / 1e6 << endl << endl;
-
-    /*start_time = time_now();
+    init();
     run_tests();
-    cout << "Time: " << time_since(start_time) / 1e6 << endl << endl;*/
+    perf_test(10000);
 
-    learn<4>(10000, 1);
-    cout << learn<4>(10000, 10000) << endl;
+    bool redirect = false;
+    if (redirect) {
+        ofstream file("../output.log", std::ios_base::out | std::ios_base::trunc);
+        streambuf *consoleBuffer = cout.rdbuf();
+        streambuf *fileBuffer = file.rdbuf();
+        cout.rdbuf(fileBuffer);
+
+        run<4>();
+
+        cout.rdbuf(consoleBuffer);
+        file.close();
+    } else {
+        run<4>();
+    }
 
     return 0;
 }
+
+// To brute force for 3x3:
+// goal of player: maximizing or minimizing (or random)
+// goal of game: maximizing or minimizing or random (with arbitrary probability for 2 instead of 0.9)
+// metrics: score, number of moves, probability of reaching a certain tile (1-10), entropy(?), TODO: extend
+// extra: ratio of reachable positions compared to all
+
+// Average sum per moves: n/(0.9*2+0.1*4) =>
+// => n/2.2
+// Average sum
+// Average score for 2^2: (0.45*4+0.1*0)/(0.45+0.1) =>
+// => 36/11 (= 3.27)
+// Average score for 2^n: f(2)=36/11,f(n)=2*f(n-1)+2^n =>
+// => (n-13/11)*2^n
+
+// Score for 2 = 4 => 3.3
+// Score for 3 = 8 => 14.5
+// Score for 4 = 16 => 45.1
+// Score for 5 = 32 => 122.2
+// Score for 6 = 64 => 308.4
+// Score for 7 = 128 => 744.7
+// Score for 8 = 256 => 1745.5
+// Score for 9 = 512 => 4002.9
+// Score for A = 1024 => 9029.8
+// Score for B = 2048 => 20107.6
+// Score for C = 4096 => 44311.3
+// Score for D = 8192 => 96814.5
+// Score for E = 16384 => 210013.1
+// Score for F = 32768 => 452794.2
+// Score for G = 65536 => 971124.4
+// Score for H = 131072 => 2073320.7
+
+// Moves for N = 2^N => 2^N/2.2
+

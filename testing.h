@@ -79,7 +79,7 @@ vector<array<array<u8, N>, N>> generate_boards(int n = 100000) {
 template<int N, int BASE>
 void test_board_move(array<array<u8, N>, N> (*move)(const array<array<u8, N>, N>, Dir)) {
     for (auto &board: generate_boards<N, BASE>()) {
-        for (auto d: Dirs) {
+        for (auto d: DIRS) {
             array<array<u8, N>, N> expected = Board<N>(board).moved(d).to_array();
             array<array<u8, N>, N> res = move(board, d);
             assert(res == expected);
@@ -91,7 +91,7 @@ void test_board_move(array<array<u8, N>, N> (*move)(const array<array<u8, N>, N>
 template<int N, int BASE>
 void test_board_reward(u32 (*reward)(const array<array<u8, N>, N>, Dir)) {
     for (auto &board: generate_boards<N, BASE>()) {
-        for (auto d: Dirs) {
+        for (auto d: DIRS) {
             u32 expected = Board<N>(board).reward(Dir(d));
             u32 res = reward(board, Dir(d));
             assert(res == expected);

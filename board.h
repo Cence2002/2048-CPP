@@ -3,18 +3,18 @@
 #include "assets.h"
 
 template<u8 N>
-u64 from_array(const array<array<u8, N>, N> &cells) {
-    u64 board = 0;
+b_t from_array(const array<array<u8, N>, N> &cells) {
+    b_t board = 0;
     for (u8 y = 0; y < N; y++) {
         for (u8 x = 0; x < N; x++) {
-            board |= u64(cells[y][x]) << (y * (N * 4) + x * 4);
+            board |= b_t(cells[y][x]) << (y * (N * 4) + x * 4);
         }
     }
     return board;
 }
 
 template<u8 N>
-array<array<u8, N>, N> to_array(const u64 board) {
+array<array<u8, N>, N> to_array(const b_t board) {
     array<array<u8, N>, N> cells{};
     for (u8 y = 0; y < N; y++) {
         for (u8 x = 0; x < N; x++) {
@@ -25,7 +25,7 @@ array<array<u8, N>, N> to_array(const u64 board) {
 }
 
 template<u8 N, u8 y>
-inline u16 get_row(const u64 board) {
+inline l_t get_row(const b_t board) {
     if constexpr (N == 4) {
         return (board >> (y * 16)) & 0xFFFFu;
     } else {
@@ -34,7 +34,7 @@ inline u16 get_row(const u64 board) {
 }
 
 template<u8 N, u8 x>
-inline u16 get_col(const u64 board) {
+inline l_t get_col(const b_t board) {
     if constexpr (N == 4) {
         return pext(board, 0x000F000F000F000Full << (x * 4));
     } else {
@@ -43,7 +43,7 @@ inline u16 get_col(const u64 board) {
 }
 
 template<u8 N>
-inline u64 empty_mask(u64 board) {
+inline b_t empty_mask(b_t board) {
     board |= board >> 2;
     board |= board >> 1;
     if constexpr (N == 4) {
@@ -54,24 +54,26 @@ inline u64 empty_mask(u64 board) {
 }
 
 template<u8 N>
-inline u8 count_empty(const u64 board) {
+inline u8 count_empty(const b_t board) {
     return popcnt(empty_mask<N>(board));
 }
 
 template<u8 N>
-inline void fill_board(u64 &board) {
-    u64 empty = empty_mask<N>(board);
+inline void fill_board(b_t &board) {
+    ++run_stats.fill_board_counter;
+    b_t empty = empty_mask<N>(board);
     u8 pos = random(popcnt(empty));
-    u64 mask = 1;
+    b_t mask = 1;
     while (!(empty & mask) || pos-- != 0) { mask <<= 4; }
     board |= mask << !random(10);
 }
 
-u32 rewards_4[E(16)];
-u32 rewards_3[E(12)];
+s_t rewards_4[E(16)];
+s_t rewards_3[E(12)];
 
 template<u8 N>
-inline u32 get_reward(const u64 board, const Dir d) {
+inline s_t get_reward(const b_t board, const Dir d) {
+    ++run_stats.reward_board_counter;
     if constexpr (N == 4) {
         if (d & 1) {
             return rewards_4[get_row<4, 0>(board)] +
@@ -97,38 +99,39 @@ inline u32 get_reward(const u64 board, const Dir d) {
     }
 }
 
-u64 left_0_4[E(16)];
-u64 left_1_4[E(16)];
-u64 left_2_4[E(16)];
-u64 left_3_4[E(16)];
-u64 up_0_4[E(16)];
-u64 up_1_4[E(16)];
-u64 up_2_4[E(16)];
-u64 up_3_4[E(16)];
-u64 right_0_4[E(16)];
-u64 right_1_4[E(16)];
-u64 right_2_4[E(16)];
-u64 right_3_4[E(16)];
-u64 down_0_4[E(16)];
-u64 down_1_4[E(16)];
-u64 down_2_4[E(16)];
-u64 down_3_4[E(16)];
+b_t left_0_4[E(16)];
+b_t left_1_4[E(16)];
+b_t left_2_4[E(16)];
+b_t left_3_4[E(16)];
+b_t up_0_4[E(16)];
+b_t up_1_4[E(16)];
+b_t up_2_4[E(16)];
+b_t up_3_4[E(16)];
+b_t right_0_4[E(16)];
+b_t right_1_4[E(16)];
+b_t right_2_4[E(16)];
+b_t right_3_4[E(16)];
+b_t down_0_4[E(16)];
+b_t down_1_4[E(16)];
+b_t down_2_4[E(16)];
+b_t down_3_4[E(16)];
 
-u64 left_0_3[E(12)];
-u64 left_1_3[E(12)];
-u64 left_2_3[E(12)];
-u64 up_0_3[E(12)];
-u64 up_1_3[E(12)];
-u64 up_2_3[E(12)];
-u64 right_0_3[E(12)];
-u64 right_1_3[E(12)];
-u64 right_2_3[E(12)];
-u64 down_0_3[E(12)];
-u64 down_1_3[E(12)];
-u64 down_2_3[E(12)];
+b_t left_0_3[E(12)];
+b_t left_1_3[E(12)];
+b_t left_2_3[E(12)];
+b_t up_0_3[E(12)];
+b_t up_1_3[E(12)];
+b_t up_2_3[E(12)];
+b_t right_0_3[E(12)];
+b_t right_1_3[E(12)];
+b_t right_2_3[E(12)];
+b_t down_0_3[E(12)];
+b_t down_1_3[E(12)];
+b_t down_2_3[E(12)];
 
 template<u8 N>
-inline void move_board(u64 &board, const Dir d) {
+inline void move_board(b_t &board, const Dir d) {
+    ++run_stats.move_board_counter;
     if constexpr (N == 4) {
         switch (d) {
             case Left:
@@ -187,10 +190,129 @@ inline void move_board(u64 &board, const Dir d) {
 }
 
 template<u8 N>
-inline u64 moved_board(const u64 board, const Dir d) {
-    u64 res = board;
-    move_board<N>(res, d);
-    return res;
+inline b_t moved_board(const b_t board, const Dir d) {
+    ++run_stats.move_board_counter;
+    if constexpr (N == 4) {
+        switch (d) {
+            case Left:
+                return board ^
+                       left_0_4[get_row<4, 0>(board)] ^
+                       left_1_4[get_row<4, 1>(board)] ^
+                       left_2_4[get_row<4, 2>(board)] ^
+                       left_3_4[get_row<4, 3>(board)];
+            case Up:
+                return board ^
+                       up_0_4[get_col<4, 0>(board)] ^
+                       up_1_4[get_col<4, 1>(board)] ^
+                       up_2_4[get_col<4, 2>(board)] ^
+                       up_3_4[get_col<4, 3>(board)];
+            case Right:
+                return board ^
+                       right_0_4[get_row<4, 0>(board)] ^
+                       right_1_4[get_row<4, 1>(board)] ^
+                       right_2_4[get_row<4, 2>(board)] ^
+                       right_3_4[get_row<4, 3>(board)];
+            case Down:
+                return board ^
+                       down_0_4[get_col<4, 0>(board)] ^
+                       down_1_4[get_col<4, 1>(board)] ^
+                       down_2_4[get_col<4, 2>(board)] ^
+                       down_3_4[get_col<4, 3>(board)];
+            default:
+                return board;
+        }
+    } else {
+        switch (d) {
+            case Left:
+                return board ^
+                       left_0_3[get_row<3, 0>(board)] ^
+                       left_1_3[get_row<3, 1>(board)] ^
+                       left_2_3[get_row<3, 2>(board)];
+            case Up:
+                return board ^
+                       up_0_3[get_col<3, 0>(board)] ^
+                       up_1_3[get_col<3, 1>(board)] ^
+                       up_2_3[get_col<3, 2>(board)];
+            case Right:
+                return board ^
+                       right_0_3[get_row<3, 0>(board)] ^
+                       right_1_3[get_row<3, 1>(board)] ^
+                       right_2_3[get_row<3, 2>(board)];
+            case Down:
+                return board ^
+                       down_0_3[get_col<3, 0>(board)] ^
+                       down_1_3[get_col<3, 1>(board)] ^
+                       down_2_3[get_col<3, 2>(board)];
+            default:
+                return board;
+        }
+    }
+}
+
+template<u8 N>
+bool game_over(const b_t board) {
+    for (const Dir dir: DIRS) {
+        if (moved_board<N>(board, dir) != board) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<u8 N>
+inline b_t reverse_rows(const b_t board) {
+    if constexpr (N == 4) {
+        return ((board & 0x000F000F000F000Full) << 12) |
+               ((board & 0x00F000F000F000F0ull) << 04) |
+               ((board & 0x0F000F000F000F00ull) >> 04) |
+               ((board & 0xF000F000F000F000ull) >> 12);
+    } else {
+        return ((board & 0x00F00F00Full) << 8) |
+               ((board & 0x0F00F00F0ull) << 0) |
+               ((board & 0xF00F00F00ull) >> 8);
+    }
+}
+
+template<u8 N>
+inline b_t reverse_cols(const b_t board) {
+    if constexpr (N == 4) {
+        return ((board & 0x000000000000FFFFull) << 48) |
+               ((board & 0x00000000FFFF0000ull) << 16) |
+               ((board & 0x0000FFFF00000000ull) >> 16) |
+               ((board & 0xFFFF000000000000ull) >> 48);
+    } else {
+        return ((board & 0x000000FFFull) << 24) |
+               ((board & 0x000FFF000ull) << 00) |
+               ((board & 0xFFF000000ull) >> 24);
+    }
+}
+
+
+template<u8 N>
+inline b_t transpose(const b_t board) {
+    if constexpr (N == 4) {
+        return (pext(board, 0x000F000F000F000Full) << 00) |
+               (pext(board, 0x00F000F000F000F0ull) << 16) |
+               (pext(board, 0x0F000F000F000F00ull) << 32) |
+               (pext(board, 0xF000F000F000F000ull) << 48);
+    } else {
+        return (pext(board, 0x00F00F00Full) << 00) |
+               (pext(board, 0x0F00F00F0ull) << 12) |
+               (pext(board, 0xF00F00F00ull) << 24);
+    }
+}
+
+template<u8 N>
+inline array<b_t, 8> get_transformations(const b_t board) {
+    const b_t transposed = transpose<N>(board);
+    const b_t reversed_rows = reverse_rows<N>(board);
+    const b_t reversed_rows_transposed = reverse_rows<N>(transposed);
+    return {
+            board, reversed_rows,
+            transposed, reversed_rows_transposed,
+            reverse_cols<N>(board), reverse_cols<N>(reversed_rows),
+            reverse_cols<N>(transposed), reverse_cols<N>(reversed_rows_transposed)
+    };
 }
 
 void init_zeroes() {
@@ -235,11 +357,11 @@ void init_zeroes() {
 template<u8 N>
 void init_moves_0() {
     for (u32 line = 0; line < E(N * 4); line++) {
-        u8 cells[N];
-        u16 rev_line = 0;
-        u32 reward = 0;
+        c_t cells[N];
+        l_t rev_line = 0;
+        s_t reward = 0;
         for (u8 i = 0; i < N; i++) {
-            u16 cell = (line >> (i * 4)) & 0xFu;
+            c_t cell = (line >> (i * 4)) & 0xFu;
             cells[i] = cell;
             rev_line |= cell << ((N - 1 - i) * 4);
         }
@@ -267,8 +389,8 @@ void init_moves_0() {
             rewards_3[line] = reward;
         }
 
-        u16 moved = 0;
-        u16 rev_moved = 0;
+        l_t moved = 0;
+        l_t rev_moved = 0;
         for (u8 i = 0; i < N; i++) {
             u8 cell = cells[i];
             moved |= cell << (i * 4);
@@ -313,60 +435,4 @@ void init_moves_123() {
         down_1_3[line] = down_0_3[line] << 4;
         down_2_3[line] = down_1_3[line] << 4;
     }
-}
-
-template<u8 N>
-inline u64 reverse_rows(const u64 board) {
-    if constexpr (N == 4) {
-        return ((board & 0x000F000F000F000Full) << 12) |
-               ((board & 0x00F000F000F000F0ull) << 04) |
-               ((board & 0x0F000F000F000F00ull) >> 04) |
-               ((board & 0xF000F000F000F000ull) >> 12);
-    } else {
-        return ((board & 0x00F00F00Full) << 8) |
-               ((board & 0x0F00F00F0ull) << 0) |
-               ((board & 0xF00F00F00ull) >> 8);
-    }
-}
-
-template<u8 N>
-inline u64 reverse_cols(const u64 board) {
-    if constexpr (N == 4) {
-        return ((board & 0x000000000000FFFFull) << 48) |
-               ((board & 0x00000000FFFF0000ull) << 16) |
-               ((board & 0x0000FFFF00000000ull) >> 16) |
-               ((board & 0xFFFF000000000000ull) >> 48);
-    } else {
-        return ((board & 0x000000FFFull) << 24) |
-               ((board & 0x000FFF000ull) << 00) |
-               ((board & 0xFFF000000ull) >> 24);
-    }
-}
-
-
-template<u8 N>
-inline u64 transpose(const u64 board) {
-    if constexpr (N == 4) {
-        return (pext(board, 0x000F000F000F000Full) << 00) |
-               (pext(board, 0x00F000F000F000F0ull) << 16) |
-               (pext(board, 0x0F000F000F000F00ull) << 32) |
-               (pext(board, 0xF000F000F000F000ull) << 48);
-    } else {
-        return (pext(board, 0x00F00F00Full) << 00) |
-               (pext(board, 0x0F00F00F0ull) << 12) |
-               (pext(board, 0xF00F00F00ull) << 24);
-    }
-}
-
-template<u8 N>
-inline array<u64, 8> get_transformations(const u64 board) {
-    const u64 transposed = transpose<N>(board);
-    const u64 reversed_rows = reverse_rows<N>(board);
-    const u64 transposed_reversed_rows = reverse_rows<N>(transposed);
-    return {
-            board, reversed_rows,
-            transposed, transposed_reversed_rows,
-            reverse_cols<N>(board), reverse_cols<N>(reversed_rows),
-            reverse_cols<N>(transposed), reverse_cols<N>(transposed_reversed_rows)
-    };
 }

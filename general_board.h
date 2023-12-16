@@ -11,7 +11,7 @@ private:
 public:
     Line() { cells.fill(0); }
 
-    Line(const array<u8, N> cells) : cells(cells) {}
+    explicit Line(const array<u8, N> cells) : cells(cells) {}
 
     Line(const Line &line) : cells(line.cells) {}
 
@@ -127,7 +127,7 @@ private:
 public:
     Board() { rows.fill(Line<N>()); }
 
-    Board(const array<array<u8, N>, N> &rows) {
+    explicit Board(const array<array<u8, N>, N> &rows) {
         for (int i = 0; i < N; i++) {
             this->rows[i] = Line<N>(rows[i]);
         }
