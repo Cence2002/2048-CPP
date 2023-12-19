@@ -8,7 +8,9 @@ inline r_t eval_board(const b_t board) {
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
         if constexpr (N == 4) {
-            for (const auto &t: tuples_4) { sum += t.weights[pext(b, t.mask)]; }
+            //TODO replace
+            //for (const auto &t: tuples_4) { sum += t.weights[pext(b, t.mask)]; }
+            for (int i = 0; i <= max(num_tuples, u8(9)); ++i) { sum += tuples_4[i].weights[pext(b, tuples_4[i].mask)]; }
         } else {
             for (const auto &t: tuples_3) { sum += t.weights[pext(b, t.mask)]; }
         }
@@ -22,9 +24,14 @@ inline r_t update_weights(const b_t board, const r_t gradient) {
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
         if constexpr (N == 4) {
-            for (auto &t: tuples_4) { sum += (t.weights[pext(b, t.mask)] += gradient); }
+            //TODO replace
+            //for (auto &t: tuples_4) { sum += (t.weights[pext(b, t.mask)] += gradient); }
+            //for (auto &t: tuples_4) { t.weights[pext(b, t.mask)] += gradient; }
+            for (int i = 0; i <= num_tuples; ++i) { tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient; }
         } else {
-            for (auto &t: tuples_3) { sum += (t.weights[pext(b, t.mask)] += gradient); }
+            //TODO replace
+            //for (auto &t: tuples_3) { sum += (t.weights[pext(b, t.mask)] += gradient); }
+            for (auto &t: tuples_3) { t.weights[pext(b, t.mask)] += gradient; }
         }
     }
     return sum;

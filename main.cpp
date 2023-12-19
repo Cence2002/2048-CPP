@@ -10,13 +10,55 @@ void init() {
     init_moves_123();
 
     for (auto &t: tuples_4) {
-        t.weights.fill(tuple_init / (8 * tuples_4.size()));
+        //TODO replace
+        //t.weights.fill(tuple_init / (8 * tuples_4.size()));
+        t.weights.fill(tuple_init);
     }
     for (auto &t: tuples_3) {
-        t.weights.fill(tuple_init / (8 * tuples_3.size()));
+        //TODO replace
+        //t.weights.fill(tuple_init / (8 * tuples_3.size()));
+        t.weights.fill(tuple_init);
     }
 
     cout << "Init time: " << time_since(start) / 1e6 << endl << endl;
+}
+
+template<u8 N>
+void save_all_weights(const string &ts_str) {
+    const string dir = "../weights_backups";
+    if constexpr (N == 4) {
+        for (auto &t: tuples_4) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            save_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    } else {
+        for (auto &t: tuples_3) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            save_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    }
+    cout << endl;
+}
+
+template<u8 N>
+void load_all_weights(const string &ts_str) {
+    const string dir = "../weights_backups";
+    if constexpr (N == 4) {
+        for (auto &t: tuples_4) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            load_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    } else {
+        for (auto &t: tuples_3) {
+            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            load_array(dir + "/" + filename, (char *) &t.weights, size);
+        }
+    }
+    cout << endl;
 }
 
 template<u8 N>
@@ -317,78 +359,6 @@ void run_tests() {
     }
 }
 
-void save_array(const string &filename, const char *arr, const size_t size) {
-    cout << "Saving " << filename << " started" << endl;
-    auto start = time_now();
-    ofstream file("../weights_backups/" + filename, ios::binary);
-    if (!file.is_open()) {
-        cout << "Error opening: " << filename << endl;
-        return;
-    }
-    file.write(arr, size);
-    file.close();
-    cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
-}
-
-template<u8 N>
-void save_all_weights(const string &ts_str) {
-    const string dir = "../weights_backups";
-    if constexpr (N == 4) {
-        for (auto &t: tuples_4) {
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            save_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    } else {
-        for (auto &t: tuples_3) {
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            save_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    }
-    cout << endl;
-}
-
-void load_array(const string &filename, char *arr, const size_t size) {
-    cout << "Loading " << filename << " started" << endl;
-    auto start = time_now();
-    ifstream file("../weights_backups/" + filename, ios::binary);
-    if (!file.is_open()) {
-        cout << "Error opening: " << filename << endl;
-        return;
-    }
-    file.read(arr, size);
-    file.close();
-    cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
-}
-
-template<u8 N>
-void load_all_weights(const string &ts_str) {
-    const string dir = "../weights_backups";
-    if constexpr (N == 4) {
-        for (auto &t: tuples_4) {
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            load_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    } else {
-        for (auto &t: tuples_3) {
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            load_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    }
-    cout << endl;
-}
-
-string get_time_str() {
-    auto ts = time(nullptr);
-    auto local_ts = *localtime(&ts);
-    ostringstream temp;
-    temp << put_time(&local_ts, "%m%d-%H-%M-%S");
-    return temp.str();
-}
-
 template<u8 N>
 void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games) {
     learning_rate = LR;
@@ -398,23 +368,226 @@ void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games) {
     save_all_weights<N>(ts_str);
 }
 
+bool is_connected(const u32 mask) {
+    //check if all 1s on the 4x4 bit matrix determined by mask are connected
+    u32 visited = 0;
+    for (u32 i = 0; i < 16; ++i) {
+        if ((mask >> i) & 1u) {
+            visited |= 1u << i;
+            break;
+        }
+    }
+    //traverse only on 1s from the mask, then check if all 1s in mask are visited
+    u32 next_visited = 0;
+    do {
+        visited |= next_visited;
+        next_visited = visited;
+        for (u32 i = 0; i < 16; ++i) {
+            if (((visited >> i) & 1u) == 0) continue;
+            for (u32 j = 0; j < 16; ++j) {
+                if (((mask >> j) & 1u) == 0) continue;
+                if (abs(int(i / 4) - int(j / 4)) + abs(int(i % 4) - int(j % 4)) == 1) {
+                    next_visited |= 1u << j;
+                }
+            }
+        }
+    } while (next_visited != visited);
+    return visited == mask;
+}
+
+string to_hex(const u32 mask) {
+    ostringstream temp;
+    temp << hex << mask << dec;
+    return temp.str();
+}
+
+u32 n_tuples(u8 n) {
+    u32 count = 0;
+    unordered_set<b_t> set;
+    for (u32 mask = 1; mask <= 0xFFFFu; ++mask) {
+        if (u8(popcnt(mask)) != n) continue;
+        if (!is_connected(mask)) continue;
+        b_t board = pdep(mask, 0x1111111111111111ull);
+        bool is_new = true;
+        for (const auto &b: get_transformations<4>(board)) {
+            if (set.find(b) != set.end()) {
+                is_new = false;
+                break;
+            }
+        }
+        if (is_new) {
+            ++count;
+            set.insert(board);
+        }
+    }
+    vector<string> masks;
+    for (const auto &b: set) {
+        //print_board<4>(b);
+        b_t bb = b;
+        bb |= bb << 1;
+        bb |= bb << 2;
+        u64 min_mask = 0;
+        for (const auto &t: get_transformations<4>(bb)) {
+            if (min_mask == 0 || t < min_mask) {
+                min_mask = t;
+            }
+        }
+        cout << hex << min_mask << dec << endl;
+    }
+    return count;
+}
+
+
+array<b_t, 68> masks_6 = {
+        0xFFFF000F000Full,
+        0xF00FFFFF0000ull,
+        0xFFFFF00F000ull,
+        0xFFFFF000F00ull,
+        0xFFFFF000F0ull,
+        0xF000FFFFF0ull,
+        0xFF000F0FFF0ull,
+        0xF00FFFFFull,
+        0xF0F0F0FFFull,
+        0xFFFF00F000F0ull,
+        0xF00FFFFF0ull,
+        0xFFFFF00F0ull,
+        0xF0FFF00FFull,
+        0xF0FFF0FF00ull,
+        0xF00FF0FFFull,
+        0xF000FFFFFull,
+        0xFFFFF0F0000ull,
+        0xF0FFFFFull,
+        0xF0FFF0FF0ull,
+        0xFFFFF00Full,
+        0xFFFF00FFull,
+        0xFFFFF000Full,
+        0xF0FFFFF0ull,
+        0xFFFFFFull,
+        0xF00FFF0FF0ull,
+        0xFF00FFF0F00ull,
+        0xF00FFFFF00ull,
+        0xFFF0FFFull,
+        0xF00FFF00FFull,
+        0xFFFFF0F00ull,
+        0xF0FFF0F0Full,
+        0xFFFF0FF0ull,
+        0xFFFFFF0000ull,
+        0xF0FFFF00F0ull,
+        0xF000F0FFFFull,
+        0xF0F0F0FFF0ull,
+        0xFFF0F00FF00ull,
+        0xF0FFF000FFull,
+        0xFFFFFF00000ull,
+        0xFF0FFFFull,
+        0xFF00FF000FFull,
+        0xFFFFF0F000ull,
+        0xF0FFF0F0F0ull,
+        0xFFFF0F0Full,
+        0xF0FFFF000Full,
+        0xFFF0F000FF0ull,
+        0xF00FFF0F0Full,
+        0xF0FFFF0F00ull,
+        0xF00FF00FFFull,
+        0xF0FFF00FF0ull,
+        0xFFFFF00F00ull,
+        0xFF00F0FFF0ull,
+        0xFF0FF00FF0ull,
+        0xF0F0FFF00F0ull,
+        0xFFFFFF000ull,
+        0xF0F0FFF000Full,
+        0xF0FFFFF0000ull,
+        0xFFF0FF00F00ull,
+        0xF00FF0FFF0ull,
+        0xFF0FF0FF00ull,
+        0xFF00FF00FF0ull,
+        0xF0FFFFF00ull,
+        0xFFFFFF0ull,
+        0xF0F0FFF0F00ull,
+        0xFF00FFF00F0ull,
+        0xFFFFF0Full,
+        0xF0FFFFF000ull,
+        0xFF0FFFF0000ull
+};
+
+void select_tuples() {
+    vector<u32> indices;
+    while (true) {
+        r_t best_score = 0;
+        u32 best_index = 0;
+        for (u32 new_index = 0; new_index < masks_6.size(); ++new_index) {
+            cout << "Trying index: " << new_index << endl;
+            if (find(indices.begin(), indices.end(), new_index) != indices.end()) {
+                continue;
+            }
+            b_t new_mask = masks_6[new_index];
+
+            tuples_4[num_tuples].mask = new_mask;
+            for (u32 i = 0; i <= num_tuples; ++i) {
+                tuples_4[i].weights.fill(tuple_init);
+            }
+
+            learning_rate = 0.1;
+            run_training_episodes<4>(200000);
+
+            r_t score = run_testing_episodes<4>(20000);
+
+            if (score > best_score) {
+                best_score = score;
+                best_index = new_index;
+            }
+
+            cout << "Score: " << score << endl;
+        }
+
+        cout << endl;
+        cout << "Num tuples: " << to_string(num_tuples) << endl;
+        cout << "Best score: " << best_score << endl;
+        cout << "Best index: " << best_index << endl;
+        cout << "Best mask: " << hex << masks_6[best_index] << dec << endl;
+        cout << endl;
+
+        indices.push_back(best_index);
+        b_t new_mask = masks_6[best_index];
+        tuples_4[num_tuples].mask = new_mask;
+        for (u32 i = 0; i <= num_tuples; ++i) {
+            tuples_4[i].weights.fill(tuple_init);
+        }
+
+        ++num_tuples;
+        if (num_tuples == 12) {
+            break;
+        }
+    }
+
+    for (u32 i = 0; i < num_tuples; ++i) {
+        cout << "Tuple " << i << ": " << hex << tuples_4[i].mask << dec << endl;
+    }
+}
+
 template<u8 N>
 void run() {
-    load_all_weights<N>("1216-21-10-12");
-    run_testing_episodes<4>(1000);
+    //load_all_weights<N>("1216-21-10-12");
+    //run_testing_episodes<N>(1000);
 
     //interactive_learn(1000, 100);
     //for (u32 i = 0; i < 2; ++i) { fixed_learn<N>(0.1, 10, 10000, 1000); }
+
+    //IMPLEMENT run_learning<4>(10, 10000, 1000, 0.75);
+    //fixed_learn<N>(0.75, 10, 10000, 1000);
+
+    select_tuples();
 }
 
 int main() {
     srand(42);
 
     init();
-    run_tests();
-    perf_test(10000);
 
-    bool redirect = false;
+    //run_tests();
+    //cout << endl;
+    //perf_test(10000);
+
+    bool redirect = true;
     if (redirect) {
         ofstream file("../output.log", std::ios_base::out | std::ios_base::trunc);
         streambuf *consoleBuffer = cout.rdbuf();

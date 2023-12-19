@@ -13,6 +13,7 @@
 #include <cassert>
 #include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 
 #define DEBUG 0
 
@@ -78,6 +79,42 @@ u64 power(u64 base, u8 exp) {
     }
     return res;
 }
+
+
+void save_array(const string &filename, const char *arr, const size_t size) {
+    cout << "Saving " << filename << " started" << endl;
+    auto start = time_now();
+    ofstream file("../weights_backups/" + filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Error opening: " << filename << endl;
+        return;
+    }
+    file.write(arr, size);
+    file.close();
+    cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
+}
+
+void load_array(const string &filename, char *arr, const size_t size) {
+    cout << "Loading " << filename << " started" << endl;
+    auto start = time_now();
+    ifstream file("../weights_backups/" + filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Error opening: " << filename << endl;
+        return;
+    }
+    file.read(arr, size);
+    file.close();
+    cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
+}
+
+string get_time_str() {
+    auto ts = time(nullptr);
+    auto local_ts = *localtime(&ts);
+    ostringstream temp;
+    temp << put_time(&local_ts, "%m%d-%H-%M-%S");
+    return temp.str();
+}
+
 
 void print_cell(const c_t cell) {
     if (cell == 0) {

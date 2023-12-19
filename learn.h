@@ -35,11 +35,17 @@ void training_episode() {
     } else {
         scaled_learning_rate /= 8 * tuples_3.size();
     }
+    //TODO remove
+    scaled_learning_rate = learning_rate / 80;
 
-    float target = 0;
+    r_t target = 0;
     for (u32 t = moves - 1; t < moves; --t) {
-        const r_t error = target - eval_board<N>(afterstates[t]);
-        target = r_t(rewards[t]) + update_weights<N>(afterstates[t], error * scaled_learning_rate);
+        //const r_t error = target - eval_board<N>(afterstates[t]);
+        //target = r_t(rewards[t]) + update_weights<N>(afterstates[t], error * scaled_learning_rate);
+
+        const r_t error = target - evals[t];
+        update_weights<N>(afterstates[t], error * scaled_learning_rate);
+        target = r_t(rewards[t]) + evals[t];
     }
 
     training_stats.update_board_stats(board, score, moves);
@@ -70,7 +76,7 @@ s_t testing_episode() {
 }
 
 /*template<u8 N>
-float learn(u32 training_episodes, u32 testing_episodes) {
+r_t learn(u32 training_episodes, u32 testing_episodes) {
     cnt = 0;
     auto start = time_now();
     for (u32 i = 0; i < training_episodes; ++i) {
@@ -99,7 +105,7 @@ float learn(u32 training_episodes, u32 testing_episodes) {
 template<u8 N>
 void run_training_episodes(u32 games) {
     srand(42);
-    cout << "Training started (" << games << " games)" << endl;
+    //cout << "Training started (" << games << " games)" << endl;
 
     run_stats = {};
     training_stats = {};
@@ -115,24 +121,27 @@ void run_training_episodes(u32 games) {
         training_stats.print_max_game_stats();
         training_stats.print_score_cell_stats();
     } else {
-        cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
-        cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
-        cout << indent << "Update per us:  \t" << r_t(run_stats.update_weights_counter) / elapsed << endl;
-        cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(training_stats.game_counter) << endl;
+        //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
+        //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
+        //cout << indent << "Update per us:  \t" << r_t(run_stats.update_weights_counter) / elapsed << endl;
+        //cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(training_stats.game_counter) << endl;
     }
 
-    cout << "Training finished (" << r_t(time_since(start)) / 1e6 << " s)" << endl;
+    //cout << "Training finished (" << r_t(time_since(start)) / 1e6 << " s)" << endl;
 }
 
 template<u8 N>
-void run_testing_episodes(u32 games) {
+r_t run_testing_episodes(u32 games) {
     srand(42);
-    cout << "Testing started (" << games << " games)" << endl;
+    //cout << "Testing started (" << games << " games)" << endl;
 
     run_stats = {};
     testing_stats = {};
     auto start = time_now();
-    for (u32 i = 0; i < games; i++) { testing_episode<N>(); }
+    r_t avg_score = 0;
+    for (u32 i = 0; i < games; i++) {
+        avg_score += testing_episode<N>();
+    }
     r_t elapsed = r_t(time_since(start));
 
     if (DEBUG) {
@@ -143,14 +152,16 @@ void run_testing_episodes(u32 games) {
         testing_stats.print_max_game_stats();
         testing_stats.print_score_cell_stats();
     } else {
-        cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
-        cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
-        cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << endl;
-        cout << indent << "Move per game:  \t" << r_t(testing_stats.moves_counter) / r_t(testing_stats.game_counter) << endl;
-        cout << indent << "Score per game: \t" << r_t(testing_stats.score_counter) / r_t(testing_stats.game_counter) << endl;
+        //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
+        //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
+        //cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << endl;
+        //cout << indent << "Move per game:  \t" << r_t(testing_stats.moves_counter) / r_t(testing_stats.game_counter) << endl;
+        //cout << indent << "Score per game: \t" << r_t(testing_stats.score_counter) / r_t(testing_stats.game_counter) << endl;
     }
 
-    cout << "Testing finished (" << r_t(time_since(start)) / 1e6 << " s)" << endl;
+    //cout << "Testing finished (" << r_t(time_since(start)) / 1e6 << " s)" << endl;
+
+    return avg_score / r_t(games);
 }
 
 template<u8 N>
