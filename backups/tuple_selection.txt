@@ -1,0 +1,1650 @@
+Trying index: 0
+Score: 5917.46
+Trying index: 1
+Score: 4519.36
+Trying index: 2
+Score: 5691.41
+Trying index: 3
+Score: 5057.33
+Trying index: 4
+Score: 4970.46
+Trying index: 5
+Score: 6494.86
+Trying index: 6
+Score: 5943.66
+Trying index: 7
+Score: 4825.63
+Trying index: 8
+Score: 5746.95
+Trying index: 9
+Score: 4715.97
+Trying index: 10
+Score: 5266.6
+Trying index: 11
+Score: 5354.17
+Trying index: 12
+Score: 7781.18
+Trying index: 13
+Score: 6793.07
+Trying index: 14
+Score: 6595.67
+Trying index: 15
+Score: 5000.82
+Trying index: 16
+Score: 5487.36
+Trying index: 17
+Score: 5954.81
+Trying index: 18
+Score: 5448.28
+Trying index: 19
+Score: 5039.15
+Trying index: 20
+Score: 6716.83
+Trying index: 21
+Score: 6509.34
+Trying index: 22
+Score: 6136.39
+Trying index: 23
+Score: 6703.42
+Trying index: 24
+Score: 6233.52
+Trying index: 25
+Score: 5253.97
+Trying index: 26
+Score: 6367.26
+Trying index: 27
+Score: 8584.86
+Trying index: 28
+Score: 6976.51
+Trying index: 29
+Score: 5170.62
+Trying index: 30
+Score: 6484.05
+Trying index: 31
+Score: 5380.99
+Trying index: 32
+Score: 5785.3
+Trying index: 33
+Score: 5441.96
+Trying index: 34
+Score: 5688.77
+Trying index: 35
+Score: 6527.23
+Trying index: 36
+Score: 5434.39
+Trying index: 37
+Score: 6412.99
+Trying index: 38
+Score: 4841.28
+Trying index: 39
+Score: 5937.7
+Trying index: 40
+Score: 6142.81
+Trying index: 41
+Score: 5639.87
+Trying index: 42
+Score: 6108.97
+Trying index: 43
+Score: 6074.24
+Trying index: 44
+Score: 6352.31
+Trying index: 45
+Score: 5017.52
+Trying index: 46
+Score: 6297.03
+Trying index: 47
+Score: 5375.76
+Trying index: 48
+Score: 7114.93
+Trying index: 49
+Score: 6248.96
+Trying index: 50
+Score: 5130.75
+Trying index: 51
+Score: 6001.93
+Trying index: 52
+Score: 5559.03
+Trying index: 53
+Score: 5729.06
+Trying index: 54
+Score: 5594.56
+Trying index: 55
+Score: 6052.11
+Trying index: 56
+Score: 5382.49
+Trying index: 57
+Score: 4865.32
+Trying index: 58
+Score: 7120.65
+Trying index: 59
+Score: 5509.41
+Trying index: 60
+Score: 5540.41
+Trying index: 61
+Score: 5970.75
+Trying index: 62
+Score: 7007.37
+Trying index: 63
+Score: 5530.13
+Trying index: 64
+Score: 5446.34
+Trying index: 65
+Score: 5585.3
+Trying index: 66
+Score: 6155.18
+Trying index: 67
+Score: 4943.69
+
+Num tuples: 0
+Best score: 8584.86
+Best index: 27
+Best mask: fff0fff
+
+Trying index: 0
+Score: 9553.05
+Trying index: 1
+Score: 9388.04
+Trying index: 2
+Score: 9505.91
+Trying index: 3
+Score: 9854.53
+Trying index: 4
+Score: 10046.6
+Trying index: 5
+Score: 9584.29
+Trying index: 6
+Score: 9902.93
+Trying index: 7
+Score: 9181.04
+Trying index: 8
+Score: 9019.79
+Trying index: 9
+Score: 9968.03
+Trying index: 10
+Score: 9317.52
+Trying index: 11
+Score: 9780.88
+Trying index: 12
+Score: 9621.09
+Trying index: 13
+Score: 9492.49
+Trying index: 14
+Score: 9227.48
+Trying index: 15
+Score: 9560.71
+Trying index: 16
+Score: 10247.6
+Trying index: 17
+Score: 9204.48
+Trying index: 18
+Score: 9694.79
+Trying index: 19
+Score: 8539.24
+Trying index: 20
+Score: 9580.53
+Trying index: 21
+Score: 9766.08
+Trying index: 22
+Score: 9255
+Trying index: 23
+Score: 9966.1
+Trying index: 24
+Score: 10479.2
+Trying index: 25
+Score: 10747.7
+Trying index: 26
+Score: 9777.51
+Trying index: 27
+Trying index: 28
+Score: 9571.58
+Trying index: 29
+Score: 9747.59
+Trying index: 30
+Score: 9548.75
+Trying index: 31
+Score: 9547.02
+Trying index: 32
+Score: 10609.6
+Trying index: 33
+Score: 10158.8
+Trying index: 34
+Score: 9200.1
+Trying index: 35
+Score: 9266.18
+Trying index: 36
+Score: 9482.96
+Trying index: 37
+Score: 9817.19
+Trying index: 38
+Score: 10508.1
+Trying index: 39
+Score: 8953.34
+Trying index: 40
+Score: 10014.6
+Trying index: 41
+Score: 9502.7
+Trying index: 42
+Score: 9683.16
+Trying index: 43
+Score: 9425.87
+Trying index: 44
+Score: 9887.9
+Trying index: 45
+Score: 10103.4
+Trying index: 46
+Score: 9690.58
+Trying index: 47
+Score: 10264.5
+Trying index: 48
+Score: 10229.5
+Trying index: 49
+Score: 10357.7
+Trying index: 50
+Score: 9774.61
+Trying index: 51
+Score: 9350.02
+Trying index: 52
+Score: 10372.2
+Trying index: 53
+Score: 10069
+Trying index: 54
+Score: 9515.27
+Trying index: 55
+Score: 9834.67
+Trying index: 56
+Score: 10298.8
+Trying index: 57
+Score: 10610.9
+Trying index: 58
+Score: 10335
+Trying index: 59
+Score: 9427.33
+Trying index: 60
+Score: 10864.7
+Trying index: 61
+Score: 9391.83
+Trying index: 62
+Score: 9773.01
+Trying index: 63
+Score: 10214.3
+Trying index: 64
+Score: 10527
+Trying index: 65
+Score: 8978.45
+Trying index: 66
+Score: 9958.89
+Trying index: 67
+Score: 10691
+
+Num tuples: 1
+Best score: 10864.7
+Best index: 60
+Best mask: ff00ff00ff0
+
+Trying index: 0
+Score: 11514.6
+Trying index: 1
+Score: 11305.9
+Trying index: 2
+Score: 11297.8
+Trying index: 3
+Score: 11544.7
+Trying index: 4
+Score: 11615
+Trying index: 5
+Score: 11558.2
+Trying index: 6
+Score: 11275
+Trying index: 7
+Score: 11575.5
+Trying index: 8
+Score: 11228.9
+Trying index: 9
+Score: 11763.2
+Trying index: 10
+Score: 11381.2
+Trying index: 11
+Score: 11761.3
+Trying index: 12
+Score: 11727.9
+Trying index: 13
+Score: 11388.9
+Trying index: 14
+Score: 11406.5
+Trying index: 15
+Score: 11862.7
+Trying index: 16
+Score: 11613.9
+Trying index: 17
+Score: 11460.2
+Trying index: 18
+Score: 11588
+Trying index: 19
+Score: 10705.6
+Trying index: 20
+Score: 11809.5
+Trying index: 21
+Score: 11769.1
+Trying index: 22
+Score: 11569.9
+Trying index: 23
+Score: 12023.9
+Trying index: 24
+Score: 11803.7
+Trying index: 25
+Score: 11776.9
+Trying index: 26
+Score: 11523.4
+Trying index: 27
+Trying index: 28
+Score: 11474.7
+Trying index: 29
+Score: 11699.6
+Trying index: 30
+Score: 11468.3
+Trying index: 31
+Score: 11695.3
+Trying index: 32
+Score: 11989.3
+Trying index: 33
+Score: 11910.9
+Trying index: 34
+Score: 11251.1
+Trying index: 35
+Score: 11249.3
+Trying index: 36
+Score: 11198
+Trying index: 37
+Score: 11546
+Trying index: 38
+Score: 11565.2
+Trying index: 39
+Score: 11018.9
+Trying index: 40
+Score: 11357.6
+Trying index: 41
+Score: 11260.8
+Trying index: 42
+Score: 11467.8
+Trying index: 43
+Score: 11626.5
+Trying index: 44
+Score: 11649.3
+Trying index: 45
+Score: 11377.6
+Trying index: 46
+Score: 11400.7
+Trying index: 47
+Score: 11885.2
+Trying index: 48
+Score: 11517.9
+Trying index: 49
+Score: 11688.1
+Trying index: 50
+Score: 11521.1
+Trying index: 51
+Score: 11337.7
+Trying index: 52
+Score: 11678.7
+Trying index: 53
+Score: 11471.3
+Trying index: 54
+Score: 11567
+Trying index: 55
+Score: 11331.6
+Trying index: 56
+Score: 11700.2
+Trying index: 57
+Score: 11491.3
+Trying index: 58
+Score: 11759
+Trying index: 59
+Score: 11282.6
+Trying index: 60
+Trying index: 61
+Score: 11326.7
+Trying index: 62
+Score: 11651
+Trying index: 63
+Score: 11555.8
+Trying index: 64
+Score: 11561.6
+Trying index: 65
+Score: 11179.2
+Trying index: 66
+Score: 11643.2
+Trying index: 67
+Score: 11762.9
+
+Num tuples: 2
+Best score: 12023.9
+Best index: 23
+Best mask: ffffff
+
+Trying index: 0
+Score: 12864.2
+Trying index: 1
+Score: 12929.1
+Trying index: 2
+Score: 12860.6
+Trying index: 3
+Score: 13003.9
+Trying index: 4
+Score: 13114.4
+Trying index: 5
+Score: 12974.5
+Trying index: 6
+Score: 12777.3
+Trying index: 7
+Score: 12517.3
+Trying index: 8
+Score: 12708.3
+Trying index: 9
+Score: 13151.3
+Trying index: 10
+Score: 12921
+Trying index: 11
+Score: 13189.9
+Trying index: 12
+Score: 13059
+Trying index: 13
+Score: 12762.5
+Trying index: 14
+Score: 12678.2
+Trying index: 15
+Score: 12898.8
+Trying index: 16
+Score: 13130.7
+Trying index: 17
+Score: 12523.5
+Trying index: 18
+Score: 13075.9
+Trying index: 19
+Score: 12516
+Trying index: 20
+Score: 13355.7
+Trying index: 21
+Score: 13200.3
+Trying index: 22
+Score: 12991.7
+Trying index: 23
+Trying index: 24
+Score: 13309.8
+Trying index: 25
+Score: 13253.7
+Trying index: 26
+Score: 13115
+Trying index: 27
+Trying index: 28
+Score: 12990.2
+Trying index: 29
+Score: 13044.5
+Trying index: 30
+Score: 13091
+Trying index: 31
+Score: 13179.6
+Trying index: 32
+Score: 13318.9
+Trying index: 33
+Score: 13297.3
+Trying index: 34
+Score: 12682.1
+Trying index: 35
+Score: 12728.1
+Trying index: 36
+Score: 12899.7
+Trying index: 37
+Score: 13273.5
+Trying index: 38
+Score: 12939.1
+Trying index: 39
+Score: 12408.2
+Trying index: 40
+Score: 12947.4
+Trying index: 41
+Score: 12859.7
+Trying index: 42
+Score: 13029.8
+Trying index: 43
+Score: 13240
+Trying index: 44
+Score: 13210.7
+Trying index: 45
+Score: 12914.8
+Trying index: 46
+Score: 13014
+Trying index: 47
+Score: 13337.8
+Trying index: 48
+Score: 13193.9
+Trying index: 49
+Score: 13191.6
+Trying index: 50
+Score: 13020.2
+Trying index: 51
+Score: 12928.5
+Trying index: 52
+Score: 13196.1
+Trying index: 53
+Score: 12976.8
+Trying index: 54
+Score: 13124.7
+Trying index: 55
+Score: 12894.9
+Trying index: 56
+Score: 13137.5
+Trying index: 57
+Score: 12979.1
+Trying index: 58
+Score: 13169.9
+Trying index: 59
+Score: 12905.8
+Trying index: 60
+Trying index: 61
+Score: 13174.4
+Trying index: 62
+Score: 13246.3
+Trying index: 63
+Score: 12955.2
+Trying index: 64
+Score: 13038.9
+Trying index: 65
+Score: 12746.8
+Trying index: 66
+Score: 13117
+Trying index: 67
+Score: 13174.1
+
+Num tuples: 3
+Best score: 13355.7
+Best index: 20
+Best mask: ffff00ff
+
+Trying index: 0
+Score: 14138.6
+Trying index: 1
+Score: 13979.5
+Trying index: 2
+Score: 14029.8
+Trying index: 3
+Score: 14055.7
+Trying index: 4
+Score: 14261.1
+Trying index: 5
+Score: 14243.9
+Trying index: 6
+Score: 13917.2
+Trying index: 7
+Score: 13892.4
+Trying index: 8
+Score: 14051.1
+Trying index: 9
+Score: 14296.4
+Trying index: 10
+Score: 14440.4
+Trying index: 11
+Score: 14256
+Trying index: 12
+Score: 14261.8
+Trying index: 13
+Score: 13787.3
+Trying index: 14
+Score: 13880.1
+Trying index: 15
+Score: 14503.5
+Trying index: 16
+Score: 14132
+Trying index: 17
+Score: 13811.8
+Trying index: 18
+Score: 14461.5
+Trying index: 19
+Score: 13565.4
+Trying index: 20
+Trying index: 21
+Score: 14259.4
+Trying index: 22
+Score: 14021.8
+Trying index: 23
+Trying index: 24
+Score: 14478
+Trying index: 25
+Score: 14402.5
+Trying index: 26
+Score: 14106.9
+Trying index: 27
+Trying index: 28
+Score: 13965.2
+Trying index: 29
+Score: 14108.4
+Trying index: 30
+Score: 14260.1
+Trying index: 31
+Score: 14228.6
+Trying index: 32
+Score: 14403.7
+Trying index: 33
+Score: 14390.6
+Trying index: 34
+Score: 13953.8
+Trying index: 35
+Score: 13745.7
+Trying index: 36
+Score: 14053.4
+Trying index: 37
+Score: 14353.7
+Trying index: 38
+Score: 14173.3
+Trying index: 39
+Score: 13793.5
+Trying index: 40
+Score: 14138.1
+Trying index: 41
+Score: 13953.2
+Trying index: 42
+Score: 14021.2
+Trying index: 43
+Score: 13925.8
+Trying index: 44
+Score: 14145
+Trying index: 45
+Score: 14040.5
+Trying index: 46
+Score: 14049.1
+Trying index: 47
+Score: 14339.4
+Trying index: 48
+Score: 14366
+Trying index: 49
+Score: 14413.7
+Trying index: 50
+Score: 14117.6
+Trying index: 51
+Score: 14173.4
+Trying index: 52
+Score: 14365
+Trying index: 53
+Score: 14124.2
+Trying index: 54
+Score: 14256.3
+Trying index: 55
+Score: 14076.4
+Trying index: 56
+Score: 14343.8
+Trying index: 57
+Score: 14258.7
+Trying index: 58
+Score: 14313.2
+Trying index: 59
+Score: 14076.9
+Trying index: 60
+Trying index: 61
+Score: 14298.3
+Trying index: 62
+Score: 14216.4
+Trying index: 63
+Score: 14171
+Trying index: 64
+Score: 14139.6
+Trying index: 65
+Score: 13754.3
+Trying index: 66
+Score: 14010
+Trying index: 67
+Score: 14184
+
+Num tuples: 4
+Best score: 14503.5
+Best index: 15
+Best mask: f000fffff
+
+Trying index: 0
+Score: 15217
+Trying index: 1
+Score: 15097.8
+Trying index: 2
+Score: 15314.9
+Trying index: 3
+Score: 15673.5
+Trying index: 4
+Score: 15782.6
+Trying index: 5
+Score: 15497.9
+Trying index: 6
+Score: 15213.8
+Trying index: 7
+Score: 15432.5
+Trying index: 8
+Score: 15226.4
+Trying index: 9
+Score: 15736.2
+Trying index: 10
+Score: 15820.2
+Trying index: 11
+Score: 15635.8
+Trying index: 12
+Score: 15538.5
+Trying index: 13
+Score: 15220
+Trying index: 14
+Score: 15230.3
+Trying index: 15
+Trying index: 16
+Score: 15433.8
+Trying index: 17
+Score: 15090.8
+Trying index: 18
+Score: 15737.9
+Trying index: 19
+Score: 15049.9
+Trying index: 20
+Trying index: 21
+Score: 15418.4
+Trying index: 22
+Score: 15279.9
+Trying index: 23
+Trying index: 24
+Score: 15737.5
+Trying index: 25
+Score: 15773
+Trying index: 26
+Score: 15457.2
+Trying index: 27
+Trying index: 28
+Score: 15335.7
+Trying index: 29
+Score: 15520.1
+Trying index: 30
+Score: 15582.9
+Trying index: 31
+Score: 15306.5
+Trying index: 32
+Score: 15707.7
+Trying index: 33
+Score: 15703
+Trying index: 34
+Score: 15099.9
+Trying index: 35
+Score: 15128
+Trying index: 36
+Score: 15395.6
+Trying index: 37
+Score: 15607
+Trying index: 38
+Score: 15352.7
+Trying index: 39
+Score: 15051.8
+Trying index: 40
+Score: 15457.7
+Trying index: 41
+Score: 15610.3
+Trying index: 42
+Score: 15422.3
+Trying index: 43
+Score: 15360.2
+Trying index: 44
+Score: 15772.7
+Trying index: 45
+Score: 15373.2
+Trying index: 46
+Score: 15658.2
+Trying index: 47
+Score: 15724.6
+Trying index: 48
+Score: 15594.7
+Trying index: 49
+Score: 15788.5
+Trying index: 50
+Score: 15350.3
+Trying index: 51
+Score: 15598.7
+Trying index: 52
+Score: 15723.8
+Trying index: 53
+Score: 15636.2
+Trying index: 54
+Score: 15680.3
+Trying index: 55
+Score: 15423.6
+Trying index: 56
+Score: 15551.7
+Trying index: 57
+Score: 15336.4
+Trying index: 58
+Score: 15540.8
+Trying index: 59
+Score: 15583.8
+Trying index: 60
+Trying index: 61
+Score: 15734.8
+Trying index: 62
+Score: 15609.7
+Trying index: 63
+Score: 15672.9
+Trying index: 64
+Score: 15673.5
+Trying index: 65
+Score: 15299.3
+Trying index: 66
+Score: 15475.6
+Trying index: 67
+Score: 15561.3
+
+Num tuples: 5
+Best score: 15820.2
+Best index: 10
+Best mask: f00fffff0
+
+Trying index: 0
+Score: 16265.1
+Trying index: 1
+Score: 16213
+Trying index: 2
+Score: 16538.2
+Trying index: 3
+Score: 16710.8
+Trying index: 4
+Score: 16985.7
+Trying index: 5
+Score: 16654.1
+Trying index: 6
+Score: 16234.3
+Trying index: 7
+Score: 16980.9
+Trying index: 8
+Score: 16312.1
+Trying index: 9
+Score: 16912.9
+Trying index: 10
+Trying index: 11
+Score: 16935
+Trying index: 12
+Score: 16445.5
+Trying index: 13
+Score: 16372
+Trying index: 14
+Score: 16157.3
+Trying index: 15
+Trying index: 16
+Score: 16629.3
+Trying index: 17
+Score: 16435.9
+Trying index: 18
+Score: 16940.4
+Trying index: 19
+Score: 16347.2
+Trying index: 20
+Trying index: 21
+Score: 16729.6
+Trying index: 22
+Score: 16620.9
+Trying index: 23
+Trying index: 24
+Score: 16824.9
+Trying index: 25
+Score: 16984.9
+Trying index: 26
+Score: 16700
+Trying index: 27
+Trying index: 28
+Score: 16544.7
+Trying index: 29
+Score: 16828.4
+Trying index: 30
+Score: 16865.8
+Trying index: 31
+Score: 16507.3
+Trying index: 32
+Score: 16742.5
+Trying index: 33
+Score: 17085.6
+Trying index: 34
+Score: 16568
+Trying index: 35
+Score: 16258.2
+Trying index: 36
+Score: 16622.6
+Trying index: 37
+Score: 17017.1
+Trying index: 38
+Score: 16602.2
+Trying index: 39
+Score: 16218
+Trying index: 40
+Score: 16678.5
+Trying index: 41
+Score: 16626.4
+Trying index: 42
+Score: 16735.3
+Trying index: 43
+Score: 16549.4
+Trying index: 44
+Score: 16968.7
+Trying index: 45
+Score: 16698.4
+Trying index: 46
+Score: 16942.6
+Trying index: 47
+Score: 16965.5
+Trying index: 48
+Score: 16926.5
+Trying index: 49
+Score: 16810.8
+Trying index: 50
+Score: 16698.8
+Trying index: 51
+Score: 16593.6
+Trying index: 52
+Score: 16772.4
+Trying index: 53
+Score: 16706.5
+Trying index: 54
+Score: 16803.9
+Trying index: 55
+Score: 16572.4
+Trying index: 56
+Score: 16812
+Trying index: 57
+Score: 16868
+Trying index: 58
+Score: 16873.5
+Trying index: 59
+Score: 16664.7
+Trying index: 60
+Trying index: 61
+Score: 16808.2
+Trying index: 62
+Score: 16678.3
+Trying index: 63
+Score: 17003.4
+Trying index: 64
+Score: 16855.9
+Trying index: 65
+Score: 16536.9
+Trying index: 66
+Score: 16794.8
+Trying index: 67
+Score: 16718.8
+
+Num tuples: 6
+Best score: 17085.6
+Best index: 33
+Best mask: f0ffff00f0
+
+Trying index: 0
+Score: 17525.7
+Trying index: 1
+Score: 17465.6
+Trying index: 2
+Score: 17637.1
+Trying index: 3
+Score: 17965
+Trying index: 4
+Score: 17909.5
+Trying index: 5
+Score: 17733.4
+Trying index: 6
+Score: 17609.4
+Trying index: 7
+Score: 18346.1
+Trying index: 8
+Score: 17790
+Trying index: 9
+Score: 17971.7
+Trying index: 10
+Trying index: 11
+Score: 17838.1
+Trying index: 12
+Score: 17971.3
+Trying index: 13
+Score: 17752.6
+Trying index: 14
+Score: 17643.8
+Trying index: 15
+Trying index: 16
+Score: 17742.9
+Trying index: 17
+Score: 17827.7
+Trying index: 18
+Score: 17951.7
+Trying index: 19
+Score: 17840.7
+Trying index: 20
+Trying index: 21
+Score: 18089
+Trying index: 22
+Score: 17959.4
+Trying index: 23
+Trying index: 24
+Score: 18154.4
+Trying index: 25
+Score: 18143.3
+Trying index: 26
+Score: 18001.9
+Trying index: 27
+Trying index: 28
+Score: 17996.4
+Trying index: 29
+Score: 17824.2
+Trying index: 30
+Score: 18219.9
+Trying index: 31
+Score: 17796.1
+Trying index: 32
+Score: 17902.6
+Trying index: 33
+Trying index: 34
+Score: 17831
+Trying index: 35
+Score: 17494
+Trying index: 36
+Score: 17864.4
+Trying index: 37
+Score: 18009.9
+Trying index: 38
+Score: 17727.9
+Trying index: 39
+Score: 17589.5
+Trying index: 40
+Score: 18026.6
+Trying index: 41
+Score: 18114
+Trying index: 42
+Score: 17839.6
+Trying index: 43
+Score: 18196.4
+Trying index: 44
+Score: 17745
+Trying index: 45
+Score: 17830.8
+Trying index: 46
+Score: 18109.4
+Trying index: 47
+Score: 17900.5
+Trying index: 48
+Score: 18182.9
+Trying index: 49
+Score: 18053.7
+Trying index: 50
+Score: 18098.4
+Trying index: 51
+Score: 18097.5
+Trying index: 52
+Score: 18156.3
+Trying index: 53
+Score: 17868.6
+Trying index: 54
+Score: 18083.5
+Trying index: 55
+Score: 17920.3
+Trying index: 56
+Score: 17523.9
+Trying index: 57
+Score: 17972.3
+Trying index: 58
+Score: 17989.6
+Trying index: 59
+Score: 17885.8
+Trying index: 60
+Trying index: 61
+Score: 18285.6
+Trying index: 62
+Score: 17963.3
+Trying index: 63
+Score: 17822.3
+Trying index: 64
+Score: 17844.6
+Trying index: 65
+Score: 17977.6
+Trying index: 66
+Score: 17635.9
+Trying index: 67
+Score: 17746.8
+
+Num tuples: 7
+Best score: 18346.1
+Best index: 7
+Best mask: f00fffff
+
+Trying index: 0
+Score: 18920.2
+Trying index: 1
+Score: 19082.7
+Trying index: 2
+Score: 19319.8
+Trying index: 3
+Score: 19497.6
+Trying index: 4
+Score: 19731.3
+Trying index: 5
+Score: 19425
+Trying index: 6
+Score: 19276
+Trying index: 7
+Trying index: 8
+Score: 19357.7
+Trying index: 9
+Score: 19562.1
+Trying index: 10
+Trying index: 11
+Score: 19511.8
+Trying index: 12
+Score: 19492.5
+Trying index: 13
+Score: 19128.9
+Trying index: 14
+Score: 19058.3
+Trying index: 15
+Trying index: 16
+Score: 19347.2
+Trying index: 17
+Score: 19523.6
+Trying index: 18
+Score: 19606.1
+Trying index: 19
+Score: 19084.6
+Trying index: 20
+Trying index: 21
+Score: 19731.5
+Trying index: 22
+Score: 19631.4
+Trying index: 23
+Trying index: 24
+Score: 19422.2
+Trying index: 25
+Score: 19532.7
+Trying index: 26
+Score: 19639.2
+Trying index: 27
+Trying index: 28
+Score: 19478.8
+Trying index: 29
+Score: 19550.2
+Trying index: 30
+Score: 19673.9
+Trying index: 31
+Score: 19321.5
+Trying index: 32
+Score: 19276.5
+Trying index: 33
+Trying index: 34
+Score: 19319
+Trying index: 35
+Score: 19119.2
+Trying index: 36
+Score: 19422.5
+Trying index: 37
+Score: 19807.3
+Trying index: 38
+Score: 19433.7
+Trying index: 39
+Score: 19115.6
+Trying index: 40
+Score: 19370.2
+Trying index: 41
+Score: 19605.1
+Trying index: 42
+Score: 19127.5
+Trying index: 43
+Score: 19133.4
+Trying index: 44
+Score: 19687.7
+Trying index: 45
+Score: 19432.1
+Trying index: 46
+Score: 19861.4
+Trying index: 47
+Score: 19587.6
+Trying index: 48
+Score: 19754.2
+Trying index: 49
+Score: 19638.6
+Trying index: 50
+Score: 19284.4
+Trying index: 51
+Score: 19579.3
+Trying index: 52
+Score: 19505.9
+Trying index: 53
+Score: 19469.9
+Trying index: 54
+Score: 19596.3
+Trying index: 55
+Score: 19244.1
+Trying index: 56
+Score: 19247
+Trying index: 57
+Score: 19409.5
+Trying index: 58
+Score: 19414.2
+Trying index: 59
+Score: 19566.1
+Trying index: 60
+Trying index: 61
+Score: 19939.8
+Trying index: 62
+Score: 19482.3
+Trying index: 63
+Score: 19622
+Trying index: 64
+Score: 19457.5
+Trying index: 65
+Score: 19756.5
+Trying index: 66
+Score: 19202.9
+Trying index: 67
+Score: 19322.6
+
+Num tuples: 8
+Best score: 19939.8
+Best index: 61
+Best mask: f0fffff00
+
+Trying index: 0
+Score: 20378.7
+Trying index: 1
+Score: 20607.9
+Trying index: 2
+Score: 20796.7
+Trying index: 3
+Score: 21231.4
+Trying index: 4
+Score: 21219.5
+Trying index: 5
+Score: 20876.2
+Trying index: 6
+Score: 20821.9
+Trying index: 7
+Trying index: 8
+Score: 20845.3
+Trying index: 9
+Score: 21078.5
+Trying index: 10
+Trying index: 11
+Score: 20960
+Trying index: 12
+Score: 21043.2
+Trying index: 13
+Score: 20686.1
+Trying index: 14
+Score: 20485.3
+Trying index: 15
+Trying index: 16
+Score: 20843.1
+Trying index: 17
+Score: 20972.5
+Trying index: 18
+Score: 20830.2
+Trying index: 19
+Score: 20930.7
+Trying index: 20
+Trying index: 21
+Score: 21010.5
+Trying index: 22
+Score: 20427.8
+Trying index: 23
+Trying index: 24
+Score: 21258.7
+Trying index: 25
+Score: 20940.7
+Trying index: 26
+Score: 21064
+Trying index: 27
+Trying index: 28
+Score: 20985.4
+Trying index: 29
+Score: 21093.8
+Trying index: 30
+Score: 21214.2
+Trying index: 31
+Score: 20801.9
+Trying index: 32
+Score: 21190.7
+Trying index: 33
+Trying index: 34
+Score: 21006.2
+Trying index: 35
+Score: 20821.7
+Trying index: 36
+Score: 20950.4
+Trying index: 37
+Score: 21282
+Trying index: 38
+Score: 20603.6
+Trying index: 39
+Score: 20702.2
+Trying index: 40
+Score: 21059.7
+Trying index: 41
+Score: 20848.5
+Trying index: 42
+Score: 20885.4
+Trying index: 43
+Score: 21292.8
+Trying index: 44
+Score: 21086.2
+Trying index: 45
+Score: 20661
+Trying index: 46
+Score: 21414.3
+Trying index: 47
+Score: 20946.3
+Trying index: 48
+Score: 21457.8
+Trying index: 49
+Score: 21025.7
+Trying index: 50
+Score: 21039.4
+Trying index: 51
+Score: 20729.6
+Trying index: 52
+Score: 20715.7
+Trying index: 53
+Score: 20994.2
+Trying index: 54
+Score: 21236.6
+Trying index: 55
+Score: 21094.1
+Trying index: 56
+Score: 21264.5
+Trying index: 57
+Score: 20792.2
+Trying index: 58
+Score: 20859.6
+Trying index: 59
+Score: 21081.8
+Trying index: 60
+Trying index: 61
+Trying index: 62
+Score: 21129.7
+Trying index: 63
+Score: 20994.8
+Trying index: 64
+Score: 20859.6
+Trying index: 65
+Score: 21227.3
+Trying index: 66
+Score: 20547.8
+Trying index: 67
+Score: 20497.3
+
+Num tuples: 9
+Best score: 21457.8
+Best index: 48
+Best mask: f00ff00fff
+
+Trying index: 0
+Score: 21763
+Trying index: 1
+Score: 22192.6
+Trying index: 2
+Score: 22125.2
+Trying index: 3
+Score: 22381.9
+Trying index: 4
+Score: 22623.6
+Trying index: 5
+Score: 22283.4
+Trying index: 6
+Score: 21982.2
+Trying index: 7
+Trying index: 8
+Score: 22035.6
+Trying index: 9
+Score: 22209.6
+Trying index: 10
+Trying index: 11
+Score: 22667.7
+Trying index: 12
+Score: 22177.7
+Trying index: 13
+Score: 22097.4
+Trying index: 14
+Score: 21913
+Trying index: 15
+Trying index: 16
+Score: 22208.5
+Trying index: 17
+Score: 22468
+Trying index: 18
+Score: 22370.8
+Trying index: 19
+Score: 22340.8
+Trying index: 20
+Trying index: 21
+Score: 21912.6
+Trying index: 22
+Score: 22354.6
+Trying index: 23
+Trying index: 24
+Score: 22320.4
+Trying index: 25
+Score: 22020.1
+Trying index: 26
+Score: 22511.9
+Trying index: 27
+Trying index: 28
+Score: 21679.5
+Trying index: 29
+Score: 22247.5
+Trying index: 30
+Score: 22107.6
+Trying index: 31
+Score: 21873
+Trying index: 32
+Score: 22366.2
+Trying index: 33
+Trying index: 34
+Score: 21986.3
+Trying index: 35
+Score: 22027.6
+Trying index: 36
+Score: 22208.3
+Trying index: 37
+Score: 22402.4
+Trying index: 38
+Score: 22329.9
+Trying index: 39
+Score: 22117.1
+Trying index: 40
+Score: 22269.1
+Trying index: 41
+Score: 22406.3
+Trying index: 42
+Score: 22347.7
+Trying index: 43
+Score: 22042.1
+Trying index: 44
+Score: 22580.4
+Trying index: 45
+Score: 21992.5
+Trying index: 46
+Score: 22017.6
+Trying index: 47
+Score: 22563.5
+Trying index: 48
+Trying index: 49
+Score: 21960.9
+Trying index: 50
+Score: 22485
+Trying index: 51
+Score: 21865.8
+Trying index: 52
+Score: 22389.5
+Trying index: 53
+Score: 21955.7
+Trying index: 54
+Score: 22649.7
+Trying index: 55
+Score: 21902.6
+Trying index: 56
+Score: 22665.1
+Trying index: 57
+Score: 22208
+Trying index: 58
+Score: 22176.1
+Trying index: 59
+Score: 22126.1
+Trying index: 60
+Trying index: 61
+Trying index: 62
+Score: 22359
+Trying index: 63
+Score: 22365.6
+Trying index: 64
+Score: 21916.4
+Trying index: 65
+Score: 22456.8
+Trying index: 66
+Score: 21917.3
+Trying index: 67
+Score: 22166
+
+Num tuples: 10
+Best score: 22667.7
+Best index: 11
+Best mask: fffff00f0
+
+Trying index: 0
+Score: 22881.9
+Trying index: 1
+Score: 22771.2
+Trying index: 2
+Score: 23249.2
+Trying index: 3
+Score: 23366.3
+Trying index: 4
+Score: 23379.8
+Trying index: 5
+Score: 22834.2
+Trying index: 6
+Score: 23346.2
+Trying index: 7
+Trying index: 8
+Score: 23010
+Trying index: 9
+Score: 23057.6
+Trying index: 10
+Trying index: 11
+Trying index: 12
+Score: 23187.9
+Trying index: 13
+Score: 23331.3
+Trying index: 14
+Score: 22505.3
+Trying index: 15
+Trying index: 16
+Score: 23277.4
+Trying index: 17
+Score: 23450.2
+Trying index: 18
+Score: 23297.9
+Trying index: 19
+Score: 23275.7
+Trying index: 20
+Trying index: 21
+Score: 23160.9
+Trying index: 22
+Score: 23316.4
+Trying index: 23
+Trying index: 24
+Score: 23428.5
+Trying index: 25
+Score: 23204.9
+Trying index: 26
+Score: 23386.2
+Trying index: 27
+Trying index: 28
+Score: 23141.2
+Trying index: 29
+Score: 23073.3
+Trying index: 30
+Score: 23042.3
+Trying index: 31
+Score: 22729.2
+Trying index: 32
+Score: 23566.1
+Trying index: 33
+Trying index: 34
+Score: 23232.4
+Trying index: 35
+Score: 22643.7
+Trying index: 36
+Score: 23544.8
+Trying index: 37
+Score: 23117
+Trying index: 38
+Score: 23034.6
+Trying index: 39
+Score: 23228.3
+Trying index: 40
+Score: 23304.7
+Trying index: 41
+Score: 23961.6
+Trying index: 42
+Score: 23329
+Trying index: 43
+Score: 23428
+Trying index: 44
+Score: 23390.9
+Trying index: 45
+Score: 23111
+Trying index: 46
+Score: 23146.9
+Trying index: 47
+Score: 23349.5
+Trying index: 48
+Trying index: 49
+Score: 23375.6
+Trying index: 50
+Score: 23965.2
+Trying index: 51
+Score: 23230.4
+Trying index: 52
+Score: 23439.9
+Trying index: 53
+Score: 23494.1
+Trying index: 54
+Score: 23634.5
+Trying index: 55
+Score: 23119.9
+Trying index: 56
+Score: 23181.6
+Trying index: 57
+Score: 23254.4
+Trying index: 58
+Score: 22920.6
+Trying index: 59
+Score: 23406.3
+Trying index: 60
+Trying index: 61
+Trying index: 62
+Score: 23539.2
+Trying index: 63
+Score: 23097
+Trying index: 64
+Score: 23027.6
+Trying index: 65
+Score: 23452.2
+Trying index: 66
+Score: 23316
+Trying index: 67
+Score: 22892.1
+
+Num tuples: 11
+Best score: 23965.2
+Best index: 50
+Best mask: fffff00f00
+
+Tuple 0: fff0fff
+Tuple 1: ff00ff00ff0
+Tuple 2: ffffff
+Tuple 3: ffff00ff
+Tuple 4: f000fffff
+Tuple 5: f00fffff0
+Tuple 6: f0ffff00f0
+Tuple 7: f00fffff
+Tuple 8: f0fffff00
+Tuple 9: f00ff00fff
+Tuple 10: fffff00f0
+Tuple 11: fffff00f00

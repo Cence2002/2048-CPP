@@ -78,11 +78,30 @@ s_t play_random_game() {
     return score;
 }
 
+template<u8 N>
+s_t play_random_game_general() {
+    Game<N> game;
+    while (!game.is_over()) {
+        game.move(Dir(random(4) + 1));
+    }
+    return game.score;
+}
+
 void perf_test(u64 N) {
     auto start = time_now();
     r_t sum = 0;
     for (u32 i = 0; i < N; ++i) {
         sum += r_t(play_random_game<4>());
+    }
+    cout << "Average score: " << sum / r_t(N) << endl;
+    cout << "Time: " << time_since(start) / 1e6 << endl << endl;
+}
+
+void perf_test_general(u64 N) {
+    auto start = time_now();
+    r_t sum = 0;
+    for (u32 i = 0; i < N; ++i) {
+        sum += r_t(play_random_game_general<4>());
     }
     cout << "Average score: " << sum / r_t(N) << endl;
     cout << "Time: " << time_since(start) / 1e6 << endl << endl;
@@ -511,6 +530,28 @@ array<b_t, 68> masks_6 = {
 
 void select_tuples() {
     vector<u32> indices;
+
+    vector<b_t> init_masks = {0xfff0fffull,
+                              0xff00ff00ff0ull,
+                              0xffffffull,
+                              0xffffff0000ull,
+                              0xffffff0ull,
+                              0xf000fffffull,
+                              0xf0ffff000full,
+                              0xf0fffff00ull,
+                              0xf00fffffull,
+                              0xffff0f0full};
+    int init_num_tuples = 10;
+    for (int i = 0; i < init_num_tuples; ++i) {
+        tuples_4[i].mask = init_masks[i];
+        //push index of mask in masks_6 to indices
+        indices.push_back(find(masks_6.begin(), masks_6.end(), init_masks[i]) - masks_6.begin());
+    }
+    for (u32 i = 0; i < init_num_tuples; ++i) {
+        tuples_4[i].weights.fill(tuple_init);
+    }
+    num_tuples = init_num_tuples;
+
     while (true) {
         r_t best_score = 0;
         u32 best_index = 0;
@@ -586,6 +627,7 @@ int main() {
     //run_tests();
     //cout << endl;
     //perf_test(10000);
+    //perf_test_general(10000);
 
     bool redirect = true;
     if (redirect) {
