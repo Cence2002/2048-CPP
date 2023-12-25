@@ -124,7 +124,7 @@ template<int N, int BASE>
 void test_board_tuple_hash(u32 (*tuple_hash)(const array<array<u8, N>, N>, u16)) {
     for (auto &board: generate_boards<N, BASE>(100)) {
         for (u32 mask = 0; mask < power(2, N * N); mask++) {
-            if (popcnt(mask) > 6) continue;
+            if (popcnt(mask) > 6) { continue; }
             u32 expected = Board<N>(board).tuple_hash(mask, BASE);
             u32 res = tuple_hash(board, mask);
             assert(res == expected);
@@ -201,7 +201,7 @@ template<int N, int BASE>
 void test_board_fill(array<array<u8, N>, N> (*fill)(const array<array<u8, N>, N>)) {
     vector<double> p_values;
     for (array<array<u8, N>, N> board: generate_boards<N, BASE>(100)) {
-        if (Board<N>(board).count_empty() == 0) continue;
+        if (Board<N>(board).count_empty() == 0) { continue; }
         u8 empty = Board<N>(board).count_empty();
         vector<pair<double, double>> data(empty * 2);
 

@@ -16,6 +16,7 @@
 #include <unordered_set>
 
 #define DEBUG 0
+#define REDIRECT 0
 
 using namespace std;
 
@@ -24,9 +25,9 @@ using u16 = uint16_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
-using c_t = uint8_t; // cell type
-using l_t = uint16_t; // line type
-using b_t = uint64_t; // board type
+// using c_t = uint8_t; // cell type
+// using l_t = uint16_t; // line type
+// using b_t = uint64_t; // board type
 
 using r_t = float; // real type
 using s_t = uint32_t; // score type
@@ -43,7 +44,7 @@ struct Eval {
     Dir dir;
     r_t eval;
     s_t reward;
-    b_t afterstate;
+    u64 afterstate;
 };
 
 constexpr Dir DIRS[4] = {Left, Up, Right, Down};
@@ -58,8 +59,9 @@ auto time_now() {
     return chrono::high_resolution_clock::now();
 }
 
-u64 time_since(chrono::high_resolution_clock::time_point start) {
-    return chrono::duration_cast<chrono::microseconds>(time_now() - start).count();
+r_t time_since(chrono::high_resolution_clock::time_point start) {
+    const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
+    return r_t(duration.count());
 }
 
 inline u8 popcnt(const u64 x) { return __builtin_popcountll(x); }
@@ -89,7 +91,7 @@ void save_array(const string &filename, const char *arr, const size_t size) {
         cout << "Error opening: " << filename << endl;
         return;
     }
-    file.write(arr, size);
+    file.write(arr, streamsize(size));
     file.close();
     cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
 }
@@ -102,7 +104,7 @@ void load_array(const string &filename, char *arr, const size_t size) {
         cout << "Error opening: " << filename << endl;
         return;
     }
-    file.read(arr, size);
+    file.read(arr, streamsize(size));
     file.close();
     cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
 }
@@ -116,7 +118,7 @@ string get_time_str() {
 }
 
 
-void print_cell(const c_t cell) {
+void print_cell(const u8 cell) {
     if (cell == 0) {
         cout << "-";
     } else if (cell < 10) {
@@ -127,7 +129,7 @@ void print_cell(const c_t cell) {
 }
 
 template<u8 N>
-void print_board(const b_t board) {
+void print_board(const u64 board) {
     for (u8 y = 0; y < N; ++y) {
         for (u8 x = 0; x < N; ++x) {
             print_cell((board >> (y * (N * 4) + x * 4)) & 0xFu);
@@ -200,7 +202,7 @@ struct game_stats_t {
     u64 score_G_counter = 0;
     u64 score_H_counter = 0;
 
-    static u32 get_max_cell(b_t board) {
+    static u32 get_max_cell(u64 board) {
         u32 result = 0;
         while (board) {
             result = max(result, u32(board & 0xFu));
@@ -209,7 +211,7 @@ struct game_stats_t {
         return result;
     }
 
-    void update_board_stats(b_t board, s_t score, u32 moves) {
+    void update_board_stats(u64 board, s_t score, u32 moves) {
         ++game_counter;
         score_counter += score;
         moves_counter += moves;

@@ -3,18 +3,36 @@
 #include "assets.h"
 
 template<u8 N>
-b_t from_array(const array<array<u8, N>, N> &cells) {
-    b_t board = 0;
+u16 from_array(const array<u8, N> &cells) {
+    u16 line = 0;
+    for (u8 i = 0; i < N; i++) {
+        line |= u16(cells[i]) << (i * 4);
+    }
+    return line;
+}
+
+template<u8 N>
+array<u8, N> to_array(const u16 line) {
+    array<u8, N> cells{};
+    for (u8 i = 0; i < N; i++) {
+        cells[i] = (line >> (i * 4)) & 0xFu;
+    }
+    return cells;
+}
+
+template<u8 N>
+u64 from_matrix(const array<array<u8, N>, N> &cells) {
+    u64 board = 0;
     for (u8 y = 0; y < N; y++) {
         for (u8 x = 0; x < N; x++) {
-            board |= b_t(cells[y][x]) << (y * (N * 4) + x * 4);
+            board |= u64(cells[y][x]) << (y * (N * 4) + x * 4);
         }
     }
     return board;
 }
 
 template<u8 N>
-array<array<u8, N>, N> to_array(const b_t board) {
+array<array<u8, N>, N> to_matrix(const u64 board) {
     array<array<u8, N>, N> cells{};
     for (u8 y = 0; y < N; y++) {
         for (u8 x = 0; x < N; x++) {
@@ -25,7 +43,7 @@ array<array<u8, N>, N> to_array(const b_t board) {
 }
 
 template<u8 N, u8 y>
-inline l_t get_row(const b_t board) {
+inline u16 get_row(const u64 board) {
     if constexpr (N == 4) {
         return (board >> (y * 16)) & 0xFFFFu;
     } else {
@@ -34,7 +52,7 @@ inline l_t get_row(const b_t board) {
 }
 
 template<u8 N, u8 x>
-inline l_t get_col(const b_t board) {
+inline u16 get_col(const u64 board) {
     if constexpr (N == 4) {
         return pext(board, 0x000F000F000F000Full << (x * 4));
     } else {
@@ -43,7 +61,7 @@ inline l_t get_col(const b_t board) {
 }
 
 template<u8 N>
-inline b_t empty_mask(b_t board) {
+inline u64 empty_mask(u64 board) {
     board |= board >> 2;
     board |= board >> 1;
     if constexpr (N == 4) {
@@ -54,16 +72,16 @@ inline b_t empty_mask(b_t board) {
 }
 
 template<u8 N>
-inline u8 count_empty(const b_t board) {
+inline u8 count_empty(const u64 board) {
     return popcnt(empty_mask<N>(board));
 }
 
 template<u8 N>
-inline void fill_board(b_t &board) {
+inline void fill_board(u64 &board) {
     ++run_stats.fill_board_counter;
-    b_t empty = empty_mask<N>(board);
+    u64 empty = empty_mask<N>(board);
     u8 pos = random(popcnt(empty));
-    b_t mask = 1;
+    u64 mask = 1;
     while (!(empty & mask) || pos-- != 0) { mask <<= 4; }
     board |= mask << !random(10);
 }
@@ -72,7 +90,7 @@ s_t rewards_4[E(16)];
 s_t rewards_3[E(12)];
 
 template<u8 N>
-inline s_t get_reward(const b_t board, const Dir d) {
+inline s_t get_reward(const u64 board, const Dir d) {
     ++run_stats.reward_board_counter;
     if constexpr (N == 4) {
         if (d & 1) {
@@ -99,38 +117,38 @@ inline s_t get_reward(const b_t board, const Dir d) {
     }
 }
 
-b_t left_0_4[E(16)];
-b_t left_1_4[E(16)];
-b_t left_2_4[E(16)];
-b_t left_3_4[E(16)];
-b_t up_0_4[E(16)];
-b_t up_1_4[E(16)];
-b_t up_2_4[E(16)];
-b_t up_3_4[E(16)];
-b_t right_0_4[E(16)];
-b_t right_1_4[E(16)];
-b_t right_2_4[E(16)];
-b_t right_3_4[E(16)];
-b_t down_0_4[E(16)];
-b_t down_1_4[E(16)];
-b_t down_2_4[E(16)];
-b_t down_3_4[E(16)];
+u64 left_0_4[E(16)];
+u64 left_1_4[E(16)];
+u64 left_2_4[E(16)];
+u64 left_3_4[E(16)];
+u64 up_0_4[E(16)];
+u64 up_1_4[E(16)];
+u64 up_2_4[E(16)];
+u64 up_3_4[E(16)];
+u64 right_0_4[E(16)];
+u64 right_1_4[E(16)];
+u64 right_2_4[E(16)];
+u64 right_3_4[E(16)];
+u64 down_0_4[E(16)];
+u64 down_1_4[E(16)];
+u64 down_2_4[E(16)];
+u64 down_3_4[E(16)];
 
-b_t left_0_3[E(12)];
-b_t left_1_3[E(12)];
-b_t left_2_3[E(12)];
-b_t up_0_3[E(12)];
-b_t up_1_3[E(12)];
-b_t up_2_3[E(12)];
-b_t right_0_3[E(12)];
-b_t right_1_3[E(12)];
-b_t right_2_3[E(12)];
-b_t down_0_3[E(12)];
-b_t down_1_3[E(12)];
-b_t down_2_3[E(12)];
+u64 left_0_3[E(12)];
+u64 left_1_3[E(12)];
+u64 left_2_3[E(12)];
+u64 up_0_3[E(12)];
+u64 up_1_3[E(12)];
+u64 up_2_3[E(12)];
+u64 right_0_3[E(12)];
+u64 right_1_3[E(12)];
+u64 right_2_3[E(12)];
+u64 down_0_3[E(12)];
+u64 down_1_3[E(12)];
+u64 down_2_3[E(12)];
 
 template<u8 N>
-inline void move_board(b_t &board, const Dir d) {
+inline void move_board(u64 &board, const Dir d) {
     ++run_stats.move_board_counter;
     if constexpr (N == 4) {
         switch (d) {
@@ -190,7 +208,7 @@ inline void move_board(b_t &board, const Dir d) {
 }
 
 template<u8 N>
-inline b_t moved_board(const b_t board, const Dir d) {
+inline u64 moved_board(const u64 board, const Dir d) {
     ++run_stats.move_board_counter;
     if constexpr (N == 4) {
         switch (d) {
@@ -250,7 +268,7 @@ inline b_t moved_board(const b_t board, const Dir d) {
 }
 
 template<u8 N>
-bool game_over(const b_t board) {
+bool game_over(const u64 board) {
     for (const Dir dir: DIRS) {
         if (moved_board<N>(board, dir) != board) {
             return false;
@@ -260,7 +278,7 @@ bool game_over(const b_t board) {
 }
 
 template<u8 N>
-inline b_t reverse_rows(const b_t board) {
+inline u64 reverse_rows(const u64 board) {
     if constexpr (N == 4) {
         return ((board & 0x000F000F000F000Full) << 12) |
                ((board & 0x00F000F000F000F0ull) << 04) |
@@ -274,7 +292,7 @@ inline b_t reverse_rows(const b_t board) {
 }
 
 template<u8 N>
-inline b_t reverse_cols(const b_t board) {
+inline u64 reverse_cols(const u64 board) {
     if constexpr (N == 4) {
         return ((board & 0x000000000000FFFFull) << 48) |
                ((board & 0x00000000FFFF0000ull) << 16) |
@@ -289,7 +307,7 @@ inline b_t reverse_cols(const b_t board) {
 
 
 template<u8 N>
-inline b_t transpose(const b_t board) {
+inline u64 transpose(const u64 board) {
     if constexpr (N == 4) {
         return (pext(board, 0x000F000F000F000Full) << 00) |
                (pext(board, 0x00F000F000F000F0ull) << 16) |
@@ -303,10 +321,10 @@ inline b_t transpose(const b_t board) {
 }
 
 template<u8 N>
-inline array<b_t, 8> get_transformations(const b_t board) {
-    const b_t transposed = transpose<N>(board);
-    const b_t reversed_rows = reverse_rows<N>(board);
-    const b_t reversed_rows_transposed = reverse_rows<N>(transposed);
+inline array<u64, 8> get_transformations(const u64 board) {
+    const u64 transposed = transpose<N>(board);
+    const u64 reversed_rows = reverse_rows<N>(board);
+    const u64 reversed_rows_transposed = reverse_rows<N>(transposed);
     return {
             board, reversed_rows,
             transposed, reversed_rows_transposed,
@@ -357,11 +375,11 @@ void init_zeroes() {
 template<u8 N>
 void init_moves_0() {
     for (u32 line = 0; line < E(N * 4); line++) {
-        c_t cells[N];
-        l_t rev_line = 0;
+        u8 cells[N];
+        u16 rev_line = 0;
         s_t reward = 0;
         for (u8 i = 0; i < N; i++) {
-            c_t cell = (line >> (i * 4)) & 0xFu;
+            u8 cell = (line >> (i * 4)) & 0xFu;
             cells[i] = cell;
             rev_line |= cell << ((N - 1 - i) * 4);
         }
@@ -389,8 +407,8 @@ void init_moves_0() {
             rewards_3[line] = reward;
         }
 
-        l_t moved = 0;
-        l_t rev_moved = 0;
+        u16 moved = 0;
+        u16 rev_moved = 0;
         for (u8 i = 0; i < N; i++) {
             u8 cell = cells[i];
             moved |= cell << (i * 4);

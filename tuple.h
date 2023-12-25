@@ -5,10 +5,10 @@
 template<u32 N>
 struct Tuple {
     const string name;
-    b_t mask;
+    u64 mask;
     array<r_t, E(N * 4)> weights{};
 
-    Tuple(string name, const b_t mask) : name(std::move(name)), mask(mask) {
+    Tuple(string name, const u64 mask) : name(std::move(name)), mask(mask) {
         weights.fill(0);
     }
 
@@ -17,32 +17,7 @@ struct Tuple {
     }
 };
 
-array<Tuple<6>, 12> tuples_4_selection = {
-        Tuple<6>("mask_0", 0),
-        Tuple<6>("mask_1", 0),
-        Tuple<6>("mask_2", 0),
-        Tuple<6>("mask_3", 0),
-        Tuple<6>("mask_4", 0),
-        Tuple<6>("mask_5", 0),
-        Tuple<6>("mask_6", 0),
-        Tuple<6>("mask_7", 0),
-        Tuple<6>("mask_8", 0),
-        Tuple<6>("mask_9", 0),
-        Tuple<6>("mask_10", 0),
-        Tuple<6>("mask_11", 0),
-};
-
-/*
-//tuples_4_yeh
-array<Tuple<6>, 4> tuples_4_yeh = {
-        Tuple<6>("FFFFFF", 0xFFFFFFull),
-        Tuple<6>("FFFFFF0000", 0xFFFFFF0000ull),
-        Tuple<6>("FFF0FFF", 0xFFF0FFFull),
-        Tuple<6>("FFF0FFF0000", 0xFFF0FFF0000ull),
-};
-
-//tuples_4
-array<Tuple<6>, 10> tuples_4_10 = {
+array<Tuple<6>, 12> tuples_4_bence = {
         Tuple<6>("FFF0FFF", 0xFFF0FFFull),
         Tuple<6>("FF00FF00FF0", 0xFF00FF00FF0ull),
         Tuple<6>("FFFFFF", 0xFFFFFFull),
@@ -52,7 +27,18 @@ array<Tuple<6>, 10> tuples_4_10 = {
         Tuple<6>("F0FFFF000F", 0xF0FFFF000Full),
         Tuple<6>("F0FFFFF00", 0xF0FFFFF00ull),
         Tuple<6>("F00FFFFF", 0xF00FFFFFull),
-        Tuple<6>("FFFF0F0F", 0xFFFF0F0Full)
+        Tuple<6>("FFFF0F0F", 0xFFFF0F0Full),
+        Tuple<6>("F0F0F0FFF", 0xF0F0F0FFFull),
+        Tuple<6>("FFFFFF000", 0xFFFFFF000ull),
+};
+
+/*
+//tuples_4_yeh
+array<Tuple<6>, 4> tuples_4_yeh = {
+        Tuple<6>("FFFFFF", 0xFFFFFFull),
+        Tuple<6>("FFFFFF0000", 0xFFFFFF0000ull),
+        Tuple<6>("FFF0FFF", 0xFFF0FFFull),
+        Tuple<6>("FFF0FFF0000", 0xFFF0FFF0000ull),
 };
 
 //tuples_4_all5
@@ -103,6 +89,9 @@ array<Tuple<5>, 2> tuples_3_5 = {
         Tuple<5>("F00FFFF", 0xF00FFFFull)
 };
 
-u8 num_tuples = 0;
-auto tuples_4 = tuples_4_selection;
+
+auto tuples_4 = tuples_4_bence;
+u8 tuples_size_4 = 4;//tuples_4.size();
+
 auto tuples_3 = tuples_3_4;
+u8 tuples_size_3 = tuples_3.size();

@@ -3,23 +3,25 @@
 #include "tuple.h"
 
 template<u8 N>
-inline r_t eval_board(const b_t board) {
+inline r_t eval_board(const u64 board) {
     ++run_stats.eval_board_counter;
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
         if constexpr (N == 4) {
             //TODO replace
             //for (const auto &t: tuples_4) { sum += t.weights[pext(b, t.mask)]; }
-            for (int i = 0; i <= max(num_tuples, u8(9)); ++i) { sum += tuples_4[i].weights[pext(b, tuples_4[i].mask)]; }
+            for (u8 i = 0; i < tuples_size_4; ++i) { sum += tuples_4[i].weights[pext(b, tuples_4[i].mask)]; }
         } else {
-            for (const auto &t: tuples_3) { sum += t.weights[pext(b, t.mask)]; }
+            //TODO replace
+            //for (const auto &t: tuples_3) { sum += t.weights[pext(b, t.mask)]; }
+            for (u8 i = 0; i < tuples_size_3; ++i) { sum += tuples_3[i].weights[pext(b, tuples_3[i].mask)]; }
         }
     }
     return sum;
 }
 
 template<u8 N>
-inline r_t update_weights(const b_t board, const r_t gradient) {
+inline r_t update_weights(const u64 board, const r_t gradient) {
     ++run_stats.update_weights_counter;
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
@@ -27,22 +29,23 @@ inline r_t update_weights(const b_t board, const r_t gradient) {
             //TODO replace
             //for (auto &t: tuples_4) { sum += (t.weights[pext(b, t.mask)] += gradient); }
             //for (auto &t: tuples_4) { t.weights[pext(b, t.mask)] += gradient; }
-            for (int i = 0; i <= num_tuples; ++i) { tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient; }
+            for (u8 i = 0; i < tuples_size_4; ++i) { tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient; }
         } else {
             //TODO replace
             //for (auto &t: tuples_3) { sum += (t.weights[pext(b, t.mask)] += gradient); }
-            for (auto &t: tuples_3) { t.weights[pext(b, t.mask)] += gradient; }
+            //for (auto &t: tuples_3) { t.weights[pext(b, t.mask)] += gradient; }
+            for (u8 i = 0; i < tuples_size_3; ++i) { tuples_3[i].weights[pext(b, tuples_3[i].mask)] += gradient; }
         }
     }
     return sum;
 }
 
 template<u8 N>
-inline Eval eval_moves(const b_t state) {
+inline Eval eval_moves(const u64 state) {
     ++run_stats.eval_moves_counter;
     Eval best = {None, 0, 0, 0};
     for (const Dir dir: DIRS) {
-        b_t afterstate = moved_board<N>(state, dir);
+        u64 afterstate = moved_board<N>(state, dir);
         if (afterstate == state) { continue; }
         s_t reward = get_reward<N>(state, dir);
         r_t eval = r_t(reward) + eval_board<N>(afterstate);
@@ -54,14 +57,14 @@ inline Eval eval_moves(const b_t state) {
 }
 
 template<u8 N>
-r_t eval_afterstate(b_t afterstate, u8 max_depth, r_t max_prob, u64 &max_states);
+r_t eval_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_states);
 
 template<u8 N>
-Eval eval_state(const b_t state, const u8 max_depth, const r_t max_prob, u64 &max_states) {
+Eval eval_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_states) {
     if (max_states) { --max_states; }
     Eval best = {None, 0, 0, 0};
     for (const Dir dir: DIRS) {
-        b_t afterstate = moved_board<N>(state, dir);
+        u64 afterstate = moved_board<N>(state, dir);
         if (afterstate == state) { continue; }
         s_t reward = get_reward<N>(state, dir);
         r_t eval = reward + eval_afterstate<N>(afterstate, max_depth, max_prob, max_states);
@@ -75,7 +78,7 @@ Eval eval_state(const b_t state, const u8 max_depth, const r_t max_prob, u64 &ma
 }
 
 template<u8 N>
-r_t eval_afterstate(const b_t afterstate, const u8 max_depth, const r_t max_prob, const u64 &max_states) {
+r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, const u64 &max_states) {
     if (max_depth == 0 || max_prob < 1 || max_states == 0) {
         return eval_board<N>(afterstate);
     }
@@ -95,9 +98,9 @@ r_t eval_afterstate(const b_t afterstate, const u8 max_depth, const r_t max_prob
         val <<= 4;
     }
     return avg_eval / r_t(empty);*/
-    b_t empty = empty_mask<N>(afterstate);
+    u64 empty = empty_mask<N>(afterstate);
     u8 count = popcnt(empty);
-    b_t mask = 1;
+    u64 mask = 1;
     r_t sum = 0;
     while (count) {
         if (empty & mask) {
@@ -116,13 +119,13 @@ r_t eval_afterstate(const b_t afterstate, const u8 max_depth, const r_t max_prob
 }
 
 template<u8 N>
-Eval limited_depth_prob_player(b_t board, u8 depth, r_t prob) {
+Eval limited_depth_prob_player(u64 board, u8 depth, r_t prob) {
     u64 states = numeric_limits<u64>::max();
     return eval_state<N>(board, depth, prob, states);
 }
 
 template<u8 N>
-Eval limited_states_player(b_t board, u64 states) {
+Eval limited_states_player(u64 board, u64 states) {
     Eval best = {None, 0, 0, 0};
     for (u8 depth = 0; depth < 100; ++depth) {
         Eval eval = eval_state<N>(board, depth, r_t(E(depth + 4)), states);

@@ -4,7 +4,7 @@
 
 using h_t = u32;
 
-h_t to_hash(b_t board) {
+h_t to_hash(u64 board) {
     h_t hash = 0;
     for (u8 i = 0; i < 9; ++i) {
         hash = (hash * 11) + (board & 0xFu);
@@ -13,7 +13,7 @@ h_t to_hash(b_t board) {
     return hash;
 }
 
-h_t get_hash(const b_t board) {
+h_t get_hash(const u64 board) {
     h_t hash = numeric_limits<h_t>::max();
     for (const auto &b: get_transformations<3>(board)) {
         hash = min(hash, to_hash(b));
@@ -21,8 +21,8 @@ h_t get_hash(const b_t board) {
     return hash;
 }
 
-u8 highest_tile(b_t board) {
-    c_t highest = 0;
+u8 highest_tile(u64 board) {
+    u8 highest = 0;
     for (u8 i = 0; i < 9; ++i) {
         highest = max(highest, u8(board & 0xFu));
         board >>= 4;
@@ -87,12 +87,12 @@ struct Bruteforce {
         afterstate_cache.clear();
     }
 
-    r_t eval_state(b_t state) {
+    r_t eval_state(u64 state) {
         h_t hash = get_hash(state);
         if (state_cache.count(hash)) { return state_cache[hash]; }
         vector<pair<r_t, r_t>> evals;
         for (const Dir d: DIRS) {
-            b_t afterstate = moved_board<3>(state, d);
+            u64 afterstate = moved_board<3>(state, d);
             if (afterstate == state) { continue; }
             r_t curr_eval = eval_afterstate(afterstate, 1);
             switch (metric) {
@@ -122,10 +122,10 @@ struct Bruteforce {
         if (afterstate_cache.count(hash)) { return afterstate_cache[hash]; }
         vector<pair<r_t, r_t>> evals;
 
-        b_t empty = empty_mask<3>(afterstate);
+        u64 empty = empty_mask<3>(afterstate);
         u8 empty_count = popcnt(empty);
         if (empty_count == 0) { return 0; }
-        b_t mask = 1;
+        u64 mask = 1;
         for (u8 i = 0; i < 9; ++i) {
             if (empty & mask) {
                 for (const auto &[shift, prob]: SHIFTS) {

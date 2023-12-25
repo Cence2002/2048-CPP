@@ -63,13 +63,13 @@ void load_all_weights(const string &ts_str) {
 
 template<u8 N>
 s_t play_random_game() {
-    b_t board = 0;
+    u64 board = 0;
     s_t score = 0;
     fill_board<N>(board);
     fill_board<N>(board);
     while (!game_over<N>(board)) {
         Dir d = Dir(random(4) + 1);
-        b_t afterstate = moved_board<N>(board, d);
+        u64 afterstate = moved_board<N>(board, d);
         if (afterstate == board) { continue; }
         score += get_reward<N>(board, d);
         board = afterstate;
@@ -109,7 +109,7 @@ void perf_test_general(u64 N) {
 
 template<u8 N>
 s_t play_game() {
-    b_t board = 0;
+    u64 board = 0;
     s_t score = 0;
     fill_board<N>(board);
     fill_board<N>(board);
@@ -338,42 +338,52 @@ void run_tests() {
     }*/
     if (true) {
         test_board_move<3, 11>([](const array<array<u8, 3>, 3> board, Dir d) {
-            u64 b = from_array<3>(board);
+            u64 b = from_matrix<3>(board);
             move_board<3>(b, d);
-            return to_array<3>(b);
+            return to_matrix<3>(b);
         });
         test_board_reward<3, 11>([](const array<array<u8, 3>, 3> board, Dir d) {
-            u64 b = from_array<3>(board);
+            u64 b = from_matrix<3>(board);
             return get_reward<3>(b, d);
         });
         test_board_count_empty<3, 11>([](const array<array<u8, 3>, 3> board) {
-            u64 b = from_array<3>(board);
+            u64 b = from_matrix<3>(board);
             return count_empty<3>(b);
         });
         test_board_fill<3, 11>([](const array<array<u8, 3>, 3> board) {
-            u64 b = from_array<3>(board);
+            u64 b = from_matrix<3>(board);
             fill_board<3>(b);
-            return to_array<3>(b);
+            return to_matrix<3>(b);
         });
     }
     if (true) {
         test_board_move<4, 16>([](const array<array<u8, 4>, 4> board, Dir d) {
-            u64 b = from_array<4>(board);
+            u64 b = from_matrix<4>(board);
             move_board<4>(b, d);
-            return to_array<4>(b);
+            return to_matrix<4>(b);
         });
         test_board_reward<4, 16>([](const array<array<u8, 4>, 4> board, Dir d) {
-            u64 b = from_array<4>(board);
+            u64 b = from_matrix<4>(board);
             return get_reward<4>(b, d);
         });
         test_board_count_empty<4, 16>([](const array<array<u8, 4>, 4> board) {
-            u64 b = from_array<4>(board);
+            u64 b = from_matrix<4>(board);
             return count_empty<4>(b);
         });
         test_board_fill<4, 16>([](const array<array<u8, 4>, 4> board) {
-            u64 b = from_array<4>(board);
+            u64 b = from_matrix<4>(board);
             fill_board<4>(b);
-            return to_array<4>(b);
+            return to_matrix<4>(b);
+        });
+    }
+    if (true) {
+        test_line_left_move<4, 15>([](array<u8, 4> line) {
+            u16 l = from_array<4>(line);
+            return to_array<4>(l ^ left_0_4[l]);
+        });
+        test_line_right_move<4, 15>([](array<u8, 4> line) {
+            u16 l = from_array<4>(line);
+            return to_array<4>(l ^ right_0_4[l]);
         });
     }
 }
@@ -422,11 +432,11 @@ string to_hex(const u32 mask) {
 
 u32 n_tuples(u8 n) {
     u32 count = 0;
-    unordered_set<b_t> set;
+    unordered_set<u64> set;
     for (u32 mask = 1; mask <= 0xFFFFu; ++mask) {
         if (u8(popcnt(mask)) != n) continue;
         if (!is_connected(mask)) continue;
-        b_t board = pdep(mask, 0x1111111111111111ull);
+        u64 board = pdep(mask, 0x1111111111111111ull);
         bool is_new = true;
         for (const auto &b: get_transformations<4>(board)) {
             if (set.find(b) != set.end()) {
@@ -442,7 +452,7 @@ u32 n_tuples(u8 n) {
     vector<string> masks;
     for (const auto &b: set) {
         //print_board<4>(b);
-        b_t bb = b;
+        u64 bb = b;
         bb |= bb << 1;
         bb |= bb << 2;
         u64 min_mask = 0;
@@ -456,155 +466,6 @@ u32 n_tuples(u8 n) {
     return count;
 }
 
-
-array<b_t, 68> masks_6 = {
-        0xFFFF000F000Full,
-        0xF00FFFFF0000ull,
-        0xFFFFF00F000ull,
-        0xFFFFF000F00ull,
-        0xFFFFF000F0ull,
-        0xF000FFFFF0ull,
-        0xFF000F0FFF0ull,
-        0xF00FFFFFull,
-        0xF0F0F0FFFull,
-        0xFFFF00F000F0ull,
-        0xF00FFFFF0ull,
-        0xFFFFF00F0ull,
-        0xF0FFF00FFull,
-        0xF0FFF0FF00ull,
-        0xF00FF0FFFull,
-        0xF000FFFFFull,
-        0xFFFFF0F0000ull,
-        0xF0FFFFFull,
-        0xF0FFF0FF0ull,
-        0xFFFFF00Full,
-        0xFFFF00FFull,
-        0xFFFFF000Full,
-        0xF0FFFFF0ull,
-        0xFFFFFFull,
-        0xF00FFF0FF0ull,
-        0xFF00FFF0F00ull,
-        0xF00FFFFF00ull,
-        0xFFF0FFFull,
-        0xF00FFF00FFull,
-        0xFFFFF0F00ull,
-        0xF0FFF0F0Full,
-        0xFFFF0FF0ull,
-        0xFFFFFF0000ull,
-        0xF0FFFF00F0ull,
-        0xF000F0FFFFull,
-        0xF0F0F0FFF0ull,
-        0xFFF0F00FF00ull,
-        0xF0FFF000FFull,
-        0xFFFFFF00000ull,
-        0xFF0FFFFull,
-        0xFF00FF000FFull,
-        0xFFFFF0F000ull,
-        0xF0FFF0F0F0ull,
-        0xFFFF0F0Full,
-        0xF0FFFF000Full,
-        0xFFF0F000FF0ull,
-        0xF00FFF0F0Full,
-        0xF0FFFF0F00ull,
-        0xF00FF00FFFull,
-        0xF0FFF00FF0ull,
-        0xFFFFF00F00ull,
-        0xFF00F0FFF0ull,
-        0xFF0FF00FF0ull,
-        0xF0F0FFF00F0ull,
-        0xFFFFFF000ull,
-        0xF0F0FFF000Full,
-        0xF0FFFFF0000ull,
-        0xFFF0FF00F00ull,
-        0xF00FF0FFF0ull,
-        0xFF0FF0FF00ull,
-        0xFF00FF00FF0ull,
-        0xF0FFFFF00ull,
-        0xFFFFFF0ull,
-        0xF0F0FFF0F00ull,
-        0xFF00FFF00F0ull,
-        0xFFFFF0Full,
-        0xF0FFFFF000ull,
-        0xFF0FFFF0000ull
-};
-
-void select_tuples() {
-    vector<u32> indices;
-
-    vector<b_t> init_masks = {0xfff0fffull,
-                              0xff00ff00ff0ull,
-                              0xffffffull,
-                              0xffffff0000ull,
-                              0xffffff0ull,
-                              0xf000fffffull,
-                              0xf0ffff000full,
-                              0xf0fffff00ull,
-                              0xf00fffffull,
-                              0xffff0f0full};
-    int init_num_tuples = 10;
-    for (int i = 0; i < init_num_tuples; ++i) {
-        tuples_4[i].mask = init_masks[i];
-        //push index of mask in masks_6 to indices
-        indices.push_back(find(masks_6.begin(), masks_6.end(), init_masks[i]) - masks_6.begin());
-    }
-    for (u32 i = 0; i < init_num_tuples; ++i) {
-        tuples_4[i].weights.fill(tuple_init);
-    }
-    num_tuples = init_num_tuples;
-
-    while (true) {
-        r_t best_score = 0;
-        u32 best_index = 0;
-        for (u32 new_index = 0; new_index < masks_6.size(); ++new_index) {
-            cout << "Trying index: " << new_index << endl;
-            if (find(indices.begin(), indices.end(), new_index) != indices.end()) {
-                continue;
-            }
-            b_t new_mask = masks_6[new_index];
-
-            tuples_4[num_tuples].mask = new_mask;
-            for (u32 i = 0; i <= num_tuples; ++i) {
-                tuples_4[i].weights.fill(tuple_init);
-            }
-
-            learning_rate = 0.1;
-            run_training_episodes<4>(200000);
-
-            r_t score = run_testing_episodes<4>(20000);
-
-            if (score > best_score) {
-                best_score = score;
-                best_index = new_index;
-            }
-
-            cout << "Score: " << score << endl;
-        }
-
-        cout << endl;
-        cout << "Num tuples: " << to_string(num_tuples) << endl;
-        cout << "Best score: " << best_score << endl;
-        cout << "Best index: " << best_index << endl;
-        cout << "Best mask: " << hex << masks_6[best_index] << dec << endl;
-        cout << endl;
-
-        indices.push_back(best_index);
-        b_t new_mask = masks_6[best_index];
-        tuples_4[num_tuples].mask = new_mask;
-        for (u32 i = 0; i <= num_tuples; ++i) {
-            tuples_4[i].weights.fill(tuple_init);
-        }
-
-        ++num_tuples;
-        if (num_tuples == 12) {
-            break;
-        }
-    }
-
-    for (u32 i = 0; i < num_tuples; ++i) {
-        cout << "Tuple " << i << ": " << hex << tuples_4[i].mask << dec << endl;
-    }
-}
-
 template<u8 N>
 void run() {
     //load_all_weights<N>("1216-21-10-12");
@@ -614,9 +475,7 @@ void run() {
     //for (u32 i = 0; i < 2; ++i) { fixed_learn<N>(0.1, 10, 10000, 1000); }
 
     //IMPLEMENT run_learning<4>(10, 10000, 1000, 0.75);
-    //fixed_learn<N>(0.75, 10, 10000, 1000);
-
-    select_tuples();
+    fixed_learn<N>(0.75, 10, 10000, 1000);
 }
 
 int main() {
@@ -624,13 +483,12 @@ int main() {
 
     init();
 
-    //run_tests();
+    run_tests();
     //cout << endl;
     //perf_test(10000);
     //perf_test_general(10000);
 
-    bool redirect = true;
-    if (redirect) {
+    if (REDIRECT) {
         ofstream file("../output.log", std::ios_base::out | std::ios_base::trunc);
         streambuf *consoleBuffer = cout.rdbuf();
         streambuf *fileBuffer = file.rdbuf();
