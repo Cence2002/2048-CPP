@@ -1,5 +1,7 @@
 #include "testing.h"
 #include "learn.h"
+#include "endgame_bruteforce.h"
+#include "3x3_bruteforce.h"
 
 void init() {
     auto start = time_now();
@@ -466,6 +468,10 @@ u32 n_tuples(u8 n) {
     return count;
 }
 
+//replace 6 with 7 or 8 to get example probabilities
+Endgame<0xFFFFFFF600000000ull> endgame;
+
+
 template<u8 N>
 void run() {
     //load_all_weights<N>("1216-21-10-12");
@@ -475,15 +481,32 @@ void run() {
     //for (u32 i = 0; i < 2; ++i) { fixed_learn<N>(0.1, 10, 10000, 1000); }
 
     //IMPLEMENT run_learning<4>(10, 10000, 1000, 0.75);
-    fixed_learn<N>(0.75, 10, 10000, 1000);
+    //fixed_learn<N>(0.75, 10, 10000, 1000);
+
+    constexpr u64 board = 0xFFFFFFF600000000ull;
+    //cout << Endgame<board>.get_size() << endl;
+    //cout << get_size(board) * 4.0f / 1e6 << endl;
+    //cout << (int) get_G(board) << endl;
+    //cout << to_hash(board, 0xFFFFFFF612500000ull) << endl;
+    //cout << endl;
+    //cout << hex << from_hash<board>(to_hash<board>(0xFFFFFFF610000000ull)) << endl;
+
+    //cout << Endgame<board>::size << endl;
+    endgame.init_goals();
+    //cout << endgame.prob_afterstate(0xFFFFFFF600000000ull) << endl;
+    cout << endgame.prob_afterstate(0xFFFFFFF622240022ull) << endl;
 }
+//0121
+//5434
+//6FFF
+//FFFF
 
 int main() {
     srand(42);
 
     init();
 
-    run_tests();
+    //run_tests();
     //cout << endl;
     //perf_test(10000);
     //perf_test_general(10000);

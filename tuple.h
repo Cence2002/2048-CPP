@@ -91,7 +91,7 @@ array<Tuple<5>, 2> tuples_3_5 = {
 
 
 auto tuples_4 = tuples_4_bence;
-u8 tuples_size_4 = 4;//tuples_4.size();
+constexpr u8 tuples_size_4 = 4;//tuples_4.size();
 
 auto tuples_3 = tuples_3_4;
-u8 tuples_size_3 = tuples_3.size();
+constexpr u8 tuples_size_3 = tuples_3.size();

@@ -15,42 +15,23 @@
  find the probability of reaching any winning configuration
 */
 
-constexpr u8 get_G(u64 board) {
-    u8 G = 0;
-    for (u8 i = 0; i < 16; ++i) {
-        u8 cell = board & 0xFu;
-        if (cell == 0xFu) { continue; }
-        G = max(G, cell);
-        board >>= 4;
-    }
-    return G;
-}
 
-constexpr u64 get_size(const u64 board) {
-    return power(get_G(board), count_empty<4>(board));
-}
+// E D C B
+// 6 8 9 A
+// 0 2 2 1
+// 2 4 1 0
+// ==>
+// F F F F
+// 6 F F F
+// 0 0 0 0
+// 0 0 0 0
+
 
 //take a board with some large tiles and some small tiles
 //given mask is B
 //ignore tiles that are not empty in B (base)
 //only return hash if, on all empty tiles in B, the tile is small enough
 //otherwise, return 0
-template<u64 B>
-u64 get_hash(u64 board) {
-    u64 hash = 0;
-    u8 G = get_G(B);
-    u64 empty = empty_mask<4>(B);
-    for (u8 i = 0; i < 16; ++i) {
-        if (empty & 0xFu) {
-            u8 cell = board & 0xFu;
-            if (cell >= G) { return 0; }
-            hash = hash * G + cell;
-        }
-        board >>= 4;
-        empty >>= 4;
-    }
-    return hash;
-}
 
 //B is the base board for this endgame
 //it contains 16 tiles, each 4 bits
@@ -61,47 +42,170 @@ u64 get_hash(u64 board) {
 // goal tile is the one we want to merge with new tiles
 // we want to maximize the probability of reaching the goal tile
 // building a goal tile next to the original goal tile is a win
+
+
+constexpr u8 get_G(const u64 B) {
+    u8 G = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        u8 cell = (B >> (i * 4)) & 0xFu;
+        if (cell == 0xFu) { continue; }
+        G = max(G, cell);
+    }
+    return G;
+}
+
+constexpr u64 get_size(const u64 B, const u8 G) {
+    return power(G, count_empty<4>(B));
+}
+
 template<u64 B>
 class Endgame {
 private:
     static constexpr u8 G = get_G(B);
-    array<r_t, get_size(B)> probs{};
+    static constexpr u64 size = get_size(B, G);
+    array<r_t, size> probs{};
+
+    static u64 to_hash(const u64 board) {
+        u64 hash = 0;
+        for (u8 i = 0; i < 16; ++i) {
+            u8 base = (B >> (i * 4)) & 0xFu;
+            u8 cell = (board >> (i * 4)) & 0xFu;
+            if (base == 0) {
+                if (cell >= G) { return 0; }
+                hash = hash * G + cell;
+            } else {
+                if (cell != base) { return 0; }
+            }
+        }
+        return hash;
+    }
+
+    static u64 from_hash(u64 hash) {
+        u64 board = 0;
+        array<u8, count_empty<4>(B)> cells{};
+        u8 index = 0;
+        for (u8 i = 0; i < 16; ++i) {
+            u8 base = (B >> (i * 4)) & 0xFu;
+            if (base == 0) {
+                cells[index++] = hash % G;
+                hash /= G;
+            }
+        }
+        for (u8 i = 0; i < 16; ++i) {
+            u8 base = (B >> (i * 4)) & 0xFu;
+            if (base == 0) {
+                board |= u64(cells[--index]) << (i * 4);
+            } else {
+                board |= u64(base) << (i * 4);
+            }
+        }
+        return board;
+    }
+
+    static bool is_goal(u64 board) {
+        for (u8 i = 0; i < 16; ++i) {
+            u8 base = (B >> (i * 4)) & 0xFu;
+            u8 cell = (board >> (i * 4)) & 0xFu;
+            if (base == 0xFu && cell != 0xFu) { return false; }
+            if (base == G && cell != G + 1) { return false; }
+        }
+        return true;
+    }
 
     //select boards from where we can definitely win
     //build a goal tile next to the original goal tile
     //set the probability of reaching the goal tile to 1
-    void init_goals() {
-        u64 empty = empty_mask<4>(B);
+    static bool is_goal_state(u64 state, u8 depth) {
+        for (const Dir dir: DIRS) {
+            u64 afterstate = moved_board<4>(state, dir);
+            if (afterstate == state) { continue; }
+            if (is_goal_afterstate(afterstate, depth)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static bool is_goal_afterstate(u64 afterstate, u8 depth) {
+        if (depth == 0) { return is_goal(afterstate); }
+        u64 empty = empty_mask<4>(afterstate);
+        u8 count = popcnt(empty);
         u64 mask = 1;
-        for (u8 i = 0; i < 16; ++i) {
-            if (empty & 0xFu) {
-                u64 board = B | mask;
-                u64 hash = get_hash<B>(board);
-                if (hash) {
-                    probs[hash] = 1;
+        while (count) {
+            if (empty & mask) {
+                for (const u8 shift: {0, 1}) {
+                    u64 state = afterstate | (u64(shift) << mask);
+                    if (!is_goal_state(state, depth - 1)) {
+                        return false;
+                    }
                 }
+                --count;
             }
             mask <<= 4;
-            empty >>= 4;
         }
+        return true;
     }
 
 public:
     Endgame() {
+        cout << size << endl;
         probs.fill(-1);
-        init_goals();
+    }
+
+    void init_goals() {
+        //iterate through all boards where
+        //at least two of the small tiles are G-1
+        //TODO finish
+        //cout << size << endl;
+        cnt = 0;
+        for (u64 hash = 0; hash < size; ++hash) {
+            u64 board = from_hash(hash);
+            //depth of 3 has the same result as 4 (84231), but faster
+            //depth of 3: 30204511 calls for B=0xFFFFFFF600000000ull
+            //depth of 4: 50700493 calls for B=0xFFFFFFF600000000ull
+            if (is_goal_state(board, 3)) {
+                //print_board<4>(board);
+                cnt++;
+                probs[hash] = 1;
+            }
+        }
+        cout << cnt << endl;
+    }
+
+    //0xFFFFFFF643451210ull => 0.9 good
+    r_t prob_state(u64 state) {
+        u64 hash = to_hash(state);
+        if (hash == 0) { return 0; }
+        if (probs[hash] != -1) { return probs[hash]; }
+        r_t max_prob = 0;
+        for (const Dir dir: DIRS) {
+            u64 afterstate = moved_board<4>(state, dir);
+            if (afterstate == state) { continue; }
+            r_t prob = prob_afterstate(afterstate);
+            max_prob = max(max_prob, prob);
+        }
+        probs[hash] = max_prob;
+        return max_prob;
+    }
+
+    r_t prob_afterstate(u64 afterstate) {
+        u64 empty = empty_mask<4>(afterstate);
+        u8 count = popcnt(empty);
+        u64 mask = 1;
+        r_t sum = 0;
+        while (count) {
+            if (empty & mask) {
+                for (const auto &[shift, prob]: SHIFTS) {
+                    sum += prob * prob_state(afterstate | (mask << shift));
+                }
+                --count;
+            }
+            mask <<= 4;
+        }
+        return sum / r_t(popcnt(empty));
     }
 };
 
-// E D C B
-// 2 4 9 A
-// 1 2 2 1
-// 2 5 1 0
-// ==>
-// 1 1 1 1
-// 0 0 9 1
-// 0 0 0 0
-// 0 0 0 0
 
 /*
 TO BUILD	1		2		3		4		5		6		7		8		9		10		11		12		13		14		15		16
