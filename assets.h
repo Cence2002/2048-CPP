@@ -69,11 +69,11 @@ void wait(r_t time) {
     while (time_since(start) < time) {}
 }
 
-constexpr inline u8 popcnt(const u64 x) { return __builtin_popcountll(x); }
+inline u8 popcnt(const u64 x) { return __builtin_popcountll(x); }
 
-constexpr inline u64 pext(const u64 x, const u64 m) { return _pext_u64(x, m); }
+inline u64 pext(const u64 x, const u64 m) { return _pext_u64(x, m); }
 
-constexpr inline u64 pdep(const u64 x, const u64 m) { return _pdep_u64(x, m); }
+inline u64 pdep(const u64 x, const u64 m) { return _pdep_u64(x, m); }
 
 constexpr u64 power(u64 base, u8 exp) {
     u64 res = 1;

@@ -72,12 +72,12 @@ constexpr inline u64 empty_mask(u64 board) {
 }
 
 template<u8 N>
-constexpr inline u8 count_empty(const u64 board) {
+inline u8 count_empty(const u64 board) {
     return popcnt(empty_mask<N>(board));
 }
 
 template<u8 N>
-constexpr inline void fill_board(u64 &board) {
+inline void fill_board(u64 &board) {
     ++run_stats.fill_board_counter;
     u64 empty = empty_mask<N>(board);
     u8 pos = random(popcnt(empty));
