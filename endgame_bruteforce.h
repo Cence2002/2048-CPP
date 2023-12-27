@@ -44,35 +44,58 @@
 // building a goal tile next to the original goal tile is a win
 
 
-constexpr u8 get_G(const u64 B) {
-    u8 G = 0;
-    for (u8 i = 0; i < 16; ++i) {
-        u8 cell = (B >> (i * 4)) & 0xFu;
-        if (cell == 0xFu) { continue; }
-        G = max(G, cell);
-    }
-    return G;
+
+
+//TODO
+//instead of 2-bit directions, store more information
+
+//is a goal reachable certainly enough (>20%)
+//if no, rely on tuple network
+//if yes, what's the best move (2 bits)
+
+//TODO
+//maybe simply store the tuple value of goal positions
+//that will incentivize reaching better goal positions
+
+
+constexpr u64 get_size(const u8 G, const u8 count) {
+    return power(G + 1, count);
 }
 
-constexpr u64 get_size(const u64 B, const u8 G) {
-    return power(G, count_empty<4>(B));
-}
-
-template<u64 B>
 class Endgame {
 private:
-    static constexpr u8 G = get_G(B);
-    static constexpr u64 size = get_size(B, G);
-    array<r_t, size> probs{};
+    const u64 B;
+    const u8 G;
+    const u64 size;
+    vector<r_t> probs;
+    //static constexpr u8 G = get_G(B);
+    //static constexpr u64 size = get_size(G, count_empty<4>(B));
+    //array<r_t, size> probs{};
 
-    static u64 to_hash(const u64 board) {
+public:
+    Endgame(const u64 B) : B(B), G(get_G(B)), size(get_size(G, count_empty<4>(B))) {
+        cout << size << endl;
+        probs.resize(size, -1);
+    }
+
+    static u8 get_G(const u64 B) {
+        u8 G = 0;
+        for (u8 i = 0; i < 16; ++i) {
+            u8 cell = (B >> (i * 4)) & 0xFu;
+            if (cell == 0xFu) { continue; }
+            G = max(G, cell);
+        }
+        return G;
+    }
+
+    u64 to_hash(const u64 board) {
         u64 hash = 0;
         for (u8 i = 0; i < 16; ++i) {
             u8 base = (B >> (i * 4)) & 0xFu;
             u8 cell = (board >> (i * 4)) & 0xFu;
             if (base == 0) {
-                if (cell >= G) { return 0; }
-                hash = hash * G + cell;
+                if (cell > G) { return 0; }
+                hash = hash * (G + 1) + cell;
             } else {
                 if (cell != base) { return 0; }
             }
@@ -80,15 +103,15 @@ private:
         return hash;
     }
 
-    static u64 from_hash(u64 hash) {
+    u64 from_hash(u64 hash) {
         u64 board = 0;
-        array<u8, count_empty<4>(B)> cells{};
+        array<u8, 16> cells{};
         u8 index = 0;
         for (u8 i = 0; i < 16; ++i) {
             u8 base = (B >> (i * 4)) & 0xFu;
             if (base == 0) {
-                cells[index++] = hash % G;
-                hash /= G;
+                cells[index++] = hash % (G + 1);
+                hash /= G + 1;
             }
         }
         for (u8 i = 0; i < 16; ++i) {
@@ -102,7 +125,7 @@ private:
         return board;
     }
 
-    static bool is_goal(u64 board) {
+    bool is_goal(u64 board) {
         for (u8 i = 0; i < 16; ++i) {
             u8 base = (B >> (i * 4)) & 0xFu;
             u8 cell = (board >> (i * 4)) & 0xFu;
@@ -112,59 +135,21 @@ private:
         return true;
     }
 
-    //select boards from where we can definitely win
-    //build a goal tile next to the original goal tile
-    //set the probability of reaching the goal tile to 1
-    static bool is_goal_state(u64 state, u8 depth) {
+    bool is_goal_state(u64 state) {
         for (const Dir dir: DIRS) {
             u64 afterstate = moved_board<4>(state, dir);
             if (afterstate == state) { continue; }
-            if (is_goal_afterstate(afterstate, depth)) {
-                return true;
-            }
+            if (is_goal(afterstate)) { return true; }
         }
         return false;
     }
 
-    static bool is_goal_afterstate(u64 afterstate, u8 depth) {
-        if (depth == 0) { return is_goal(afterstate); }
-        u64 empty = empty_mask<4>(afterstate);
-        u8 count = popcnt(empty);
-        u64 mask = 1;
-        while (count) {
-            if (empty & mask) {
-                for (const u8 shift: {0, 1}) {
-                    u64 state = afterstate | (u64(shift) << mask);
-                    if (!is_goal_state(state, depth - 1)) {
-                        return false;
-                    }
-                }
-                --count;
-            }
-            mask <<= 4;
-        }
-        return true;
-    }
-
-public:
-    Endgame() {
-        cout << size << endl;
-        probs.fill(-1);
-    }
-
     void init_goals() {
-        //iterate through all boards where
-        //at least two of the small tiles are G-1
-        //TODO finish
-        //cout << size << endl;
         cnt = 0;
         for (u64 hash = 0; hash < size; ++hash) {
+            if (hash % (size / 100) == 0) { cout << hash / (size / 100) << "%" << endl; }
             u64 board = from_hash(hash);
-            //depth of 3 has the same result as 4 (84231), but faster
-            //depth of 3: 30204511 calls for B=0xFFFFFFF600000000ull
-            //depth of 4: 50700493 calls for B=0xFFFFFFF600000000ull
-            if (is_goal_state(board, 3)) {
-                //print_board<4>(board);
+            if (is_goal_state(board)) {
                 cnt++;
                 probs[hash] = 1;
             }
@@ -172,7 +157,6 @@ public:
         cout << cnt << endl;
     }
 
-    //0xFFFFFFF643451210ull => 0.9 good
     r_t prob_state(u64 state) {
         u64 hash = to_hash(state);
         if (hash == 0) { return 0; }
@@ -182,6 +166,9 @@ public:
             u64 afterstate = moved_board<4>(state, dir);
             if (afterstate == state) { continue; }
             r_t prob = prob_afterstate(afterstate);
+            if (state == 0xFFFFFFF734561122ull) {
+                cout << (int) dir << " " << prob << endl;
+            }
             max_prob = max(max_prob, prob);
         }
         probs[hash] = max_prob;
@@ -204,7 +191,40 @@ public:
         }
         return sum / r_t(popcnt(empty));
     }
+
+    Dir best_dir(u64 board) {
+        Dir best_dir = None;
+        r_t best_prob = 0;
+        for (const Dir dir: DIRS) {
+            u64 afterstate = moved_board<4>(board, dir);
+            if (afterstate == board) { continue; }
+            r_t prob = prob_afterstate(afterstate);
+            if (prob > best_prob) {
+                best_dir = dir;
+                best_prob = prob;
+            }
+        }
+        return best_dir;
+    }
+
+    vector<u8> pack_dirs() {
+        vector<u8> packed(size / 4 + 1, 0);
+        for (u64 hash = 0; hash < size; ++hash) {
+            u8 dir = best_dir(from_hash(hash));
+            if (dir != 0) { --dir; }
+            packed[hash / 4] |= dir << ((hash % 4) * 2);
+        }
+        return packed;
+    }
+
+    Dir unpack_dir(const vector<u8> &packed, const u64 hash) {
+        u8 byte = packed[hash / 4];
+        u8 bits = (byte >> ((hash % 4) * 2)) & 0b11u;
+        return Dir(bits + 1);
+    }
 };
+
+
 
 
 /*

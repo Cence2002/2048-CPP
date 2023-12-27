@@ -29,12 +29,17 @@ inline r_t update_weights(const u64 board, const r_t gradient) {
             //TODO replace
             //for (auto &t: tuples_4) { sum += (t.weights[pext(b, t.mask)] += gradient); }
             //for (auto &t: tuples_4) { t.weights[pext(b, t.mask)] += gradient; }
-            for (u8 i = 0; i < tuples_size_4; ++i) { tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient; }
+            //for (u8 i = 0; i < tuples_size_4; ++i) { tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient; }
+            for (u8 i = 0; i < tuples_size_4; ++i) {
+                sum += (tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient);
+            }
         } else {
             //TODO replace
             //for (auto &t: tuples_3) { sum += (t.weights[pext(b, t.mask)] += gradient); }
             //for (auto &t: tuples_3) { t.weights[pext(b, t.mask)] += gradient; }
-            for (u8 i = 0; i < tuples_size_3; ++i) { tuples_3[i].weights[pext(b, tuples_3[i].mask)] += gradient; }
+            for (u8 i = 0; i < tuples_size_3; ++i) {
+                sum += (tuples_3[i].weights[pext(b, tuples_3[i].mask)] += gradient);
+            }
         }
     }
     return sum;

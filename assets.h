@@ -16,7 +16,7 @@
 #include <unordered_set>
 
 #define DEBUG 0
-#define REDIRECT 0
+#define REDIRECT 1
 
 using namespace std;
 
@@ -62,6 +62,11 @@ auto time_now() {
 r_t time_since(chrono::high_resolution_clock::time_point start) {
     const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
     return r_t(duration.count());
+}
+
+void wait(r_t time) {
+    auto start = time_now();
+    while (time_since(start) < time) {}
 }
 
 constexpr inline u8 popcnt(const u64 x) { return __builtin_popcountll(x); }

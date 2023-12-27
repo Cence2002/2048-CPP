@@ -2,7 +2,7 @@
 
 #include "eval.h"
 
-constexpr r_t tuple_init = 1e5;
+constexpr r_t tuple_init = 2e5;
 r_t learning_rate = 0;
 
 template<u8 N>
@@ -38,12 +38,12 @@ void training_episode() {
 
     r_t target = 0;
     for (u32 t = moves - 1; t < moves; --t) {
-        //const r_t error = target - eval_board<N>(afterstates[t]);
-        //target = r_t(rewards[t]) + update_weights<N>(afterstates[t], error * scaled_learning_rate);
+        const r_t error = target - eval_board<N>(afterstates[t]);
+        target = r_t(rewards[t]) + update_weights<N>(afterstates[t], error * scaled_learning_rate);
 
-        const r_t error = target - evals[t];
-        update_weights<N>(afterstates[t], error * scaled_learning_rate);
-        target = r_t(rewards[t]) + evals[t];
+        //const r_t error = target - evals[t];
+        //update_weights<N>(afterstates[t], error * scaled_learning_rate);
+        //target = r_t(rewards[t]) + evals[t];
     }
 
     training_stats.update_board_stats(board, score, moves);
