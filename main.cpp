@@ -463,9 +463,9 @@ void run() {
 
 template<u8 N>
 void run2() {
-    //load_all_weights<N>("1227-00-54-28");
+    load_all_weights<N>("1227-06-17-09");
     for (u32 i = 0; i < 1; ++i) {
-        fixed_learn<N>(0.1, 50, 100000, 10000);
+        fixed_learn<N>(0.1, 15, 1000000, 100000);
     }
 }
 

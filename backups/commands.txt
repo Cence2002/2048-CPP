@@ -1,0 +1,100 @@
+# ==============
+# Create VM
+
+gcloud compute instances create high-perf-asdfg-1 --project=high-verve-402512 --zone=europe-west1-b --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --maintenance-policy=MIGRATE --provisioning-model=STANDARD --service-account=267481148324-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --tags=http-server,https-server --create-disk=auto-delete=yes,boot=yes,device-name=high-perf-asdfg-1,image=projects/debian-cloud/global/images/debian-11-bullseye-v20231010,mode=rw,size=40,type=projects/high-verve-402512/zones/europe-west1-b/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
+
+# ==============
+# Setup
+
+sudo apt-get update
+sudo apt-get install -y git g++ cmake git-lfs
+git --version
+g++ --version
+cmake --version
+git-lfs --version
+
+git clone https://github.com/Cence2002/2048-cloud.git
+Cence2002
+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
+
+
+cd 2048-cloud/
+git config --global user.email "hervay.bence@gmail.com"
+git config --global user.name "Cence2002"
+
+git lfs install
+git lfs track "*.bin"
+git lfs fetch
+git lfs checkout
+ls
+
+
+# ==============
+# Run
+
+> output.log
+mkdir -p cmake_build
+cd cmake_build/
+cmake ..
+make
+nohup ./2048_AI &
+
+
+# ==============
+# Spectate
+
+cd 2048-cloud/
+cat output.log
+
+top -i
+
+
+# ==============
+# Update
+
+git fetch origin
+Cence2002
+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
+
+git reset --hard origin/master
+Cence2002
+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
+
+
+# ==============
+# Add / Delete weights
+
+find . -type f -name '*DATE.bin'
+find . -type f -name '*DATE.bin' | xargs git add
+git add -A weights_backups/*
+git add output.log
+git status
+
+find . -type f -name "*DATE.bin" -exec rm {} \;
+
+find . -type f -name '*1028-16-24-17.bin'
+find . -type f -name '*1216-21-07-33.bin' -exec rm {} \;
+
+# ==============
+# Push updates
+
+git commit -m "Commit message"
+git push origin master
+Cence2002
+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
+
+
+# ==============
+# Modify file
+
+nano [file]
+[modify]
+CTRL+X
+y
+
+# ==============
+# Add token
+[github: settings/developer/tokens/new]
+[note: Google cloud compute engine]
+[select: repo, workflow, project]
+e.g. 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
