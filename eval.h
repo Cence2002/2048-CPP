@@ -2,6 +2,9 @@
 
 #include "tuple.h"
 
+#define FIXNEGATIVE 0
+#define DOWNGRADE 0
+
 template<u8 N>
 inline r_t eval_board(const u64 board) {
     ++run_stats.eval_board_counter;
@@ -79,17 +82,18 @@ Eval eval_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &ma
     }
     //TODO maybe turn on
     //if (best.dir == None) { best.eval = eval_board<N>(state) - 1e7; }
-    //TODO maybe turn off (against avoiding negative evals more than losing)
-    best.eval += 1;
+    if (FIXNEGATIVE) { best.eval += 1; }
     return best;
 }
 
 template<u8 N>
 r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, const u64 &max_states) {
     if (max_depth == 0 || max_prob < 1 || max_states == 0) {
-        //TODO maybe replace (against avoiding negative evals more than losing)
-        //return eval_board<N>(afterstate)
-        return max(0, eval_board<N>(afterstate));
+        if (FIXNEGATIVE) {
+            return max(0, eval_board<N>(afterstate));
+        } else {
+            return eval_board<N>(afterstate);
+        }
     }
     /*const u8 empty = count_empty<N>(afterstate);
     max_prob /= r_t(empty);
@@ -145,7 +149,35 @@ Eval limited_states_player(u64 board, u64 states) {
 }
 
 template<u8 N>
-u64 downgraded(u64 board, const u8 threshold) {
-    //TODO finish
+u64 downgraded(u64 board, const u8 threshold = 15) {
+    u32 used = 0;
+    u8 highest = 0;
+    for (u8 i = 0; i < N * N; ++i) {
+        u8 cell = (board >> (i * 4)) & 0xFu;
+        used |= u32(1) << cell;
+        if (cell > highest) { highest = cell; }
+    }
+    if (highest < threshold) { return board; }
+    u8 missing = 0;
+    for (u8 i = 1; i < highest; ++i) {
+        if ((used & (u32(1) << i)) == 0) {
+            missing = i;
+        }
+    }
+    //TODO maybe try (missing < 5) or other values
+    if (missing < 5) { return board; }
+    for (u8 i = 0; i < N * N; ++i) {
+        u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell > missing) {
+            board &= ~(u64(0xF) << (i * 4));
+            board |= u64(cell - 1) << (i * 4);
+        }
+    }
     return board;
+}
+
+template<u8 N>
+Eval evaluate(u64 board) {
+    if (DOWNGRADE) { board = downgraded<4>(board); }
+    return limited_states_player<N>(board, 1000);
 }
