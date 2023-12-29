@@ -18,9 +18,7 @@ void init() {
         t.weights.fill(tuple_init / (8 * tuples_size_3));
     }
 
-    cout << "Number of cores: " << thread::hardware_concurrency() << endl;
-
-    //cout << "Init time: " << time_since(start) / 1e6 << endl << endl;
+    cout << "Init time: " << time_since(start) / 1e6 << endl;
 }
 
 /*template<u8 N>
@@ -466,8 +464,10 @@ void run() {
 
 template<u8 N>
 void run2() {
+    init();
     //load_packed_weights<N>("1229_114706");
     const u32 threads = thread::hardware_concurrency();
+    cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 1; ++i) {
         fixed_learn<N>(0.1, 10, 100000, 10000, threads);
     }
@@ -475,8 +475,6 @@ void run2() {
 
 int main() {
     srand(42);
-
-    init();
 
     //run_tests();
     //cout << endl;

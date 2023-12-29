@@ -1,4 +1,82 @@
-# ==============
+# ================
+# Create VM instance (n2d-highcpu-8)
+
+gcloud compute instances create high-performance \
+    --project=high-verve-402512 \
+    --zone=europe-west1-b \
+    --machine-type=n2d-highcpu-8 \
+    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
+    --maintenance-policy=MIGRATE \
+    --provisioning-model=STANDARD \
+    --service-account=267481148324-compute@developer.gserviceaccount.com \
+    --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
+    --create-disk=auto-delete=yes,boot=yes,device-name=high-performance,image=projects/debian-cloud/global/images/debian-11-bullseye-v20231212,mode=rw,size=50,type=projects/high-verve-402512/zones/europe-west1-b/diskTypes/pd-standard \
+    --no-shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring \
+    --labels=goog-ec-src=vm_add-gcloud \
+    --reservation-affinity=any \
+    --threads-per-core=2
+
+# ================
+# Update & install everything
+
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+sudo apt-get install -y git g++ cmake git-lfs
+git --version
+g++ --version
+cmake --version
+git-lfs --version
+
+git clone https://github.com/Cence2002/2048-CPP.git
+Cence2002
+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
+
+# ================
+# Setup git-lfs
+
+cd 2048-CPP/
+git config --global user.email "hervay.bence@gmail.com"
+git config --global user.name "Cence2002"
+git config --list
+
+git lfs install
+git lfs track "*.bin"
+git lfs fetch
+git lfs checkout
+
+# ================
+Update
+
+git fetch origin
+git reset --hard origin/master
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ================
 # Create VM
 
 gcloud compute instances create high-perf-asdfg-1 \
@@ -21,6 +99,8 @@ gcloud compute instances create high-perf-asdfg-1 \
 # Setup
 
 sudo apt-get update
+sudo apt-get upgrade
+
 sudo apt-get install -y git g++ cmake git-lfs
 git --version
 g++ --version
@@ -40,7 +120,6 @@ git lfs install
 git lfs track "*.bin"
 git lfs fetch
 git lfs checkout
-ls
 
 
 # ==============
@@ -115,20 +194,3 @@ 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
 
 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
 
-
-gcloud compute instances create high-performance \
-    --project=high-verve-402512 \
-    --zone=europe-west1-b \
-    --machine-type=n2d-highcpu-8 \
-    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
-    --maintenance-policy=MIGRATE \
-    --provisioning-model=STANDARD \
-    --service-account=267481148324-compute@developer.gserviceaccount.com \
-    --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
-    --create-disk=auto-delete=yes,boot=yes,device-name=high-performance,image=projects/debian-cloud/global/images/debian-11-bullseye-v20231212,mode=rw,size=50,type=projects/high-verve-402512/zones/europe-west1-b/diskTypes/pd-standard \
-    --no-shielded-secure-boot \
-    --shielded-vtpm \
-    --shielded-integrity-monitoring \
-    --labels=goog-ec-src=vm_add-gcloud \
-    --reservation-affinity=any \
-    --threads-per-core=2
