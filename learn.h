@@ -5,7 +5,7 @@
 r_t learning_rate = 0;
 
 template<u8 N>
-void training_episode() {
+Game_stat training_episode() {
     vector<r_t> evals;
     vector<s_t> rewards;
     vector<u64> afterstates;
@@ -45,11 +45,13 @@ void training_episode() {
         //target = r_t(rewards[t]) + evals[t];
     }
 
-    training_stats.update_board_stats(board, score, moves);
+    //training_stats.update_board_stats(board, score, moves);
+
+    return {board, score, moves};
 }
 
 template<u8 N>
-s_t testing_episode() {
+Game_stat testing_episode() {
     u64 board = 0;
     s_t score = 0;
     u32 moves = 0;
@@ -67,20 +69,45 @@ s_t testing_episode() {
         fill_board<N>(board);
     }
 
-    testing_stats.update_board_stats(board, score, moves);
+    //testing_stats.update_board_stats(board, score, moves);
 
-    return score;
+    return {board, score, moves};
 }
 
 template<u8 N>
-void run_training_episodes(u32 games) {
+vector<Game_stat> run_training_episodes(u32 games, u8 threads) {
     srand(42);
     cout << "Training started (" << games << " games)" << endl;
 
     run_stats = {};
-    training_stats = {};
+    vector<Game_stat> games_stats;
     auto start = time_now();
-    for (u32 i = 0; i < games; i++) { training_episode<N>(); }
+    if (threads == 0) {
+        for (u32 i = 0; i < games; i++) {
+            games_stats.push_back(training_episode<N>());
+        }
+    } else {
+        vector<thread> all_threads;
+        const u32 threads_games = games / threads;
+        vector<vector<Game_stat>> threads_stats(threads);
+        for (u8 t = 0; t < threads; ++t) {
+            all_threads.emplace_back([t, threads_games, &threads_stats]() {
+                for (u32 i = 0; i < threads_games; ++i) {
+                    threads_stats[t].push_back(training_episode<N>());
+                }
+            });
+        }
+        for (auto &thread: all_threads) {
+            thread.join();
+        }
+        for (const auto &thread_stats: threads_stats) {
+            games_stats.insert(games_stats.end(), thread_stats.begin(), thread_stats.end());
+        }
+    }
+    training_stats = {};
+    for (const auto &game_stats: games_stats) {
+        training_stats.update_board_stats(game_stats.board, game_stats.score, game_stats.moves);
+    }
     r_t elapsed = time_since(start);
 
     if (DEBUG) {
@@ -98,19 +125,43 @@ void run_training_episodes(u32 games) {
     }
 
     cout << "Training finished (" << time_since(start) / 1e6 << " s)" << endl;
+
+    return games_stats;
 }
 
 template<u8 N>
-r_t run_testing_episodes(u32 games) {
+vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
     srand(42);
     cout << "Testing started (" << games << " games)" << endl;
 
     run_stats = {};
-    testing_stats = {};
+    vector<Game_stat> games_stats;
     auto start = time_now();
-    r_t avg_score = 0;
-    for (u32 i = 0; i < games; i++) {
-        avg_score += testing_episode<N>();
+    if (threads == 0) {
+        for (u32 i = 0; i < games; i++) {
+            games_stats.push_back(testing_episode<N>());
+        }
+    } else {
+        vector<thread> all_threads;
+        const u32 threads_games = games / threads;
+        vector<vector<Game_stat>> threads_stats(threads);
+        for (u8 t = 0; t < threads; ++t) {
+            all_threads.emplace_back([t, threads_games, &threads_stats]() {
+                for (u32 i = 0; i < threads_games; ++i) {
+                    threads_stats[t].push_back(testing_episode<N>());
+                }
+            });
+        }
+        for (auto &thread: all_threads) {
+            thread.join();
+        }
+        for (const auto &thread_stats: threads_stats) {
+            games_stats.insert(games_stats.end(), thread_stats.begin(), thread_stats.end());
+        }
+    }
+    testing_stats = {};
+    for (const auto &game_stats: games_stats) {
+        testing_stats.update_board_stats(game_stats.board, game_stats.score, game_stats.moves);
     }
     r_t elapsed = time_since(start);
 
@@ -131,29 +182,29 @@ r_t run_testing_episodes(u32 games) {
 
     cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << endl;
 
-    return avg_score / r_t(games);
+    return games_stats;
 }
 
 template<u8 N>
-void run_learning(u32 episodes, u32 training_games, u32 testing_games) {
+void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 threads) {
     cout << "Learning started (" << episodes << " episodes, LR=" << learning_rate << ")" << endl;
 
     run_stats_t all_run_stats = {};
     game_stats_t all_training_stats = {};
     game_stats_t all_testing_stats = {};
 
-    run_testing_episodes<N>(testing_games);
+    run_testing_episodes<N>(testing_games, threads);
     cout << endl;
 
     auto start = time_now();
     for (u32 i = 0; i < episodes; i++) {
         cout << "Episode " << i + 1 << endl;
 
-        run_training_episodes<N>(training_games);
+        run_training_episodes<N>(training_games, threads);
         all_training_stats.append_stats(training_stats);
         all_run_stats.append_stats(run_stats);
 
-        run_testing_episodes<N>(testing_games);
+        run_testing_episodes<N>(testing_games, threads);
         all_run_stats.append_stats(run_stats);
         all_testing_stats.append_stats(testing_stats);
 

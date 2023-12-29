@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <thread>
 
 #define DEBUG 0
 #define REDIRECT 1
@@ -45,6 +46,12 @@ struct Eval {
     r_t eval;
     s_t reward;
     u64 afterstate;
+};
+
+struct Game_stat {
+    u64 board;
+    s_t score;
+    u32 moves;
 };
 
 constexpr Dir DIRS[4] = {Left, Up, Right, Down};

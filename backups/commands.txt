@@ -37,7 +37,7 @@ mkdir -p cmake_build
 cd cmake_build/
 cmake ..
 make
-nohup ./2048_AI &
+nohup ./2048_CPP &
 
 
 # ==============
@@ -101,3 +101,5 @@ y
 e.g. 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
 
 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
+
+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
