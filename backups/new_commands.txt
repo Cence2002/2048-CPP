@@ -53,17 +53,37 @@ Update
 git fetch origin
 git reset --hard origin/master
 
+# ================
+# Run
 
+chmod +x run.sh
+./run.sh
 
+# ================
+# Spectate
 
+cat output.log
+top -i
 
+# ================
+# Add results
 
+git add -A weights_backups/*
+git add output.log
+git status
 
+# ================
+# Push updates
 
+git config credential.helper store
 
+git commit -m "Commit message"
+git push origin master
 
+Cece2002
+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
 
-
+# ================
 
 
 
@@ -193,4 +213,7 @@ e.g. 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
 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
 
 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
+
+
+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
 

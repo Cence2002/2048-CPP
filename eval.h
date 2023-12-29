@@ -71,7 +71,7 @@ Eval eval_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &ma
     for (const Dir dir: DIRS) {
         u64 afterstate = moved_board<N>(state, dir);
         if (afterstate == state) { continue; }
-        s_t reward = get_reward<N>(state, dir);
+        const s_t reward = get_reward<N>(state, dir);
         r_t eval = reward + eval_afterstate<N>(afterstate, max_depth, max_prob, max_states);
         if (best.dir == None || eval > best.eval) {
             best = {dir, eval, reward, afterstate};
@@ -79,13 +79,17 @@ Eval eval_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &ma
     }
     //TODO maybe turn on
     //if (best.dir == None) { best.eval = eval_board<N>(state) - 1e7; }
+    //TODO maybe turn off (against avoiding negative evals more than losing)
+    best.eval += 1;
     return best;
 }
 
 template<u8 N>
 r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, const u64 &max_states) {
     if (max_depth == 0 || max_prob < 1 || max_states == 0) {
-        return eval_board<N>(afterstate);
+        //TODO maybe replace (against avoiding negative evals more than losing)
+        //return eval_board<N>(afterstate)
+        return max(0, eval_board<N>(afterstate));
     }
     /*const u8 empty = count_empty<N>(afterstate);
     max_prob /= r_t(empty);
@@ -104,10 +108,10 @@ r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob
     }
     return avg_eval / r_t(empty);*/
     u64 empty = empty_mask<N>(afterstate);
-    u8 count = popcnt(empty);
+    const u8 count = popcnt(empty);
     u64 mask = 1;
     r_t sum = 0;
-    while (count) {
+    for (u8 i = 0; i < count;) {
         if (empty & mask) {
             for (const auto &[shift, prob]: SHIFTS) {
                 sum += prob * eval_state<N>(
@@ -116,11 +120,11 @@ r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob
                         max_prob * prob,
                         max_states).eval;
             }
-            --count;
+            ++i;
         }
         mask <<= 4;
     }
-    return sum / r_t(popcnt(empty));
+    return sum / r_t(count);
 }
 
 template<u8 N>
@@ -138,4 +142,10 @@ Eval limited_states_player(u64 board, u64 states) {
         best = eval;
     }
     return best;
+}
+
+template<u8 N>
+u64 downgraded(u64 board, const u8 threshold) {
+    //TODO finish
+    return board;
 }

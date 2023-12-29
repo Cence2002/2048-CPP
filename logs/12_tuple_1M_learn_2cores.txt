@@ -1,0 +1,163 @@
+Learning started (10 episodes, LR=0.1)
+Testing started (10000 games)
+    Move per us:    	7.67488
+    Eval per us:    	3.53319
+    Ms per game:    	0.136647
+    Move per game:  	261.373
+    Score per game: 	3114.87
+Testing finished (1.36651 s)
+
+Episode 1
+Training started (100000 games)
+    Move per us:    	3.13829
+    Eval per us:    	4.1578
+    Update per us:  	0.9882
+    Ms per game:    	1.54525
+Training finished (154.525 s)
+Testing started (10000 games)
+    Move per us:    	6.37801
+    Eval per us:    	2.93653
+    Ms per game:    	1.80663
+    Move per game:  	2881.68
+    Score per game: 	61691.4
+Testing finished (18.0663 s)
+
+Episode 2
+Training started (100000 games)
+    Move per us:    	3.01647
+    Eval per us:    	4.0239
+    Update per us:  	0.949186
+    Ms per game:    	2.87909
+Training finished (287.909 s)
+Testing started (10000 games)
+    Move per us:    	6.14854
+    Eval per us:    	2.80773
+    Ms per game:    	2.16387
+    Move per game:  	3327.83
+    Score per game: 	72637.1
+Testing finished (21.6388 s)
+
+Episode 3
+Training started (100000 games)
+    Move per us:    	3.00311
+    Eval per us:    	3.98032
+    Update per us:  	0.951614
+    Ms per game:    	4.05904
+Training finished (405.904 s)
+Testing started (10000 games)
+    Move per us:    	6.26605
+    Eval per us:    	2.84791
+    Ms per game:    	3.23051
+    Move per game:  	5063.02
+    Score per game: 	119094
+Testing finished (32.3051 s)
+
+Episode 4
+Training started (100000 games)
+    Move per us:    	3.03571
+    Eval per us:    	3.99771
+    Update per us:  	0.956973
+    Ms per game:    	4.83457
+Training finished (483.457 s)
+Testing started (10000 games)
+    Move per us:    	6.19783
+    Eval per us:    	2.81439
+    Ms per game:    	3.48953
+    Move per game:  	5409.17
+    Score per game: 	128335
+Testing finished (34.8953 s)
+
+Episode 5
+Training started (100000 games)
+    Move per us:    	3.03174
+    Eval per us:    	3.98993
+    Update per us:  	0.953313
+    Ms per game:    	4.9727
+Training finished (497.27 s)
+Testing started (10000 games)
+    Move per us:    	6.2292
+    Eval per us:    	2.82799
+    Ms per game:    	3.523
+    Move per game:  	5488.95
+    Score per game: 	130520
+Testing finished (35.2301 s)
+
+Episode 6
+Training started (100000 games)
+    Move per us:    	3.01404
+    Eval per us:    	3.9598
+    Update per us:  	0.949767
+    Ms per game:    	5.08782
+Training finished (508.782 s)
+Testing started (10000 games)
+    Move per us:    	6.20648
+    Eval per us:    	2.81728
+    Ms per game:    	3.58766
+    Move per game:  	5569.57
+    Score per game: 	132737
+Testing finished (35.8766 s)
+
+Episode 7
+Training started (100000 games)
+    Move per us:    	2.9771
+    Eval per us:    	3.92568
+    Update per us:  	0.936525
+    Ms per game:    	5.18952
+Training finished (518.952 s)
+Testing started (10000 games)
+    Move per us:    	6.21136
+    Eval per us:    	2.81823
+    Ms per game:    	3.53611
+    Move per game:  	5493.04
+    Score per game: 	130760
+Testing finished (35.3612 s)
+
+Episode 8
+Training started (100000 games)
+    Move per us:    	3.00762
+    Eval per us:    	3.95917
+    Update per us:  	0.944896
+    Ms per game:    	5.17104
+Training finished (517.104 s)
+Testing started (10000 games)
+    Move per us:    	6.22458
+    Eval per us:    	2.82451
+    Ms per game:    	3.66933
+    Move per game:  	5712.42
+    Score per game: 	136457
+Testing finished (36.6934 s)
+
+Episode 9
+Training started (100000 games)
+    Move per us:    	3.00128
+    Eval per us:    	3.95067
+    Update per us:  	0.942706
+    Ms per game:    	5.21881
+Training finished (521.881 s)
+Testing started (10000 games)
+    Move per us:    	6.13662
+    Eval per us:    	2.78501
+    Ms per game:    	3.66964
+    Move per game:  	5632.21
+    Score per game: 	134318
+Testing finished (36.6965 s)
+
+Episode 10
+Training started (100000 games)
+    Move per us:    	3.00146
+    Eval per us:    	3.94191
+    Update per us:  	0.944889
+    Ms per game:    	5.26016
+Training finished (526.016 s)
+Testing started (10000 games)
+    Move per us:    	6.15471
+    Eval per us:    	2.7823
+    Ms per game:    	3.71845
+    Move per game:  	5724.01
+    Score per game: 	136742
+Testing finished (37.1846 s)
+
+Learning finished (4745.75 s)
+
+Timestamp: 1229_173830
+Saving weights-1229_173830.bin finished: 468823 us
