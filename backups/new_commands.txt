@@ -77,7 +77,7 @@ git status
 
 git config credential.helper store
 
-git commit -m "Commit message"
+git commit -m "Update"
 git push origin master
 
 Cence2002
