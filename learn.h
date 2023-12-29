@@ -71,11 +71,14 @@ Game_stat testing_episode() {
 
     //testing_stats.update_board_stats(board, score, moves);
 
+    cnt++;
+
     return {board, score, moves};
 }
 
 template<u8 N>
 vector<Game_stat> run_training_episodes(u32 games, u8 threads) {
+    cnt = 0;
     srand(42);
     cout << "Training started (" << games << " games)" << endl;
 
@@ -125,12 +128,14 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads) {
     }
 
     cout << "Training finished (" << time_since(start) / 1e6 << " s)" << endl;
+    cout << "cnt: " << cnt << endl;
 
     return games_stats;
 }
 
 template<u8 N>
 vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
+    cnt = 0;
     srand(42);
     cout << "Testing started (" << games << " games)" << endl;
 
@@ -181,6 +186,7 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
     }
 
     cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << endl;
+    cout << "cnt: " << cnt << endl;
 
     return games_stats;
 }
