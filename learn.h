@@ -2,7 +2,6 @@
 
 #include "eval.h"
 
-constexpr r_t tuple_init = 2e5;
 r_t learning_rate = 0;
 
 template<u8 N>

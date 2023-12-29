@@ -91,7 +91,75 @@ array<Tuple<5>, 2> tuples_3_5 = {
 
 
 auto tuples_4 = tuples_4_bence;
-constexpr u8 tuples_size_4 = 4;//tuples_4.size();
+constexpr u8 tuples_size_4 = tuples_4.size();
 
 auto tuples_3 = tuples_3_4;
 constexpr u8 tuples_size_3 = tuples_3.size();
+
+constexpr r_t tuple_init = 2e5;
+
+template<u8 N>
+void save_packed_weights(const string &ts_str) {
+    const string filename = "weights-" + ts_str + ".bin";
+    auto start = time_now();
+    ofstream file("../weights_backups/" + filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Error opening: " << filename << endl;
+        return;
+    }
+    if constexpr (N == 4) {
+        for (u8 i = 0; i < tuples_size_4; ++i) {
+            auto &t = tuples_4[i];
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            file.write(t.name.c_str(), streamsize(t.name.size()));
+            file.write((const char *) &size, sizeof(size));
+            file.write((const char *) &t.weights[0], streamsize(size));
+        }
+    } else {
+        for (u8 i = 0; i < tuples_size_3; ++i) {
+            auto &t = tuples_3[i];
+            size_t size = t.weights.size() * sizeof(t.weights[0]);
+            file.write(t.name.c_str(), streamsize(t.name.size()));
+            file.write((const char *) &size, sizeof(size));
+            file.write((const char *) &t.weights[0], streamsize(size));
+        }
+    }
+    file.close();
+    cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
+}
+
+template<u8 N>
+void load_packed_weights(const string &ts_str) {
+    const string filename = "weights-" + ts_str + ".bin";
+    auto start = time_now();
+    ifstream file("../weights_backups/" + filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Error opening: " << filename << endl;
+        return;
+    }
+    if constexpr (N == 4) {
+        for (u8 i = 0; i < tuples_size_4; ++i) {
+            auto &t = tuples_4[i];
+            size_t size;
+            string nameBuffer(t.name.size(), '\0');
+            file.read(&nameBuffer[0], streamsize(t.name.size()));
+            assert(nameBuffer == t.name);
+            file.read((char *) &size, sizeof(size));
+            assert(size == t.weights.size() * sizeof(t.weights[0]));
+            file.read((char *) &t.weights[0], streamsize(size));
+        }
+    } else {
+        for (u8 i = 0; i < tuples_size_3; ++i) {
+            auto &t = tuples_3[i];
+            size_t size;
+            string nameBuffer(t.name.size(), '\0');
+            file.read(&nameBuffer[0], streamsize(t.name.size()));
+            assert(nameBuffer == t.name);
+            file.read((char *) &size, sizeof(size));
+            assert(size == t.weights.size() * sizeof(t.weights[0]));
+            file.read((char *) &t.weights[0], streamsize(size));
+        }
+    }
+    file.close();
+    cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
+}

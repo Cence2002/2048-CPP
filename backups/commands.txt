@@ -66,6 +66,7 @@ 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
 
 find . -type f -name '*DATE.bin'
 find . -type f -name '*DATE.bin' | xargs git add
+
 git add -A weights_backups/*
 git add output.log
 git status
@@ -98,3 +99,5 @@ y
 [note: Google cloud compute engine]
 [select: repo, workflow, project]
 e.g. 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
+
+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

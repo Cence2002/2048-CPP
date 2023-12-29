@@ -117,7 +117,7 @@ string get_time_str() {
     auto ts = time(nullptr);
     auto local_ts = *localtime(&ts);
     ostringstream temp;
-    temp << put_time(&local_ts, "%m%d-%H-%M-%S");
+    temp << put_time(&local_ts, "%m%d_%H%M%S");
     return temp.str();
 }
 

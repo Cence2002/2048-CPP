@@ -12,16 +12,16 @@ void init() {
     init_moves_123();
 
     for (auto &t: tuples_4) {
-        t.weights.fill(tuple_init / (8 * tuples_4.size()));
+        t.weights.fill(tuple_init / (8 * tuples_size_4));
     }
     for (auto &t: tuples_3) {
-        t.weights.fill(tuple_init / (8 * tuples_3.size()));
+        t.weights.fill(tuple_init / (8 * tuples_size_3));
     }
 
     cout << "Init time: " << time_since(start) / 1e6 << endl << endl;
 }
 
-template<u8 N>
+/*template<u8 N>
 void save_all_weights(const string &ts_str) {
     const string dir = "../weights_backups";
     if constexpr (N == 4) {
@@ -61,7 +61,8 @@ void load_all_weights(const string &ts_str) {
         }
     }
     cout << endl;
-}
+}*/
+
 
 template<u8 N>
 s_t play_random_game() {
@@ -395,8 +396,9 @@ void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games) {
     learning_rate = LR;
     run_learning<N>(episodes, training_games, testing_games);
     string ts_str = get_time_str();
-    cout << "Saving weights: " << ts_str << endl;
-    save_all_weights<N>(ts_str);
+    cout << "Timestamp: " << ts_str << endl;
+    //save_all_weights<N>(ts_str);
+    save_packed_weights<N>(ts_str);
 }
 
 template<u8 N>
@@ -463,9 +465,9 @@ void run() {
 
 template<u8 N>
 void run2() {
-    load_all_weights<N>("1227-06-17-09");
+    //load_packed_weights<N>("1229_114706");
     for (u32 i = 0; i < 1; ++i) {
-        fixed_learn<N>(0.1, 15, 1000000, 100000);
+        fixed_learn<N>(0.1, 10, 100000, 10000);
     }
 }
 
