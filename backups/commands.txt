@@ -1,7 +1,21 @@
 # ==============
 # Create VM
 
-gcloud compute instances create high-perf-asdfg-1 --project=high-verve-402512 --zone=europe-west1-b --machine-type=n2-standard-2 --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default --maintenance-policy=MIGRATE --provisioning-model=STANDARD --service-account=267481148324-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --tags=http-server,https-server --create-disk=auto-delete=yes,boot=yes,device-name=high-perf-asdfg-1,image=projects/debian-cloud/global/images/debian-11-bullseye-v20231010,mode=rw,size=40,type=projects/high-verve-402512/zones/europe-west1-b/diskTypes/pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --labels=goog-ec-src=vm_add-gcloud --reservation-affinity=any
+gcloud compute instances create high-perf-asdfg-1 \
+    --project=high-verve-402512 \
+    --zone=europe-west1-b \
+    --machine-type=n2-standard-2 \
+    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
+    --maintenance-policy=MIGRATE \
+    --provisioning-model=STANDARD \
+    --service-account=267481148324-compute@developer.gserviceaccount.com \
+    --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
+    --tags=http-server,https-server --create-disk=auto-delete=yes,boot=yes,device-name=high-perf-asdfg-1,image=projects/debian-cloud/global/images/debian-11-bullseye-v20231010,mode=rw,size=40,type=projects/high-verve-402512/zones/europe-west1-b/diskTypes/pd-balanced \
+    --no-shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring \
+    --labels=goog-ec-src=vm_add-gcloud \
+    --reservation-affinity=any
 
 # ==============
 # Setup
@@ -53,9 +67,6 @@ top -i
 # Update
 
 git fetch origin
-Cence2002
-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
-
 git reset --hard origin/master
 Cence2002
 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
@@ -103,3 +114,21 @@ e.g. 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
 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
 
 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
+
+
+gcloud compute instances create high-performance \
+    --project=high-verve-402512 \
+    --zone=europe-west1-b \
+    --machine-type=n2d-highcpu-8 \
+    --network-interface=network-tier=PREMIUM,stack-type=IPV4_ONLY,subnet=default \
+    --maintenance-policy=MIGRATE \
+    --provisioning-model=STANDARD \
+    --service-account=267481148324-compute@developer.gserviceaccount.com \
+    --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
+    --create-disk=auto-delete=yes,boot=yes,device-name=high-performance,image=projects/debian-cloud/global/images/debian-11-bullseye-v20231212,mode=rw,size=50,type=projects/high-verve-402512/zones/europe-west1-b/diskTypes/pd-standard \
+    --no-shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring \
+    --labels=goog-ec-src=vm_add-gcloud \
+    --reservation-affinity=any \
+    --threads-per-core=2
