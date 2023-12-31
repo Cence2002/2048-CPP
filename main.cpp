@@ -471,6 +471,12 @@ void run2() {
     for (u32 i = 0; i < 10; ++i) {
         //fixed_learn<N>(0.1, 5, 1000000, 100000, 8);
     }
+
+    auto start = time_now();
+    run_testing_episodes<N>(10000, 0);
+    cout << "Testing time: " << time_since(start) / 1e6 << endl;
+    run_testing_episodes<N>(10000, 8);
+    cout << "Testing time: " << time_since(start) / 1e6 << endl;
 }
 
 u32 compute_test(u32 n) {
@@ -487,7 +493,7 @@ u32 compute_test(u32 n) {
 
 u64 compute_test_sequential() {
     u64 sum = 0;
-    for (u32 i = 0; i < 10; ++i) {
+    for (u32 i = 0; i < 5; ++i) {
         sum += compute_test(i);
     }
     return sum;
@@ -497,7 +503,7 @@ u64 compute_test_sequential() {
 u64 compute_test_parallel() {
     u64 sum = 0;
     vector<thread> threads;
-    for (u32 i = 0; i < 10; ++i) {
+    for (u32 i = 0; i < 5; ++i) {
         threads.emplace_back([i, &sum]() {
             sum += compute_test(i);
         });
@@ -515,6 +521,7 @@ void test_seq_vs_par() {
     start = time_now();
     cout << compute_test_parallel() << endl;
     cout << "Parallel time: " << time_since(start) / 1e6 << endl;
+    cout << endl;
 }
 
 int main() {

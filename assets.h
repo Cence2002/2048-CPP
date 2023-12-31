@@ -17,7 +17,7 @@
 #include <thread>
 
 #define DEBUG 0
-#define REDIRECT 1
+#define REDIRECT 0
 
 using namespace std;
 
