@@ -469,16 +469,18 @@ void run2() {
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 10; ++i) {
-        fixed_learn<N>(0.1, 5, 1000000, 100000, 8);
+        //fixed_learn<N>(0.1, 5, 1000000, 100000, 8);
     }
 }
 
 u32 compute_test(u32 n) {
-    for (u32 i = 0; i < 10000000; ++i) {
-        n += i;
-        n %= 1000000007;
-        n *= i;
-        n %= 1000000007;
+    for (u32 t = 0; t < 10; ++t) {
+        for (u32 i = 0; i < 10000000; ++i) {
+            n += i;
+            n %= 1000000007;
+            n *= i;
+            n %= 1000000007;
+        }
     }
     return n;
 }
