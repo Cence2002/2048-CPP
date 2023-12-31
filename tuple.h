@@ -2,6 +2,14 @@
 
 #include "board.h"
 
+constexpr r_t tuple_init = 2e5;
+r_t learning_rate = 0;
+
+const r_t beta_0 = 0.99;
+const r_t beta_1 = 0.99;
+const r_t beta_2 = 0.999;
+const r_t epsilon = 1e-8;
+
 template<u32 N>
 struct Tuple {
     const string name;
@@ -15,6 +23,59 @@ struct Tuple {
     inline r_t &operator[](const u32 index) {
         return weights[index];
     }
+
+    inline void update_const(const u32 index, const r_t gradient) {
+        weights[index] += gradient * learning_rate;
+    }
+
+    r_t pow_beta1 = 1;
+    r_t pow_beta2 = 1;
+
+    //array<r_t, E(N * 4)> sum{};
+    //array<r_t, E(N * 4)> sum_abs{};
+    //array<r_t, E(N * 4)> sum_squares{};
+    //array<r_t, E(N * 4)> sum_squares_max{};
+
+    /*inline void update_coherence(const u32 index, const r_t gradient) {
+        sum[index] += gradient;
+        sum_abs[index] += abs(gradient);
+        const r_t delta = safe_div(abs(sum[index]), sum_abs[index]);
+        weights[index] += gradient * learning_rate * delta;
+    }
+
+    inline void update_coherence_sqrt(const u32 index, const r_t gradient) {
+        sum[index] *= beta_0;
+        sum_abs[index] *= beta_0;
+        sum[index] += gradient;
+        sum_abs[index] += abs(gradient);
+        const r_t delta = sqrt(safe_div(abs(sum[index]), sum_abs[index]));
+        weights[index] += gradient * learning_rate * delta;
+    }
+
+    inline void update_adam(const u32 index, const r_t gradient) {
+        pow_beta1 *= beta_1;
+        pow_beta2 *= beta_2;
+        sum[index] = beta_1 * sum[index] + (1 - beta_1) * gradient;
+        sum_squares[index] = beta_2 * sum_squares[index] + (1 - beta_2) * gradient * gradient;
+        sum_squares_max[index] = max(sum_squares_max[index], sum_squares[index]);
+        const r_t m_norm = sum[index] / (1 - pow_beta1);
+        const r_t v_norm = sum_squares[index] / (1 - pow_beta2);
+        weights[index] += learning_rate * m_norm / (sqrt(v_norm) + epsilon);
+    }
+
+    inline void update_momentum(const u32 index, const r_t gradient) {
+        pow_beta1 *= beta_1;
+        sum[index] = beta_1 * sum[index] + (1 - beta_1) * gradient;
+        const r_t m_norm = sum[index] / (1 - pow_beta1);
+        weights[index] += learning_rate * m_norm;
+    }
+
+    inline void update_rmsprop(const u32 index, const r_t gradient) {
+        pow_beta2 *= beta_2;
+        sum_squares[index] = beta_2 * sum_squares[index] + (1 - beta_2) * gradient * gradient;
+        const r_t v_norm = sum_squares[index] / (1 - pow_beta2);
+        weights[index] += learning_rate * gradient / (sqrt(v_norm) + epsilon);
+    }*/
 };
 
 array<Tuple<6>, 12> tuples_4_bence = {
@@ -95,8 +156,6 @@ constexpr u8 tuples_size_4 = tuples_4.size();
 
 auto tuples_3 = tuples_3_4;
 constexpr u8 tuples_size_3 = tuples_3.size();
-
-constexpr r_t tuple_init = 2e5;
 
 template<u8 N>
 void save_packed_weights(const string &ts_str) {

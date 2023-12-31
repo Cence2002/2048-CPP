@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "general_board.h"
 #include "board.h"
 
 /*

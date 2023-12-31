@@ -31,8 +31,6 @@ cmake --version
 git-lfs --version
 
 git clone https://github.com/Cence2002/2048-CPP.git
-Cence2002
-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
 
 # ================
 # Setup git-lfs

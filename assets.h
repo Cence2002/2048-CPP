@@ -30,8 +30,8 @@ using u64 = uint64_t;
 // using l_t = uint16_t; // line type
 // using b_t = uint64_t; // board type
 
-using r_t = float; // real type
-using s_t = uint32_t; // score type
+using r_t = float;
+using s_t = uint32_t;
 
 enum Dir : u8 {
     None = 0,

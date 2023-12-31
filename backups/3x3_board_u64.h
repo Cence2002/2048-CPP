@@ -99,7 +99,6 @@ inline u64 moved_board(const u64 board, const Dir d) {
 }
 
 void init_tables() {
-    //init to 0
     for (u16 line = 0; line < (1 << 12); line++) {
         rewards[line] = 0;
 

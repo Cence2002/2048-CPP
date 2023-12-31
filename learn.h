@@ -2,8 +2,6 @@
 
 #include "eval.h"
 
-r_t learning_rate = 0;
-
 template<u8 N>
 Game_stat training_episode() {
     vector<r_t> evals;

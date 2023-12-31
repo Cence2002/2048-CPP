@@ -468,13 +468,57 @@ void run2() {
     //load_packed_weights<N>("1229_114706");
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
-    for (u32 i = 0; i < 3; ++i) {
-        fixed_learn<N>(0.1, 10, 1000000, 100000, 0);
+    for (u32 i = 0; i < 10; ++i) {
+        fixed_learn<N>(0.1, 5, 1000000, 100000, 8);
     }
+}
+
+u32 compute_test(u32 n) {
+    for (u32 i = 0; i < 10000000; ++i) {
+        n += i;
+        n %= 1000000007;
+        n *= i;
+        n %= 1000000007;
+    }
+    return n;
+}
+
+u64 compute_test_sequential() {
+    u64 sum = 0;
+    for (u32 i = 0; i < 10; ++i) {
+        sum += compute_test(i);
+    }
+    return sum;
+}
+
+//with the thread library
+u64 compute_test_parallel() {
+    u64 sum = 0;
+    vector<thread> threads;
+    for (u32 i = 0; i < 10; ++i) {
+        threads.emplace_back([i, &sum]() {
+            sum += compute_test(i);
+        });
+    }
+    for (auto &t: threads) {
+        t.join();
+    }
+    return sum;
+}
+
+void test_seq_vs_par() {
+    auto start = time_now();
+    cout << compute_test_sequential() << endl;
+    cout << "Sequential time: " << time_since(start) / 1e6 << endl;
+    start = time_now();
+    cout << compute_test_parallel() << endl;
+    cout << "Parallel time: " << time_since(start) / 1e6 << endl;
 }
 
 int main() {
     srand(42);
+
+    test_seq_vs_par();
 
     //run_tests();
     //cout << endl;
@@ -482,7 +526,7 @@ int main() {
     //perf_test_general(10000);
 
     if (REDIRECT) {
-        ofstream file("../output.log", std::ios_base::out | std::ios_base::trunc);
+        ofstream file("../output.log", ios_base::out | ios_base::trunc);
         streambuf *consoleBuffer = cout.rdbuf();
         streambuf *fileBuffer = file.rdbuf();
         cout.rdbuf(fileBuffer);
