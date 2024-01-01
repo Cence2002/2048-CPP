@@ -472,32 +472,12 @@ void run2() {
     //perf_test(10000);
     //perf_test_general(10000);
 
-    //load_packed_weights<N>("1229_114706");
+    load_packed_weights<N>("1231_214853");
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
-    for (u32 i = 0; i < 10; ++i) {
-        //fixed_learn<N>(0.1, 5, 10000, 10000, 16);
+    for (u32 i = 0; i < 7; ++i) {
+        fixed_learn<N>(0.1, 10, 1000000, 100000, threads);
     }
-
-    r_t speed[60];
-    for (u32 i = 0; i < 60; ++i) {
-        speed[i] = 0;
-        auto start = time_now();
-        for (u32 j = 0; j < 10; ++j) {
-            run_testing_episodes<N>(2000, i);
-        }
-        speed[i] += r_t(time_since(start));
-    }
-    int best = 1e9;
-    int best_i = 0;
-    for (u32 i = 0; i < 60; ++i) {
-        cout << i << ": " << speed[i] << endl;
-        if (speed[i] < best) {
-            best = speed[i];
-            best_i = i;
-        }
-    }
-    cout << "Best number of threads: " << best_i << endl;
 }
 
 int main() {

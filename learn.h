@@ -168,6 +168,7 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
         testing_stats.print_max_game_stats();
         testing_stats.print_score_cell_stats();
     } else {
+        testing_stats.print_score_cell_stats();
         //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
         //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
         cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << endl;

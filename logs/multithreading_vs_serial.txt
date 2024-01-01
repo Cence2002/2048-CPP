@@ -1,0 +1,123 @@
+hervay_bence@ultra-performance:~/2048-CPP$ cat cmake_build/nohup.out
+Init time: 0.046984
+Number of cores: 32
+Learning started (50 episodes, LR=0.1)
+Testing started (10000 games)
+    Ms per game:        0.272346
+    Move per game:      261.795
+    Score per game:     3124.27
+Testing finished (2.72351 s)
+
+Episode 1
+Training started (10000 games)
+    Ms per game:        1.11272
+    Move per game:      604.86
+Training finished (11.1273 s)
+Testing started (10000 games)
+    Ms per game:        1.01175
+    Move per game:      775.575
+    Score per game:     12855
+Testing finished (10.1175 s)
+
+Episode 2
+Training started (10000 games)
+    Ms per game:        1.65862
+    Move per game:      891.921
+Training finished (16.5862 s)
+Testing started (10000 games)
+    Ms per game:        1.31988
+    Move per game:      1012.37
+    Score per game:     17848.1
+Testing finished (13.1988 s)
+
+Episode 3
+Training started (10000 games)
+Init time: 0.047513
+Number of cores: 32
+Learning started (50 episodes, LR=0.1)
+Testing started (10000 games)
+    Ms per game:        0.0180896
+    Move per game:      260.964
+    Score per game:     3108.16
+Testing finished (0.180644 s)
+
+Episode 1
+Training started (10000 games)
+    Ms per game:        0.282148
+    Move per game:      591.469
+Training finished (2.81701 s)
+Testing started (10000 games)
+    Ms per game:        0.0620944
+    Move per game:      760.04
+    Score per game:     12552.1
+Testing finished (0.619994 s)
+
+Episode 2
+Training started (10000 games)
+    Ms per game:        0.363047
+    Move per game:      910.366
+Training finished (3.62471 s)
+Testing started (10000 games)
+    Ms per game:        0.0890596
+    Move per game:      1092.03
+    Score per game:     19585.4
+Testing finished (0.889209 s)
+
+Episode 3
+Training started (10000 games)
+    Ms per game:        0.462962
+    Move per game:      1290.33
+Training finished (4.62226 s)
+Testing started (10000 games)
+    Ms per game:        0.119069
+    Move per game:      1505.97
+    Score per game:     28654.3
+Testing finished (1.18883 s)
+
+Episode 4
+Training started (10000 games)
+Init time: 0.048159
+Number of cores: 32
+Learning started (50 episodes, LR=0.1)
+Testing started (10000 games)
+    Ms per game:        0.0246127
+    Move per game:      260.964
+    Score per game:     3111.28
+Testing finished (0.246169 s)
+
+Episode 1
+Training started (10000 games)
+    Ms per game:        0.345172
+    Move per game:      602.034
+Training finished (3.45176 s)
+Testing started (10000 games)
+    Ms per game:        0.0681934
+    Move per game:      767.897
+    Score per game:     12695.3
+Testing finished (0.68197 s)
+
+Episode 2
+Training started (10000 games)
+    Ms per game:        0.42525
+    Move per game:      881.281
+Training finished (4.25255 s)
+Testing started (10000 games)
+    Ms per game:        0.0892381
+    Move per game:      1026.18
+    Score per game:     18132.7
+Testing finished (0.892424 s)
+
+Episode 3
+Training started (10000 games)
+    Ms per game:        0.534335
+    Move per game:      1160.8
+Training finished (5.34339 s)
+Testing started (10000 games)
+    Ms per game:        0.117322
+    Move per game:      1356.63
+    Score per game:     25449.6
+Testing finished (1.17326 s)
+
+Episode 4
+Training started (10000 games)
+hervay_bence@ultra-performance:~/2048-CPP$
