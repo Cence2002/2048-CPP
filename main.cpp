@@ -465,6 +465,13 @@ void run() {
 template<u8 N>
 void run2() {
     init();
+
+    //run_tests();
+    test_seq_vs_par();
+    //cout << endl;
+    //perf_test(10000);
+    //perf_test_general(10000);
+
     //load_packed_weights<N>("1229_114706");
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
@@ -481,14 +488,6 @@ void run2() {
 
 int main() {
     srand(42);
-
-    test_seq_vs_par();
-
-    //run_tests();
-    //cout << endl;
-    //perf_test(10000);
-    //perf_test_general(10000);
-
     if (REDIRECT) {
         ofstream file("../output.log", ios_base::out | ios_base::trunc);
         streambuf *consoleBuffer = cout.rdbuf();

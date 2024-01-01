@@ -59,6 +59,12 @@ Game_stat testing_episode() {
     while (true) {
         const auto [dir, eval, reward, afterstate]
                 = eval_moves<N>(board);
+        //TODO remove
+        //const Dir dir = Dir(random(4) + 1);
+        //const s_t reward = get_reward<N>(board, dir);
+        //const u64 afterstate = moved_board<N>(board, dir);
+        if (afterstate == board) { continue; }
+
         if (dir == None) { break; }
         score += reward;
         ++moves;
@@ -161,10 +167,9 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
         const u32 threads_games = games / threads;
         for (u8 t = 0; t < threads; ++t) {
             all_threads.emplace_back([t, threads_games]() {
-                /*for (u32 i = 0; i < threads_games; ++i) {
+                for (u32 i = 0; i < threads_games; ++i) {
                     testing_episode<N>();
-                }*/
-                compute_test_sequential();
+                }
             });
         }
         for (auto &thread: all_threads) {
