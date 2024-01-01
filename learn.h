@@ -14,7 +14,7 @@ Game_stat training_episode() {
     fill_board<N>(board);
     while (true) {
         const auto [dir, eval, reward, afterstate]
-                = eval_moves<N>(board);
+                = eval_state<N>(board);
         if (dir == None) { break; }
         evals.push_back(eval);
         rewards.push_back(reward);
@@ -35,7 +35,7 @@ Game_stat training_episode() {
 
     r_t target = 0;
     for (u32 t = moves - 1; t < moves; --t) {
-        const r_t error = target - eval_board<N>(afterstates[t]);
+        const r_t error = target - add_weights<N>(afterstates[t]);
         target = r_t(rewards[t]) + update_weights<N>(afterstates[t], error * scaled_learning_rate);
 
         //const r_t error = target - evals[t];
@@ -56,7 +56,7 @@ Game_stat testing_episode() {
     fill_board<N>(board);
     while (true) {
         const auto [dir, eval, reward, afterstate]
-                = eval_moves<N>(board);
+                = eval_state<N>(board);
         if (dir == None) { break; }
         score += reward;
         ++moves;

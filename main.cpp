@@ -12,10 +12,12 @@ void init() {
     init_moves_123();
 
     for (auto &t: tuples_4) {
-        t.weights.fill(tuple_init / (8 * tuples_size_4));
+        //t.weights.fill(tuple_init / (8 * tuples_size_4));
+        t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_4));
     }
     for (auto &t: tuples_3) {
-        t.weights.fill(tuple_init / (8 * tuples_size_3));
+        //t.weights.fill(tuple_init / (8 * tuples_size_3));
+        t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_3));
     }
 
     cout << "Init time: " << time_since(start) / 1e6 << endl;
@@ -118,7 +120,7 @@ s_t play_game() {
     fill_board<N>(board);
     while (!game_over<N>(board)) {
         const auto [dir, eval, reward, afterstate] =
-                limited_states_player<N>(board, 1000);
+                expectimax_limited_states<N>(board, 100);
         if (dir == None) { break; }
         score += reward;
         board = afterstate;
@@ -476,8 +478,25 @@ void run2() {
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 7; ++i) {
-        fixed_learn<N>(0.1, 10, 1000000, 100000, threads);
+        //fixed_learn<N>(0.1, 10, 1000000, 100000, threads);
     }
+
+    /*r_t avg = 0;
+    for (u32 i = 0; i < 10; ++i) {
+        avg += play_game<N>();
+    }
+    cout << "Average score: " << avg / 10 << endl;*/
+
+    auto start = time_now();
+    Endgame eg(0xFFFFFFF700000000ull);
+    eg.init_goals(threads);
+    cout << "Init time: " << time_since(start) / 1e6 << endl;
+
+    start = time_now();
+    eg.eval_all_states();
+    cout << "Eval time: " << time_since(start) / 1e6 << endl;
+
+    //eg.play_game();
 }
 
 int main() {

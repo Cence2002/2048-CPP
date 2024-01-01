@@ -6,7 +6,7 @@
 #define DOWNGRADE 0
 
 template<u8 N>
-inline r_t eval_board(const u64 board) {
+inline r_t add_weights(const u64 board) {
     //++run_stats.eval_board_counter;
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
@@ -49,14 +49,14 @@ inline r_t update_weights(const u64 board, const r_t gradient) {
 }
 
 template<u8 N>
-inline Eval eval_moves(const u64 state) {
+inline Eval eval_state(const u64 state) {
     //++run_stats.eval_moves_counter;
     Eval best = {None, 0, 0, 0};
     for (const Dir dir: DIRS) {
         u64 afterstate = moved_board<N>(state, dir);
         if (afterstate == state) { continue; }
         s_t reward = get_reward<N>(state, dir);
-        r_t eval = r_t(reward) + eval_board<N>(afterstate);
+        r_t eval = r_t(reward) + add_weights<N>(afterstate);
         if (best.dir == None || eval > best.eval) {
             best = {dir, eval, reward, afterstate};
         }
@@ -65,17 +65,17 @@ inline Eval eval_moves(const u64 state) {
 }
 
 template<u8 N>
-r_t eval_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_states);
+r_t expectimax_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_states);
 
 template<u8 N>
-Eval eval_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_states) {
+Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_states) {
     if (max_states) { --max_states; }
     Eval best = {None, 0, 0, 0};
     for (const Dir dir: DIRS) {
         u64 afterstate = moved_board<N>(state, dir);
         if (afterstate == state) { continue; }
         const s_t reward = get_reward<N>(state, dir);
-        r_t eval = reward + eval_afterstate<N>(afterstate, max_depth, max_prob, max_states);
+        r_t eval = reward + expectimax_afterstate<N>(afterstate, max_depth, max_prob, max_states);
         if (best.dir == None || eval > best.eval) {
             best = {dir, eval, reward, afterstate};
         }
@@ -87,12 +87,12 @@ Eval eval_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &ma
 }
 
 template<u8 N>
-r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, const u64 &max_states) {
+r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, u64 &max_states) {
     if (max_depth == 0 || max_prob < 1 || max_states == 0) {
         if (FIXNEGATIVE) {
-            return max(0, eval_board<N>(afterstate));
+            return max(r_t(0), add_weights<N>(afterstate));
         } else {
-            return eval_board<N>(afterstate);
+            return add_weights<N>(afterstate);
         }
     }
     /*const u8 empty = count_empty<N>(afterstate);
@@ -118,7 +118,7 @@ r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob
     for (u8 i = 0; i < count;) {
         if (empty & mask) {
             for (const auto &[shift, prob]: SHIFTS) {
-                sum += prob * eval_state<N>(
+                sum += prob * expectimax_state<N>(
                         afterstate | (mask << shift),
                         max_depth - 1,
                         max_prob * prob,
@@ -132,16 +132,16 @@ r_t eval_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob
 }
 
 template<u8 N>
-Eval limited_depth_prob_player(u64 board, u8 depth, r_t prob) {
+Eval expectimax_limited_depth_prob(u64 board, u8 depth, r_t prob) {
     u64 states = numeric_limits<u64>::max();
-    return eval_state<N>(board, depth, prob, states);
+    return expectimax_state<N>(board, depth, prob, states);
 }
 
 template<u8 N>
-Eval limited_states_player(u64 board, u64 states) {
+Eval expectimax_limited_states(u64 board, u64 states) {
     Eval best = {None, 0, 0, 0};
     for (u8 depth = 0; depth < 100; ++depth) {
-        Eval eval = eval_state<N>(board, depth, r_t(E(depth + 4)), states);
+        Eval eval = expectimax_state<N>(board, depth, r_t(E(depth + 4)), states);
         if (states == 0) { break; }
         best = eval;
     }
@@ -177,7 +177,7 @@ u64 downgraded(u64 board, const u8 threshold = 15) {
 }
 
 template<u8 N>
-Eval evaluate(u64 board) {
+Eval expectimax(u64 board) {
     if (DOWNGRADE) { board = downgraded<4>(board); }
-    return limited_states_player<N>(board, 1000);
+    return expectimax_limited_states<N>(board, 1000);
 }
