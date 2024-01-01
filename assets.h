@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <thread>
+#include <random>
 
 #define DEBUG 0
 #define REDIRECT 0
@@ -60,8 +61,34 @@ constexpr pair<u8, r_t> SHIFTS[2] = {{0, 0.9},
 
 constexpr u64 E(const u8 n) { return u64(1) << n; }
 
+thread_local mt19937 rng(random_device{}());
+
+/*thread_local array<uniform_int_distribution<u32>, 20> dists = {
+        uniform_int_distribution<u32>(0, 0), // should never be used
+        uniform_int_distribution<u32>(0, 0),
+        uniform_int_distribution<u32>(0, 1),
+        uniform_int_distribution<u32>(0, 2),
+        uniform_int_distribution<u32>(0, 3),
+        uniform_int_distribution<u32>(0, 4),
+        uniform_int_distribution<u32>(0, 5),
+        uniform_int_distribution<u32>(0, 6),
+        uniform_int_distribution<u32>(0, 7),
+        uniform_int_distribution<u32>(0, 8),
+        uniform_int_distribution<u32>(0, 9),
+        uniform_int_distribution<u32>(0, 10),
+        uniform_int_distribution<u32>(0, 11),
+        uniform_int_distribution<u32>(0, 12),
+        uniform_int_distribution<u32>(0, 13),
+        uniform_int_distribution<u32>(0, 14),
+        uniform_int_distribution<u32>(0, 15),
+        uniform_int_distribution<u32>(0, 16),
+        uniform_int_distribution<u32>(0, 17),
+        uniform_int_distribution<u32>(0, 18),
+};*/
+
 u32 random(const u32 n) {
-    return rand() % n;
+    uniform_int_distribution<u32> dist(0, n - 1);
+    return dist(rng);
 }
 
 auto time_now() {
