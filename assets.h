@@ -61,8 +61,6 @@ constexpr pair<u8, r_t> SHIFTS[2] = {{0, 0.9},
 constexpr u64 E(const u8 n) { return u64(1) << n; }
 
 u32 random(const u32 n) {
-    //TODO replace
-    //return 0;
     return rand() % n;
 }
 
