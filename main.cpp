@@ -12,59 +12,14 @@ void init() {
     init_moves_123();
 
     for (auto &t: tuples_4) {
-        //t.weights.fill(tuple_init / (8 * tuples_size_4));
         t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_4));
     }
     for (auto &t: tuples_3) {
-        //t.weights.fill(tuple_init / (8 * tuples_size_3));
         t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_3));
     }
 
     cout << "Init time: " << time_since(start) / 1e6 << endl;
 }
-
-/*template<u8 N>
-void save_all_weights(const string &ts_str) {
-    const string dir = "../weights_backups";
-    if constexpr (N == 4) {
-        for (u8 i = 0; i < tuples_size_4; ++i) {
-            auto &t = tuples_4[i];
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            save_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    } else {
-        for (u8 i = 0; i < tuples_size_3; ++i) {
-            auto &t = tuples_3[i];
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            save_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    }
-    cout << endl;
-}
-
-template<u8 N>
-void load_all_weights(const string &ts_str) {
-    const string dir = "../weights_backups";
-    if constexpr (N == 4) {
-        for (u8 i = 0; i < tuples_size_4; ++i) {
-            auto &t = tuples_4[i];
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            load_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    } else {
-        for (u8 i = 0; i < tuples_size_3; ++i) {
-            auto &t = tuples_3[i];
-            const string filename = "weights_" + t.name + "_" + ts_str + ".bin";
-            size_t size = t.weights.size() * sizeof(t.weights[0]);
-            load_array(dir + "/" + filename, (char *) &t.weights, size);
-        }
-    }
-    cout << endl;
-}*/
-
 
 template<u8 N>
 s_t play_random_game() {
@@ -85,7 +40,7 @@ s_t play_random_game() {
 
 template<u8 N>
 s_t play_random_game_general() {
-    Game<N> game;
+    Game <N> game;
     while (!game.is_over()) {
         game.move(Dir(random(4) + 1));
     }
@@ -474,11 +429,11 @@ void run2() {
     //perf_test(10000);
     //perf_test_general(10000);
 
-    load_packed_weights<N>("1231_214853");
+    load_packed_weights<N>("0101_182708");
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
-    for (u32 i = 0; i < 7; ++i) {
-        //fixed_learn<N>(0.1, 10, 1000000, 100000, threads);
+    for (u32 i = 0; i < 5; ++i) {
+        fixed_learn<N>(0.1, 10, 1000000, 100000, threads);
     }
 
     /*r_t avg = 0;
@@ -487,16 +442,14 @@ void run2() {
     }
     cout << "Average score: " << avg / 10 << endl;*/
 
-    auto start = time_now();
+    /*auto start = time_now();
     Endgame eg(0xFFFFFFF700000000ull);
     eg.init_goals(threads);
     cout << "Init time: " << time_since(start) / 1e6 << endl;
-
     start = time_now();
     eg.eval_all_states();
     cout << "Eval time: " << time_since(start) / 1e6 << endl;
-
-    //eg.play_game();
+    eg.play_game();*/
 }
 
 int main() {

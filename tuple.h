@@ -9,11 +9,9 @@ template<u32 N>
 struct Tuple {
     const string name;
     u64 mask;
-    //array<r_t, E(N * 4)> weights{};
     vector<r_t> weights;
 
     Tuple(string name, const u64 mask) : name(std::move(name)), mask(mask) {
-        //weights.fill(0);
         weights.resize(E(N * 4), 0);
     }
 

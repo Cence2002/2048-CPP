@@ -216,14 +216,14 @@ public:
 
     Dir best_dir(u64 board) {
         Dir best_dir = None;
-        r_t best_prob = 0;
+        r_t best_eval = 0;
         for (const Dir dir: DIRS) {
             u64 afterstate = moved_board<4>(board, dir);
             if (afterstate == board) { continue; }
             r_t eval = eval_afterstate(afterstate);
-            if (best_dir == None || eval > best_prob) {
+            if (eval > best_eval) {
                 best_dir = dir;
-                best_prob = eval;
+                best_eval = eval;
             }
         }
         return best_dir;
