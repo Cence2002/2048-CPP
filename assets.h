@@ -63,7 +63,7 @@ constexpr u64 E(const u8 n) { return u64(1) << n; }
 
 thread_local mt19937 rng(random_device{}());
 
-/*thread_local array<uniform_int_distribution<u32>, 20> dists = {
+thread_local array<uniform_int_distribution<u32>, 20> dists = {
         uniform_int_distribution<u32>(0, 0), // should never be used
         uniform_int_distribution<u32>(0, 0),
         uniform_int_distribution<u32>(0, 1),
@@ -84,11 +84,10 @@ thread_local mt19937 rng(random_device{}());
         uniform_int_distribution<u32>(0, 16),
         uniform_int_distribution<u32>(0, 17),
         uniform_int_distribution<u32>(0, 18),
-};*/
+};
 
 u32 random(const u32 n) {
-    uniform_int_distribution<u32> dist(0, n - 1);
-    return dist(rng);
+    return dists[n](rng);
 }
 
 auto time_now() {

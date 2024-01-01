@@ -398,6 +398,7 @@ void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games, u8
     string ts_str = get_time_str();
     cout << "Timestamp: " << ts_str << endl;
     save_packed_weights<N>(ts_str);
+    cout << endl;
 }
 
 template<u8 N>
@@ -475,7 +476,7 @@ void run2() {
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 10; ++i) {
-        //fixed_learn<N>(0.1, 5, 10000, 10000, threads - 1);
+        //fixed_learn<N>(0.1, 5, 10000, 10000, 16);
     }
 
     r_t speed[60];
@@ -483,11 +484,11 @@ void run2() {
         speed[i] = 0;
         auto start = time_now();
         for (u32 j = 0; j < 10; ++j) {
-            run_testing_episodes<N>(1000, i);
+            run_testing_episodes<N>(2000, i);
         }
         speed[i] += r_t(time_since(start));
     }
-    int best = 1e6;
+    int best = 1e9;
     int best_i = 0;
     for (u32 i = 0; i < 60; ++i) {
         cout << i << ": " << speed[i] << endl;

@@ -5,11 +5,6 @@
 constexpr r_t tuple_init = 2e5;
 r_t learning_rate = 0;
 
-const r_t beta_0 = 0.99;
-const r_t beta_1 = 0.99;
-const r_t beta_2 = 0.999;
-const r_t epsilon = 1e-8;
-
 template<u32 N>
 struct Tuple {
     const string name;
@@ -28,8 +23,12 @@ struct Tuple {
         weights[index] += gradient * learning_rate;
     }
 
-    r_t pow_beta1 = 1;
-    r_t pow_beta2 = 1;
+    //r_t pow_beta1 = 1;
+    //r_t pow_beta2 = 1;
+    //const r_t beta_0 = 0.99;
+    //const r_t beta_1 = 0.99;
+    //const r_t beta_2 = 0.999;
+    //const r_t epsilon = 1e-8;
 
     //array<r_t, E(N * 4)> sum{};
     //array<r_t, E(N * 4)> sum_abs{};

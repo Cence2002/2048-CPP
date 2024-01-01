@@ -112,10 +112,11 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads) {
         training_stats.print_max_game_stats();
         training_stats.print_score_cell_stats();
     } else {
-        cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
-        cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
-        cout << indent << "Update per us:  \t" << r_t(run_stats.update_weights_counter) / elapsed << endl;
+        //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
+        //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
+        //cout << indent << "Update per us:  \t" << r_t(run_stats.update_weights_counter) / elapsed << endl;
         cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(training_stats.game_counter) << endl;
+        cout << indent << "Move per game:  \t" << r_t(training_stats.moves_counter) / r_t(training_stats.game_counter) << endl;
     }
 
     cout << "Training finished (" << time_since(start) / 1e6 << " s)" << endl;
@@ -126,7 +127,7 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads) {
 template<u8 N>
 vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
     srand(42);
-    //cout << "Testing started (" << games << " games)" << endl;
+    cout << "Testing started (" << games << " games)" << endl;
 
     run_stats = {};
     vector<Game_stat> games_stats;
@@ -169,12 +170,12 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
     } else {
         //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
         //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
-        //cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << endl;
-        //cout << indent << "Move per game:  \t" << r_t(testing_stats.moves_counter) / r_t(testing_stats.game_counter) << endl;
-        //cout << indent << "Score per game: \t" << r_t(testing_stats.score_counter) / r_t(testing_stats.game_counter) << endl;
+        cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << endl;
+        cout << indent << "Move per game:  \t" << r_t(testing_stats.moves_counter) / r_t(testing_stats.game_counter) << endl;
+        cout << indent << "Score per game: \t" << r_t(testing_stats.score_counter) / r_t(testing_stats.game_counter) << endl;
     }
 
-    //cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << endl;
+    cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << endl;
 
     return games_stats;
 }
