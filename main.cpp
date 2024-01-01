@@ -478,8 +478,8 @@ void run2() {
         //fixed_learn<N>(0.1, 5, 10000, 10000, threads - 1);
     }
 
-    r_t speed[30];
-    for (u32 i = 0; i < 30; ++i) {
+    r_t speed[60];
+    for (u32 i = 0; i < 60; ++i) {
         speed[i] = 0;
         auto start = time_now();
         for (u32 j = 0; j < 10; ++j) {
@@ -489,7 +489,7 @@ void run2() {
     }
     int best = 1e6;
     int best_i = 0;
-    for (u32 i = 0; i < 30; ++i) {
+    for (u32 i = 0; i < 60; ++i) {
         cout << i << ": " << speed[i] << endl;
         if (speed[i] < best) {
             best = speed[i];
