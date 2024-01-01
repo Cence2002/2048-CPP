@@ -78,7 +78,7 @@ inline u8 count_empty(const u64 board) {
 
 template<u8 N>
 inline void fill_board(u64 &board) {
-    ++run_stats.fill_board_counter;
+    //++run_stats.fill_board_counter;
     u64 empty = empty_mask<N>(board);
     u8 pos = random(popcnt(empty));
     u64 mask = 1;
@@ -91,7 +91,7 @@ s_t rewards_3[E(12)];
 
 template<u8 N>
 constexpr inline s_t get_reward(const u64 board, const Dir d) {
-    ++run_stats.reward_board_counter;
+    //++run_stats.reward_board_counter;
     if constexpr (N == 4) {
         if (d & 1) {
             return rewards_4[get_row<4, 0>(board)] +
@@ -149,7 +149,7 @@ u64 down_2_3[E(12)];
 
 template<u8 N>
 constexpr inline void move_board(u64 &board, const Dir d) {
-    ++run_stats.move_board_counter;
+    //++run_stats.move_board_counter;
     if constexpr (N == 4) {
         switch (d) {
             case Left:
@@ -209,7 +209,7 @@ constexpr inline void move_board(u64 &board, const Dir d) {
 
 template<u8 N>
 constexpr inline u64 moved_board(const u64 board, const Dir d) {
-    ++run_stats.move_board_counter;
+    //++run_stats.move_board_counter;
     if constexpr (N == 4) {
         switch (d) {
             case Left:
