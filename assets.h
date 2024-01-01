@@ -62,8 +62,8 @@ constexpr u64 E(const u8 n) { return u64(1) << n; }
 
 u32 random(const u32 n) {
     //TODO replace
-    return 0;
-    //return rand() % n;
+    //return 0;
+    return rand() % n;
 }
 
 auto time_now() {
