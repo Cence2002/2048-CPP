@@ -476,7 +476,7 @@ void run2() {
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 10; ++i) {
-        //fixed_learn<N>(0.1, 5, 1000000, 100000, 8);
+        fixed_learn<N>(0.1, 5, 10000, 1000, 0);
     }
 
     auto start = time_now();
