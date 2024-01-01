@@ -291,3 +291,47 @@ struct game_stats_t {
 } training_stats, testing_stats;
 
 u64 cnt = 0;
+
+u32 compute_test(u32 n) {
+    for (u32 t = 0; t < 1; ++t) {
+        for (u32 i = 0; i < 10000000; ++i) {
+            n += i;
+            n %= 1000000007;
+            n *= i;
+            n %= 1000000007;
+        }
+    }
+    return n;
+}
+
+u64 compute_test_sequential() {
+    u64 sum = 0;
+    for (u32 i = 0; i < 8; ++i) {
+        sum += compute_test(i);
+    }
+    return sum;
+}
+
+u64 compute_test_parallel() {
+    u64 sum = 0;
+    vector<thread> threads;
+    for (u32 i = 0; i < 8; ++i) {
+        threads.emplace_back([i, &sum]() {
+            sum += compute_test(i);
+        });
+    }
+    for (auto &t: threads) {
+        t.join();
+    }
+    return sum;
+}
+
+void test_seq_vs_par() {
+    auto start = time_now();
+    cout << compute_test_sequential() << endl;
+    cout << "Sequential time: " << time_since(start) / 1e6 << endl;
+    start = time_now();
+    cout << compute_test_parallel() << endl;
+    cout << "Parallel time: " << time_since(start) / 1e6 << endl;
+    cout << endl;
+}
