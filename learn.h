@@ -43,8 +43,6 @@ Game_stat training_episode() {
         //target = r_t(rewards[t]) + evals[t];
     }
 
-    //training_stats.update_board_stats(board, score, moves);
-
     return {board, score, moves};
 }
 
@@ -59,10 +57,6 @@ Game_stat testing_episode() {
     while (true) {
         const auto [dir, eval, reward, afterstate]
                 = eval_moves<N>(board);
-        //TODO remove
-        //const Dir dir = Dir(random(4) + 1);
-        //const s_t reward = get_reward<N>(board, dir);
-        //const u64 afterstate = moved_board<N>(board, dir);
         if (afterstate == board) { continue; }
 
         if (dir == None) { break; }
@@ -72,8 +66,6 @@ Game_stat testing_episode() {
         board = afterstate;
         fill_board<N>(board);
     }
-
-    //testing_stats.update_board_stats(board, score, moves);
 
     return {board, score, moves};
 }

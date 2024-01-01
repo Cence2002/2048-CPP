@@ -480,9 +480,9 @@ void run2() {
     }
 
     auto start = time_now();
-    run_testing_episodes<N>(10000, 0);
+    run_testing_episodes<N>(3000, 0);
     cout << "Testing time: " << time_since(start) / 1e6 << endl;
-    run_testing_episodes<N>(10000, 8);
+    run_testing_episodes<N>(3000, 8);
     cout << "Testing time: " << time_since(start) / 1e6 << endl;
 }
 
