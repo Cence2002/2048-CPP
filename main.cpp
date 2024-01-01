@@ -467,7 +467,6 @@ void run2() {
     init();
 
     //run_tests();
-    test_seq_vs_par();
     //cout << endl;
     //perf_test(10000);
     //perf_test_general(10000);
@@ -476,14 +475,28 @@ void run2() {
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 10; ++i) {
-        fixed_learn<N>(0.1, 5, 10000, 1000, 0);
+        //fixed_learn<N>(0.1, 5, 10000, 10000, threads - 1);
     }
 
-    auto start = time_now();
-    run_testing_episodes<N>(3000, 0);
-    cout << "Testing time: " << time_since(start) / 1e6 << endl;
-    run_testing_episodes<N>(3000, 8);
-    cout << "Testing time: " << time_since(start) / 1e6 << endl;
+    r_t speed[30];
+    for (u32 i = 0; i < 30; ++i) {
+        speed[i] = 0;
+        auto start = time_now();
+        for (u32 j = 0; j < 10; ++j) {
+            run_testing_episodes<N>(1000, i);
+        }
+        speed[i] += r_t(time_since(start));
+    }
+    int best = 1e6;
+    int best_i = 0;
+    for (u32 i = 0; i < 30; ++i) {
+        cout << i << ": " << speed[i] << endl;
+        if (speed[i] < best) {
+            best = speed[i];
+            best_i = i;
+        }
+    }
+    cout << "Best number of threads: " << best_i << endl;
 }
 
 int main() {

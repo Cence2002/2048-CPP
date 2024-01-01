@@ -7,7 +7,7 @@
 
 template<u8 N>
 inline r_t eval_board(const u64 board) {
-    //++run_stats.eval_board_counter;
+    ++run_stats.eval_board_counter;
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
         if constexpr (N == 4) {
@@ -25,7 +25,7 @@ inline r_t eval_board(const u64 board) {
 
 template<u8 N>
 inline r_t update_weights(const u64 board, const r_t gradient) {
-    //++run_stats.update_weights_counter;
+    ++run_stats.update_weights_counter;
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
         if constexpr (N == 4) {
@@ -50,7 +50,7 @@ inline r_t update_weights(const u64 board, const r_t gradient) {
 
 template<u8 N>
 inline Eval eval_moves(const u64 state) {
-    //++run_stats.eval_moves_counter;
+    ++run_stats.eval_moves_counter;
     Eval best = {None, 0, 0, 0};
     for (const Dir dir: DIRS) {
         u64 afterstate = moved_board<N>(state, dir);
