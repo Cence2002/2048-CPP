@@ -40,7 +40,7 @@ s_t play_random_game() {
 
 template<u8 N>
 s_t play_random_game_general() {
-    Game <N> game;
+    Game<N> game;
     while (!game.is_over()) {
         game.move(Dir(random(4) + 1));
     }
@@ -429,11 +429,12 @@ void run2() {
     //perf_test(10000);
     //perf_test_general(10000);
 
-    load_packed_weights<N>("0101_182708");
+    load_packed_weights<N>("0103_011756");
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
-    for (u32 i = 0; i < 5; ++i) {
-        fixed_learn<N>(0.1, 10, 1000000, 100000, threads);
+    for (u32 i = 0; i < 1; ++i) {
+        fixed_learn<N>(0.01, 10, 1000000, 100000, threads);
+        fixed_learn<N>(0.001, 10, 1000000, 100000, threads);
     }
 
     /*r_t avg = 0;
