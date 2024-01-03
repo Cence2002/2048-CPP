@@ -1,0 +1,1053 @@
+Init time: 0.046055
+Loading weights-0101_182708.bin finished: 113717 us
+Number of cores: 32
+Learning started (10 episodes, LR=0.1)
+Testing started (100000 games)
+    Score A:        	0.9967 / game
+    Score B:        	0.99132 / game
+    Score C:        	0.97653 / game
+    Score D:        	0.92709 / game
+    Score E:        	0.69798 / game
+    Score F:        	0.07541 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.884149
+    Move per game:  	10993.2
+    Score per game: 	288938
+Testing finished (88.415 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.0153
+    Move per game:  	10661.9
+Training finished (2015.3 s)
+Testing started (100000 games)
+    Score A:        	0.99713 / game
+    Score B:        	0.99091 / game
+    Score C:        	0.97365 / game
+    Score D:        	0.91723 / game
+    Score E:        	0.65397 / game
+    Score F:        	0.06628 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.843001
+    Move per game:  	10475.9
+    Score per game: 	274429
+Testing finished (84.3001 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	2.02419
+    Move per game:  	10667.6
+Training finished (2024.19 s)
+Testing started (100000 games)
+    Score A:        	0.99577 / game
+    Score B:        	0.99002 / game
+    Score C:        	0.97496 / game
+    Score D:        	0.91282 / game
+    Score E:        	0.67117 / game
+    Score F:        	0.06344 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.848783
+    Move per game:  	10589.6
+    Score per game: 	277475
+Testing finished (84.8783 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	2.02436
+    Move per game:  	10682.8
+Training finished (2024.36 s)
+Testing started (100000 games)
+    Score A:        	0.99694 / game
+    Score B:        	0.99151 / game
+    Score C:        	0.97569 / game
+    Score D:        	0.91939 / game
+    Score E:        	0.671 / game
+    Score F:        	0.06364 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.859995
+    Move per game:  	10567.1
+    Score per game: 	276873
+Testing finished (85.9996 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	2.03224
+    Move per game:  	10703.9
+Training finished (2032.24 s)
+Testing started (100000 games)
+    Score A:        	0.99674 / game
+    Score B:        	0.99049 / game
+    Score C:        	0.97647 / game
+    Score D:        	0.92271 / game
+    Score E:        	0.68043 / game
+    Score F:        	0.06937 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.874281
+    Move per game:  	10754.1
+    Score per game: 	282152
+Testing finished (87.4282 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	2.02533
+    Move per game:  	10689.5
+Training finished (2025.33 s)
+Testing started (100000 games)
+    Score A:        	0.99681 / game
+    Score B:        	0.99132 / game
+    Score C:        	0.9756 / game
+    Score D:        	0.92275 / game
+    Score E:        	0.68327 / game
+    Score F:        	0.06773 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.865877
+    Move per game:  	10753.7
+    Score per game: 	282142
+Testing finished (86.5878 s)
+
+Episode 6
+Training started (1000000 games)
+    Ms per game:    	2.02708
+    Move per game:  	10688
+Training finished (2027.08 s)
+Testing started (100000 games)
+    Score A:        	0.99601 / game
+    Score B:        	0.99044 / game
+    Score C:        	0.97395 / game
+    Score D:        	0.91986 / game
+    Score E:        	0.67515 / game
+    Score F:        	0.06652 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.869874
+    Move per game:  	10658.3
+    Score per game: 	279521
+Testing finished (86.9875 s)
+
+Episode 7
+Training started (1000000 games)
+    Ms per game:    	2.02699
+    Move per game:  	10699.5
+Training finished (2026.99 s)
+Testing started (100000 games)
+    Score A:        	0.99662 / game
+    Score B:        	0.99132 / game
+    Score C:        	0.97664 / game
+    Score D:        	0.9227 / game
+    Score E:        	0.67122 / game
+    Score F:        	0.06601 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.861364
+    Move per game:  	10682.1
+    Score per game: 	279960
+Testing finished (86.1365 s)
+
+Episode 8
+Training started (1000000 games)
+    Ms per game:    	2.03158
+    Move per game:  	10723.2
+Training finished (2031.58 s)
+Testing started (100000 games)
+    Score A:        	0.99711 / game
+    Score B:        	0.99185 / game
+    Score C:        	0.97494 / game
+    Score D:        	0.92743 / game
+    Score E:        	0.6906 / game
+    Score F:        	0.06965 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.884004
+    Move per game:  	10855.5
+    Score per game: 	285032
+Testing finished (88.4004 s)
+
+Episode 9
+Training started (1000000 games)
+    Ms per game:    	2.02981
+    Move per game:  	10707.2
+Training finished (2029.81 s)
+Testing started (100000 games)
+    Score A:        	0.99567 / game
+    Score B:        	0.98868 / game
+    Score C:        	0.97037 / game
+    Score D:        	0.90912 / game
+    Score E:        	0.6667 / game
+    Score F:        	0.06966 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.864889
+    Move per game:  	10575.3
+    Score per game: 	277459
+Testing finished (86.489 s)
+
+Episode 10
+Training started (1000000 games)
+    Ms per game:    	2.02811
+    Move per game:  	10720.4
+Training finished (2028.11 s)
+Testing started (100000 games)
+    Score A:        	0.99621 / game
+    Score B:        	0.99042 / game
+    Score C:        	0.97633 / game
+    Score D:        	0.92531 / game
+    Score E:        	0.68376 / game
+    Score F:        	0.07417 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.877518
+    Move per game:  	10843.5
+    Score per game: 	284732
+Testing finished (87.7519 s)
+
+Learning finished (21129.9 s)
+
+Timestamp: 0102_013310
+Saving weights-0102_013310.bin finished: 420803 us
+
+Learning started (10 episodes, LR=0.1)
+Testing started (100000 games)
+    Score A:        	0.99651 / game
+    Score B:        	0.99037 / game
+    Score C:        	0.97578 / game
+    Score D:        	0.92558 / game
+    Score E:        	0.68324 / game
+    Score F:        	0.07506 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.87038
+    Move per game:  	10860.4
+    Score per game: 	285220
+Testing finished (87.0381 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.03962
+    Move per game:  	10736.5
+Training finished (2039.62 s)
+Testing started (100000 games)
+    Score A:        	0.99676 / game
+    Score B:        	0.99215 / game
+    Score C:        	0.97637 / game
+    Score D:        	0.92261 / game
+    Score E:        	0.669 / game
+    Score F:        	0.06614 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.86739
+    Move per game:  	10686.7
+    Score per game: 	280075
+Testing finished (86.7391 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	2.03518
+    Move per game:  	10713.6
+Training finished (2035.18 s)
+Testing started (100000 games)
+    Score A:        	0.99678 / game
+    Score B:        	0.99178 / game
+    Score C:        	0.9753 / game
+    Score D:        	0.9253 / game
+    Score E:        	0.69294 / game
+    Score F:        	0.07263 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.879913
+    Move per game:  	10886.5
+    Score per game: 	285974
+Testing finished (87.9914 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	2.04111
+    Move per game:  	10736.2
+Training finished (2041.11 s)
+Testing started (100000 games)
+    Score A:        	0.99636 / game
+    Score B:        	0.98936 / game
+    Score C:        	0.9745 / game
+    Score D:        	0.91837 / game
+    Score E:        	0.66479 / game
+    Score F:        	0.05902 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.853511
+    Move per game:  	10495
+    Score per game: 	274722
+Testing finished (85.3511 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	2.03563
+    Move per game:  	10730
+Training finished (2035.63 s)
+Testing started (100000 games)
+    Score A:        	0.9965 / game
+    Score B:        	0.99121 / game
+    Score C:        	0.97601 / game
+    Score D:        	0.91968 / game
+    Score E:        	0.67457 / game
+    Score F:        	0.06931 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.871908
+    Move per game:  	10696.4
+    Score per game: 	280543
+Testing finished (87.1908 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	2.04227
+    Move per game:  	10752.8
+Training finished (2042.27 s)
+Testing started (100000 games)
+    Score A:        	0.99674 / game
+    Score B:        	0.992 / game
+    Score C:        	0.97922 / game
+    Score D:        	0.92961 / game
+    Score E:        	0.68707 / game
+    Score F:        	0.06623 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.870915
+    Move per game:  	10822.9
+    Score per game: 	283926
+Testing finished (87.0915 s)
+
+Episode 6
+Training started (1000000 games)
+    Ms per game:    	2.03472
+    Move per game:  	10734.7
+Training finished (2034.72 s)
+Testing started (100000 games)
+    Score A:        	0.99605 / game
+    Score B:        	0.98969 / game
+    Score C:        	0.97537 / game
+    Score D:        	0.92268 / game
+    Score E:        	0.68426 / game
+    Score F:        	0.07254 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.883442
+    Move per game:  	10801.7
+    Score per game: 	283686
+Testing finished (88.3443 s)
+
+Episode 7
+Training started (1000000 games)
+    Ms per game:    	2.04536
+    Move per game:  	10764.6
+Training finished (2045.36 s)
+Testing started (100000 games)
+    Score A:        	0.99617 / game
+    Score B:        	0.99064 / game
+    Score C:        	0.97634 / game
+    Score D:        	0.91981 / game
+    Score E:        	0.66998 / game
+    Score F:        	0.06816 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.87003
+    Move per game:  	10638.2
+    Score per game: 	279017
+Testing finished (87.003 s)
+
+Episode 8
+Training started (1000000 games)
+    Ms per game:    	2.03873
+    Move per game:  	10740.1
+Training finished (2038.73 s)
+Testing started (100000 games)
+    Score A:        	0.99621 / game
+    Score B:        	0.99072 / game
+    Score C:        	0.97617 / game
+    Score D:        	0.92082 / game
+    Score E:        	0.67279 / game
+    Score F:        	0.06791 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.87497
+    Move per game:  	10720.5
+    Score per game: 	281047
+Testing finished (87.4971 s)
+
+Episode 9
+Training started (1000000 games)
+    Ms per game:    	2.04506
+    Move per game:  	10737.6
+Training finished (2045.06 s)
+Testing started (100000 games)
+    Score A:        	0.9964 / game
+    Score B:        	0.99097 / game
+    Score C:        	0.97726 / game
+    Score D:        	0.93085 / game
+    Score E:        	0.69069 / game
+    Score F:        	0.07224 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.878483
+    Move per game:  	10919.1
+    Score per game: 	286728
+Testing finished (87.8484 s)
+
+Episode 10
+Training started (1000000 games)
+    Ms per game:    	2.0497
+    Move per game:  	10766
+Training finished (2049.7 s)
+Testing started (100000 games)
+    Score A:        	0.9963 / game
+    Score B:        	0.99087 / game
+    Score C:        	0.97584 / game
+    Score D:        	0.92669 / game
+    Score E:        	0.68986 / game
+    Score F:        	0.06894 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.877934
+    Move per game:  	10821.2
+    Score per game: 	284071
+Testing finished (87.7935 s)
+
+Learning finished (21280.2 s)
+
+Timestamp: 0102_072917
+Saving weights-0102_072917.bin finished: 413823 us
+
+Learning started (10 episodes, LR=0.1)
+Testing started (100000 games)
+    Score A:        	0.9963 / game
+    Score B:        	0.99066 / game
+    Score C:        	0.97557 / game
+    Score D:        	0.92776 / game
+    Score E:        	0.68941 / game
+    Score F:        	0.06979 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.876739
+    Move per game:  	10838.8
+    Score per game: 	284558
+Testing finished (87.6739 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.03898
+    Move per game:  	10754.7
+Training finished (2038.98 s)
+Testing started (100000 games)
+    Score A:        	0.99575 / game
+    Score B:        	0.99036 / game
+    Score C:        	0.97522 / game
+    Score D:        	0.91819 / game
+    Score E:        	0.6804 / game
+    Score F:        	0.07043 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.875576
+    Move per game:  	10742.3
+    Score per game: 	281980
+Testing finished (87.5577 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	2.04638
+    Move per game:  	10769
+Training finished (2046.38 s)
+Testing started (100000 games)
+    Score A:        	0.9972 / game
+    Score B:        	0.99207 / game
+    Score C:        	0.9804 / game
+    Score D:        	0.93487 / game
+    Score E:        	0.70253 / game
+    Score F:        	0.07608 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.890244
+    Move per game:  	11081.1
+    Score per game: 	291302
+Testing finished (89.0244 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	2.04463
+    Move per game:  	10763.9
+Training finished (2044.63 s)
+Testing started (100000 games)
+    Score A:        	0.99585 / game
+    Score B:        	0.98849 / game
+    Score C:        	0.97016 / game
+    Score D:        	0.91702 / game
+    Score E:        	0.66674 / game
+    Score F:        	0.06457 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.857755
+    Move per game:  	10542.3
+    Score per game: 	276330
+Testing finished (85.7756 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	2.03374
+    Move per game:  	10780.3
+Training finished (2033.74 s)
+Testing started (100000 games)
+    Score A:        	0.9966 / game
+    Score B:        	0.99085 / game
+    Score C:        	0.97556 / game
+    Score D:        	0.92565 / game
+    Score E:        	0.69154 / game
+    Score F:        	0.07425 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.87827
+    Move per game:  	10881.6
+    Score per game: 	285966
+Testing finished (87.827 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	2.02675
+    Move per game:  	10751.9
+Training finished (2026.75 s)
+Testing started (100000 games)
+    Score A:        	0.99699 / game
+    Score B:        	0.99174 / game
+    Score C:        	0.97588 / game
+    Score D:        	0.9274 / game
+    Score E:        	0.6985 / game
+    Score F:        	0.07813 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.878243
+    Move per game:  	10987.3
+    Score per game: 	289006
+Testing finished (87.8244 s)
+
+Episode 6
+Training started (1000000 games)
+    Ms per game:    	2.03226
+    Move per game:  	10787.3
+Training finished (2032.26 s)
+Testing started (100000 games)
+    Score A:        	0.99642 / game
+    Score B:        	0.99058 / game
+    Score C:        	0.97598 / game
+    Score D:        	0.92573 / game
+    Score E:        	0.69019 / game
+    Score F:        	0.07207 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.882945
+    Move per game:  	10863.7
+    Score per game: 	285326
+Testing finished (88.2945 s)
+
+Episode 7
+Training started (1000000 games)
+    Ms per game:    	2.02973
+    Move per game:  	10772.7
+Training finished (2029.73 s)
+Testing started (100000 games)
+    Score A:        	0.99606 / game
+    Score B:        	0.9911 / game
+    Score C:        	0.97921 / game
+    Score D:        	0.9336 / game
+    Score E:        	0.70019 / game
+    Score F:        	0.07255 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.880056
+    Move per game:  	11022.7
+    Score per game: 	289604
+Testing finished (88.0056 s)
+
+Episode 8
+Training started (1000000 games)
+    Ms per game:    	2.02742
+    Move per game:  	10782
+Training finished (2027.42 s)
+Testing started (100000 games)
+    Score A:        	0.99623 / game
+    Score B:        	0.99086 / game
+    Score C:        	0.97663 / game
+    Score D:        	0.92648 / game
+    Score E:        	0.69062 / game
+    Score F:        	0.07372 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.876425
+    Move per game:  	10867
+    Score per game: 	285540
+Testing finished (87.6426 s)
+
+Episode 9
+Training started (1000000 games)
+    Ms per game:    	2.03594
+    Move per game:  	10782.6
+Training finished (2035.94 s)
+Testing started (100000 games)
+    Score A:        	0.9962 / game
+    Score B:        	0.99033 / game
+    Score C:        	0.97417 / game
+    Score D:        	0.92484 / game
+    Score E:        	0.68348 / game
+    Score F:        	0.06462 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.863032
+    Move per game:  	10681.2
+    Score per game: 	280278
+Testing finished (86.3032 s)
+
+Episode 10
+Training started (1000000 games)
+    Ms per game:    	2.03481
+    Move per game:  	10791.7
+Training finished (2034.81 s)
+Testing started (100000 games)
+    Score A:        	0.99618 / game
+    Score B:        	0.9911 / game
+    Score C:        	0.97765 / game
+    Score D:        	0.92649 / game
+    Score E:        	0.6827 / game
+    Score F:        	0.07643 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.883337
+    Move per game:  	10896.3
+    Score per game: 	286233
+Testing finished (88.3337 s)
+
+Learning finished (21227.2 s)
+
+Timestamp: 0102_132433
+Saving weights-0102_132433.bin finished: 423335 us
+
+Learning started (10 episodes, LR=0.1)
+Testing started (100000 games)
+    Score A:        	0.99623 / game
+    Score B:        	0.99113 / game
+    Score C:        	0.97756 / game
+    Score D:        	0.92576 / game
+    Score E:        	0.6829 / game
+    Score F:        	0.07513 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.874824
+    Move per game:  	10882.6
+    Score per game: 	285792
+Testing finished (87.4825 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.03286
+    Move per game:  	10791.4
+Training finished (2032.86 s)
+Testing started (100000 games)
+    Score A:        	0.99646 / game
+    Score B:        	0.99114 / game
+    Score C:        	0.97716 / game
+    Score D:        	0.92763 / game
+    Score E:        	0.68356 / game
+    Score F:        	0.07555 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.871929
+    Move per game:  	10901.8
+    Score per game: 	286345
+Testing finished (87.193 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	2.03727
+    Move per game:  	10793.5
+Training finished (2037.27 s)
+Testing started (100000 games)
+    Score A:        	0.99614 / game
+    Score B:        	0.99016 / game
+    Score C:        	0.97395 / game
+    Score D:        	0.91748 / game
+    Score E:        	0.66993 / game
+    Score F:        	0.06402 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.844897
+    Move per game:  	10606.9
+    Score per game: 	278004
+Testing finished (84.4898 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	2.03616
+    Move per game:  	10774.1
+Training finished (2036.16 s)
+Testing started (100000 games)
+    Score A:        	0.99698 / game
+    Score B:        	0.99175 / game
+    Score C:        	0.97766 / game
+    Score D:        	0.92916 / game
+    Score E:        	0.68905 / game
+    Score F:        	0.07115 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.874304
+    Move per game:  	10891
+    Score per game: 	285991
+Testing finished (87.4305 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	2.03336
+    Move per game:  	10779.6
+Training finished (2033.36 s)
+Testing started (100000 games)
+    Score A:        	0.99682 / game
+    Score B:        	0.99178 / game
+    Score C:        	0.97927 / game
+    Score D:        	0.93049 / game
+    Score E:        	0.71081 / game
+    Score F:        	0.08161 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.893837
+    Move per game:  	11184.4
+    Score per game: 	294395
+Testing finished (89.3838 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	2.03477
+    Move per game:  	10794.5
+Training finished (2034.77 s)
+Testing started (100000 games)
+    Score A:        	0.99687 / game
+    Score B:        	0.99173 / game
+    Score C:        	0.97824 / game
+    Score D:        	0.92687 / game
+    Score E:        	0.69088 / game
+    Score F:        	0.07485 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.873584
+    Move per game:  	10937.4
+    Score per game: 	287375
+Testing finished (87.3585 s)
+
+Episode 6
+Training started (1000000 games)
+    Ms per game:    	2.03787
+    Move per game:  	10799.4
+Training finished (2037.87 s)
+Testing started (100000 games)
+    Score A:        	0.99575 / game
+    Score B:        	0.98952 / game
+    Score C:        	0.97302 / game
+    Score D:        	0.92066 / game
+    Score E:        	0.66813 / game
+    Score F:        	0.07111 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.869692
+    Move per game:  	10635.1
+    Score per game: 	279038
+Testing finished (86.9692 s)
+
+Episode 7
+Training started (1000000 games)
+    Ms per game:    	2.03814
+    Move per game:  	10808.4
+Training finished (2038.14 s)
+Testing started (100000 games)
+    Score A:        	0.99618 / game
+    Score B:        	0.99022 / game
+    Score C:        	0.97558 / game
+    Score D:        	0.9246 / game
+    Score E:        	0.69432 / game
+    Score F:        	0.07898 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.887639
+    Move per game:  	10962.9
+    Score per game: 	288349
+Testing finished (88.764 s)
+
+Episode 8
+Training started (1000000 games)
+    Ms per game:    	2.04379
+    Move per game:  	10794.9
+Training finished (2043.79 s)
+Testing started (100000 games)
+    Score A:        	0.99624 / game
+    Score B:        	0.99058 / game
+    Score C:        	0.974 / game
+    Score D:        	0.91937 / game
+    Score E:        	0.67201 / game
+    Score F:        	0.06797 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.874523
+    Move per game:  	10635.2
+    Score per game: 	279077
+Testing finished (87.4524 s)
+
+Episode 9
+Training started (1000000 games)
+    Ms per game:    	2.05852
+    Move per game:  	10810.9
+Training finished (2058.52 s)
+Testing started (100000 games)
+    Score A:        	0.99636 / game
+    Score B:        	0.9911 / game
+    Score C:        	0.97761 / game
+    Score D:        	0.93318 / game
+    Score E:        	0.69949 / game
+    Score F:        	0.07571 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.897621
+    Move per game:  	11020.7
+    Score per game: 	289785
+Testing finished (89.7621 s)
+
+Episode 10
+Training started (1000000 games)
+    Ms per game:    	2.05606
+    Move per game:  	10811.7
+Training finished (2056.06 s)
+Testing started (100000 games)
+    Score A:        	0.99656 / game
+    Score B:        	0.99076 / game
+    Score C:        	0.97572 / game
+    Score D:        	0.93365 / game
+    Score E:        	0.70083 / game
+    Score F:        	0.07569 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.889764
+    Move per game:  	11046.4
+    Score per game: 	290368
+Testing finished (88.9765 s)
+
+Learning finished (21286.6 s)
+
+Timestamp: 0102_192047
+Saving weights-0102_192047.bin finished: 421162 us
+
+Learning started (10 episodes, LR=0.1)
+Testing started (100000 games)
+    Score A:        	0.99642 / game
+    Score B:        	0.99076 / game
+    Score C:        	0.97553 / game
+    Score D:        	0.93271 / game
+    Score E:        	0.70253 / game
+    Score F:        	0.07631 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.890233
+    Move per game:  	11064.8
+    Score per game: 	290933
+Testing finished (89.0233 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.05132
+    Move per game:  	10806
+Training finished (2051.32 s)
+Testing started (100000 games)
+    Score A:        	0.99696 / game
+    Score B:        	0.99291 / game
+    Score C:        	0.98038 / game
+    Score D:        	0.93627 / game
+    Score E:        	0.71923 / game
+    Score F:        	0.08909 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.910019
+    Move per game:  	11348.6
+    Score per game: 	299133
+Testing finished (91.0019 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	2.05103
+    Move per game:  	10804.6
+Training finished (2051.03 s)
+Testing started (100000 games)
+    Score A:        	0.99608 / game
+    Score B:        	0.99043 / game
+    Score C:        	0.97165 / game
+    Score D:        	0.91765 / game
+    Score E:        	0.68456 / game
+    Score F:        	0.07829 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.880095
+    Move per game:  	10829.2
+    Score per game: 	284696
+Testing finished (88.0095 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	2.05418
+    Move per game:  	10815.3
+Training finished (2054.18 s)
+Testing started (100000 games)
+    Score A:        	0.99641 / game
+    Score B:        	0.99031 / game
+    Score C:        	0.97367 / game
+    Score D:        	0.9238 / game
+    Score E:        	0.67785 / game
+    Score F:        	0.07037 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.874454
+    Move per game:  	10730
+    Score per game: 	281663
+Testing finished (87.4454 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	2.04509
+    Move per game:  	10798.1
+Training finished (2045.09 s)
+Testing started (100000 games)
+    Score A:        	0.99631 / game
+    Score B:        	0.99135 / game
+    Score C:        	0.97743 / game
+    Score D:        	0.92434 / game
+    Score E:        	0.69422 / game
+    Score F:        	0.07269 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.881441
+    Move per game:  	10957.3
+    Score per game: 	287835
+Testing finished (88.1441 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	2.03757
+    Move per game:  	10796.6
+Training finished (2037.57 s)
+Testing started (100000 games)
+    Score A:        	0.99564 / game
+    Score B:        	0.99013 / game
+    Score C:        	0.97504 / game
+    Score D:        	0.92406 / game
+    Score E:        	0.68845 / game
+    Score F:        	0.07355 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.881917
+    Move per game:  	10884.2
+    Score per game: 	285832
+Testing finished (88.1918 s)
+
+Episode 6
+Training started (1000000 games)
+    Ms per game:    	2.03755
+    Move per game:  	10806.7
+Training finished (2037.55 s)
+Testing started (100000 games)
+    Score A:        	0.99651 / game
+    Score B:        	0.99143 / game
+    Score C:        	0.97728 / game
+    Score D:        	0.92576 / game
+    Score E:        	0.67211 / game
+    Score F:        	0.07095 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.86389
+    Move per game:  	10713.5
+    Score per game: 	281121
+Testing finished (86.3891 s)
+
+Episode 7
+Training started (1000000 games)
+    Ms per game:    	2.04078
+    Move per game:  	10825.2
+Training finished (2040.78 s)
+Testing started (100000 games)
+    Score A:        	0.9961 / game
+    Score B:        	0.99011 / game
+    Score C:        	0.97594 / game
+    Score D:        	0.92556 / game
+    Score E:        	0.71144 / game
+    Score F:        	0.07944 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.900909
+    Move per game:  	11097.8
+    Score per game: 	292174
+Testing finished (90.0909 s)
+
+Episode 8
+Training started (1000000 games)
+    Ms per game:    	2.0466
+    Move per game:  	10827.2
+Training finished (2046.6 s)
+Testing started (100000 games)
+    Score A:        	0.99682 / game
+    Score B:        	0.99229 / game
+    Score C:        	0.97921 / game
+    Score D:        	0.93171 / game
+    Score E:        	0.70761 / game
+    Score F:        	0.08192 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.897244
+    Move per game:  	11124.5
+    Score per game: 	292836
+Testing finished (89.7244 s)
+
+Episode 9
+Training started (1000000 games)
+    Ms per game:    	2.04547
+    Move per game:  	10822.4
+Training finished (2045.47 s)
+Testing started (100000 games)
+    Score A:        	0.99629 / game
+    Score B:        	0.99052 / game
+    Score C:        	0.97597 / game
+    Score D:        	0.91821 / game
+    Score E:        	0.6718 / game
+    Score F:        	0.07329 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.866467
+    Move per game:  	10754.9
+    Score per game: 	282229
+Testing finished (86.6467 s)
+
+Episode 10
+Training started (1000000 games)
+    Ms per game:    	2.04625
+    Move per game:  	10822.9
+Training finished (2046.26 s)
+Testing started (100000 games)
+    Score A:        	0.99695 / game
+    Score B:        	0.9913 / game
+    Score C:        	0.97889 / game
+    Score D:        	0.92913 / game
+    Score E:        	0.69904 / game
+    Score F:        	0.07811 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	0.88064
+    Move per game:  	11069.3
+    Score per game: 	291025
+Testing finished (88.064 s)
+
+Learning finished (21339.6 s)
+
+Timestamp: 0103_011756
+Saving weights-0103_011756.bin finished: 419673 us
+
