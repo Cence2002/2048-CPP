@@ -429,14 +429,30 @@ void run2() {
     //perf_test(10000);
     //perf_test_general(10000);
 
-    load_packed_weights<N>("0103_011756");
+    load_packed_weights<N>("0104_035426");
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
     for (u32 i = 0; i < 1; ++i) {
-        fixed_learn<N>(0.01, 10, 1000000, 100000, threads);
-        fixed_learn<N>(0.001, 10, 1000000, 100000, threads);
+        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
+        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
     }
 
+  /*  Endgame eg(0xFFFFFFF700000000ull);
+    u64 b = 0x101012007FFFFFFFull;
+    eg.init_goals(10);
+    eg.bruteforce_states();
+    u8 b_i = eg.transform_index(b);
+    print_board<4>(0xFFFFFFF700000000ull);
+    print_board<4>(b);
+    cout << (int) b_i << endl;
+    cout << eg.general_state_eval(b, b_i) << endl;
+*/
     /*r_t avg = 0;
     for (u32 i = 0; i < 10; ++i) {
         avg += play_game<N>();
