@@ -88,7 +88,7 @@ Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u
 
 template<u8 N>
 r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, u64 &max_states) {
-    if (max_depth == 0 || max_prob < 1 || max_states == 0) {
+    if (max_depth == 0 || max_prob <= 1 || max_states == 0) {
         if (FIXNEGATIVE) {
             return max(r_t(0), add_weights<N>(afterstate));
         } else {

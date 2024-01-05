@@ -1,7 +1,6 @@
 #include "testing.h"
-#include "learn.h"
+#include "algorithm.h"
 #include "endgame_bruteforce.h"
-#include "3x3_bruteforce.h"
 
 void init() {
     auto start = time_now();
@@ -18,7 +17,7 @@ void init() {
         t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_3));
     }
 
-    cout << "Init time: " << time_since(start) / 1e6 << endl;
+    cout << "Init time: " << time_since(start) / 1e6 << endl << endl;
 }
 
 template<u8 N>
@@ -349,16 +348,6 @@ void run_tests() {
 }
 
 template<u8 N>
-void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games, u8 threads) {
-    learning_rate = LR;
-    run_learning<N>(episodes, training_games, testing_games, threads);
-    string ts_str = get_time_str();
-    cout << "Timestamp: " << ts_str << endl;
-    save_packed_weights<N>(ts_str);
-    cout << endl;
-}
-
-template<u8 N>
 void run() {
     //load_all_weights<N>("1216-21-10-12");
     //run_testing_episodes<N>(1000);
@@ -426,24 +415,14 @@ void run2() {
 
     //run_tests();
     //cout << endl;
-    //perf_test(10000);
+    perf_test(10000);
     //perf_test_general(10000);
 
-    load_packed_weights<N>("0104_035426");
-    const u32 threads = thread::hardware_concurrency();
-    cout << "Number of cores: " << threads << endl;
-    for (u32 i = 0; i < 1; ++i) {
-        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.01, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
-        fixed_learn<N>(0.001, 1, 500000, 50000, threads);
-    }
+    //load_packed_weights<N>("final");
+    //const u32 threads = thread::hardware_concurrency();
+    //run_testing_episodes<N>(1000, threads);
 
-  /*  Endgame eg(0xFFFFFFF700000000ull);
+    /*Endgame eg(0xFFFFFFF700000000ull);
     u64 b = 0x101012007FFFFFFFull;
     eg.init_goals(10);
     eg.bruteforce_states();
@@ -451,8 +430,8 @@ void run2() {
     print_board<4>(0xFFFFFFF700000000ull);
     print_board<4>(b);
     cout << (int) b_i << endl;
-    cout << eg.general_state_eval(b, b_i) << endl;
-*/
+    cout << eg.general_state_eval(b, b_i) << endl;*/
+
     /*r_t avg = 0;
     for (u32 i = 0; i < 10; ++i) {
         avg += play_game<N>();
@@ -469,6 +448,45 @@ void run2() {
     eg.play_game();*/
 }
 
+template<u8 N>
+void run3() {
+    init();
+    load_packed_weights<N>("final");
+
+    //run_tests();
+    //perf_test(10000);
+    //perf_test_general(10000);
+
+    const u32 threads = thread::hardware_concurrency();
+    cout << "Number of cores: " << threads << endl;
+
+    run_algorithm_episodes<N>(1000, 10, [](const u64 board) {
+        return eval_state<N>(board).dir;
+    });
+
+    //run_algorithm_episodes<N>(20, 10, [](const u64 board) {
+    //    return expectimax_limited_states<N>(board, 10).dir;
+    //});
+
+    //run_algorithm_episodes<N>(1, 0, [](const u64 board) {
+    //    print_board<N>(board);
+    //    return expectimax_limited_depth_prob<N>(board, 4, 1e10).dir;
+    //});
+
+    //run_algorithm_episodes<N>(100, 10, [](const u64 board) {
+    //    //print_board<N>(board);
+    //    return expectimax_limited_states<N>(board, 10000).dir;
+    //});
+
+    run_algorithm_episodes<N>(10, 10, [](const u64 board) {
+        return expectimax_limited_depth_prob<N>(board, 3, 1e10).dir;
+    });
+
+    //const u64 board = 0x2021000000000000ull;
+    //print_board<N>(board);
+    //print_dir(expectimax_limited_states<N>(board, 100).dir);
+}
+
 int main() {
     srand(42);
     if (REDIRECT) {
@@ -478,13 +496,15 @@ int main() {
         cout.rdbuf(fileBuffer);
 
         //run<4>();
-        run2<4>();
+        //run2<4>();
+        run3<4>();
 
         cout.rdbuf(consoleBuffer);
         file.close();
     } else {
         //run<4>();
-        run2<4>();
+        //run2<4>();
+        run3<4>();
     }
 
     return 0;

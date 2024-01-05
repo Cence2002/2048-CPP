@@ -157,8 +157,8 @@ auto tuples_3 = tuples_3_4;
 constexpr u8 tuples_size_3 = tuples_3.size();
 
 template<u8 N>
-void save_packed_weights(const string &ts_str) {
-    const string filename = "weights-" + ts_str + ".bin";
+void save_packed_weights(const string &id) {
+    const string filename = "weights-" + id + ".bin";
     auto start = time_now();
     ofstream file("../weights_backups/" + filename, ios::binary);
     if (!file.is_open()) {
@@ -187,8 +187,8 @@ void save_packed_weights(const string &ts_str) {
 }
 
 template<u8 N>
-void load_packed_weights(const string &ts_str) {
-    const string filename = "weights-" + ts_str + ".bin";
+void load_packed_weights(const string &id) {
+    const string filename = "weights-" + id + ".bin";
     auto start = time_now();
     ifstream file("../weights_backups/" + filename, ios::binary);
     if (!file.is_open()) {

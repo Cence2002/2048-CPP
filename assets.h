@@ -18,7 +18,7 @@
 #include <random>
 
 #define DEBUG 0
-#define REDIRECT 1
+#define REDIRECT 0
 
 using namespace std;
 
@@ -122,6 +122,10 @@ constexpr u64 power(u64 base, u8 exp) {
     return res;
 }
 
+constexpr r_t st_dev(const u64 sum, const u64 sum_squared, const u64 n) {
+    return sqrt(r_t(sum_squared) / r_t(n) - r_t(sum) * r_t(sum) / r_t(n * n));
+}
+
 void save_array(const string &filename, const char *arr, const size_t size) {
     cout << "Saving " << filename << " started" << endl;
     auto start = time_now();
@@ -156,6 +160,26 @@ string get_time_str() {
     return temp.str();
 }
 
+
+void print_dir(const Dir dir) {
+    switch (dir) {
+        case Left:
+            cout << "Left";
+            break;
+        case Up:
+            cout << "Up";
+            break;
+        case Right:
+            cout << "Right";
+            break;
+        case Down:
+            cout << "Down";
+            break;
+        default:
+            cout << "None";
+            break;
+    }
+}
 
 void print_cell(const u8 cell) {
     if (cell == 0) {
@@ -226,7 +250,9 @@ struct run_stats_t {
 struct game_stats_t {
     u64 game_counter = 0;
     u64 score_counter = 0;
+    u64 score_squared_counter = 0;
     u64 moves_counter = 0;
+    u64 moves_squared_counter = 0;
 
     u32 max_moves = 0;
     s_t max_score = 0;
@@ -253,7 +279,9 @@ struct game_stats_t {
     void update_board_stats(u64 board, s_t score, u32 moves) {
         ++game_counter;
         score_counter += score;
+        //score_squared_counter += u64(score) * u64(score);
         moves_counter += moves;
+        //moves_squared_counter += moves * moves;
         max_moves = max(max_moves, moves);
         max_score = max(max_score, score);
 
@@ -281,7 +309,9 @@ struct game_stats_t {
     void append_stats(game_stats_t stats) {
         game_counter += stats.game_counter;
         score_counter += stats.score_counter;
+        //score_squared_counter += stats.score_squared_counter;
         moves_counter += stats.moves_counter;
+        //moves_squared_counter += stats.moves_squared_counter;
         max_moves = max(max_moves, stats.max_moves);
         max_score = max(max_score, stats.max_score);
         max_cell = max(max_cell, stats.max_cell);
@@ -297,7 +327,9 @@ struct game_stats_t {
 
     void print_average_game_stats() const {
         cout << indent << "Average score   \t" << r_t(score_counter) / r_t(game_counter) << " / game" << endl;
+        //cout << indent << "St dev score    \t" << st_dev(score_counter, score_squared_counter, game_counter) << endl;
         cout << indent << "Average moves   \t" << r_t(moves_counter) / r_t(game_counter) << " / game" << endl;
+        //cout << indent << "St dev moves    \t" << st_dev(moves_counter, moves_squared_counter, game_counter) << endl;
     }
 
     void print_max_game_stats() const {

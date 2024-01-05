@@ -255,3 +255,13 @@ void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 thread
     cout << "Learning finished (" << elapsed / 1e6 << " s)" << endl;
     cout << endl;
 }
+
+template<u8 N>
+void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games, u8 threads) {
+    learning_rate = LR;
+    run_learning<N>(episodes, training_games, testing_games, threads);
+    string ts_str = get_time_str();
+    cout << "Timestamp: " << ts_str << endl;
+    save_packed_weights<N>(ts_str);
+    cout << endl;
+}

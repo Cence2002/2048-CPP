@@ -3,18 +3,6 @@
 #include "board.h"
 #include "eval.h"
 
-/*
- brute force all possible endgame positions
- for a given board with some large and some small tiles
- maximize the probability of reaching the smallest large tile (G)
- for all possible configurations of small tiles (< G)
- where the large tiles are fixed in place
-
- first, find each "winning" configuration (position)
- then, for each possible configuration of small tiles
- find the probability of reaching any winning configuration
-*/
-
 
 // E D C B
 // 6 8 9 A
@@ -26,49 +14,12 @@
 // 0 0 0 0
 // 0 0 0 0
 
-
-//take a board with some large tiles and some small tiles
-//given mask is B
-//ignore tiles that are not empty in B (base)
-//only return hash if, on all empty tiles in B, the tile is small enough
-//otherwise, return 0
-
-//B is the base board for this endgame
-//it contains 16 tiles, each 4 bits
-//values can be:
-// 0: small tile (< G)
-// F: large tile (>= G)
-// 2: goal tile (== G)
-// goal tile is the one we want to merge with new tiles
-// we want to maximize the probability of reaching the goal tile
-// building a goal tile next to the original goal tile is a win
-
-
-
-
-//TODO
-//instead of 2-bit directions, store more information
-
-//is a goal reachable certainly enough (>20%)
-//if no, rely on tuple network
-//if yes, what's the best move (2 bits)
-
-//TODO
-//maybe simply store the tuple value of goal positions
-//that will incentivize reaching better goal positions
-
 class Endgame {
 private:
     const u64 B;
     const u8 G;
     const u64 size;
-    vector<r_t> probs;
-
-public:
-    explicit Endgame(const u64 base) : B(base), G(get_G(B)), size(get_size(G, B)) {
-        cout << size << endl;
-        probs.resize(size, -1);
-    }
+    vector<r_t> evals;
 
     static u8 get_G(const u64 B) {
         u8 G = 0;
@@ -80,8 +31,8 @@ public:
         return G;
     }
 
-    static u64 get_size(const u8 G, const u64 B) {
-        return power(G + 1, count_empty<4>(B));
+    static u64 get_size(const u64 B) {
+        return power(get_G(B) + 1, count_empty<4>(B));
     }
 
     u64 to_hash(const u64 board) const {
@@ -92,8 +43,27 @@ public:
             if (base == 0) {
                 if (cell > G) { return 0; }
                 hash = hash * (G + 1) + cell;
+            } else if (base == G) {
+                if (cell != G) { return 0; }
             } else {
-                if (cell != base) { return 0; }
+                if (cell != 0xFu) { return 0; }
+            }
+        }
+        return hash;
+    }
+
+    u64 general_to_hash(const u64 board) const {
+        u64 hash = 0;
+        for (u8 i = 0; i < 16; ++i) {
+            const u8 base = (B >> (i * 4)) & 0xFu;
+            const u8 cell = (board >> (i * 4)) & 0xFu;
+            if (base == 0) {
+                if (cell > G) { return 0; }
+                hash = hash * (G + 1) + cell;
+            } else if (base == G) {
+                if (cell != G) { return 0; }
+            } else {
+                if (cell <= G) { return 0; }
             }
         }
         return hash;
@@ -112,7 +82,39 @@ public:
         }
         for (u8 i = 0; i < 16; ++i) {
             const u8 base = (B >> (i * 4)) & 0xFu;
-            const u8 cell = (base == 0) ? cells[--index] : base;
+            u8 cell;
+            if (base == 0) {
+                cell = cells[--index];
+            } else {
+                cell = base;
+            }
+            board |= u64(cell) << (i * 4);
+        }
+        return board;
+    }
+
+    u64 general_from_hash(u64 hash) const {
+        u64 board = 0;
+        array<u8, 16> cells{};
+        u8 index = 0;
+        for (u8 i = 0; i < 16; ++i) {
+            const u8 base = (B >> (i * 4)) & 0xFu;
+            if (base == 0) {
+                cells[index++] = hash % (G + 1);
+                hash /= G + 1;
+            }
+        }
+        u8 big = G + 1;
+        for (u8 i = 0; i < 16; ++i) {
+            const u8 base = (B >> (i * 4)) & 0xFu;
+            u8 cell;
+            if (base == 0) {
+                cell = cells[--index];
+            } else if (base == G) {
+                cell = base;
+            } else {
+                cell = big++;
+            }
             board |= u64(cell) << (i * 4);
         }
         return board;
@@ -137,55 +139,22 @@ public:
         return false;
     }
 
-    r_t eval_goal_state(const u64 state) const {
-        return expectimax_limited_states<4>(state, 100).eval;
-    }
-
-    void init_goals(u32 threads) {
-        //TODO replace with n-tuple evaluation with not-too-large depth
-        if (threads == 0) {
-            for (u64 hash = 0; hash < size; ++hash) {
-                const u64 board = from_hash(hash);
-                if (is_goal_state(board)) {
-                    probs[hash] = 1;
-                    probs[hash] = eval_goal_state(board);
-                }
-            }
-        } else {
-            vector<thread> all_threads;
-            for (u32 t = 0; t < threads; ++t) {
-                all_threads.emplace_back([this, t, threads]() {
-                    for (u64 hash = t; hash < size; hash += threads) {
-                        const u64 board = from_hash(hash);
-                        if (is_goal_state(board)) {
-                            probs[hash] = 1;
-                            probs[hash] = eval_goal_state(board);
-                        }
-                    }
-                });
-            }
-            for (auto &thread: all_threads) {
-                thread.join();
-            }
-        }
-    }
-
     r_t eval_state(const u64 state) {
         const u64 hash = to_hash(state);
         if (hash == 0) { return 0; }
-        if (probs[hash] != -1) { return probs[hash]; }
-        r_t max_prob = 0;
+        if (evals[hash] != -1) { return evals[hash]; }
+        r_t max_eval = 0;
         for (const Dir dir: DIRS) {
             const u64 afterstate = moved_board<4>(state, dir);
             if (afterstate == state) { continue; }
             r_t reward = r_t(get_reward<4>(state, dir));
             //TODO remove
-            //reward *= 0;
+            reward *= 0;
             const r_t eval = reward + eval_afterstate(afterstate);
-            max_prob = max(max_prob, eval);
+            max_eval = max(max_eval, eval);
         }
-        probs[hash] = max_prob;
-        return max_prob;
+        evals[hash] = max_eval;
+        return max_eval;
     }
 
     r_t eval_afterstate(const u64 afterstate) {
@@ -206,15 +175,85 @@ public:
         return sum / r_t(count);
     }
 
-    void eval_all_states() {
-        for (u64 hash = 0; hash < size; ++hash) {
-            const u64 board = from_hash(hash);
-            if (to_hash(board) == 0) { continue; }
-            eval_state(board);
+public:
+    explicit Endgame(const u64 base) : B(base), G(get_G(B)), size(get_size(B)) {
+        cout << size << endl;
+        evals.resize(size, -1);
+    }
+
+    void init_goals(u32 threads) {
+        //TODO replace with n-tuple evaluation with not-too-large depth
+        if (threads == 0) {
+            for (u64 hash = 0; hash < size; ++hash) {
+                const u64 board = from_hash(hash);
+                if (is_goal_state(board)) {
+                    //TODO replace
+                    //const u64 general_board = general_from_hash(hash);
+                    //const r_t eval = expectimax_limited_states<4>(general_board, 100).eval;
+                    //evals[hash] = eval;
+                    evals[hash] = 1;
+                }
+            }
+        } else {
+            vector<thread> all_threads;
+            for (u32 t = 0; t < threads; ++t) {
+                all_threads.emplace_back([this, t, threads]() {
+                    for (u64 hash = t; hash < size; hash += threads) {
+                        const u64 board = from_hash(hash);
+                        if (is_goal_state(board)) {
+                            //TODO replace
+                            //const u64 general_board = general_from_hash(hash);
+                            //const r_t eval = expectimax_limited_states<4>(general_board, 100).eval;
+                            //evals[hash] = eval;
+                            evals[hash] = 1;
+                        }
+                    }
+                });
+            }
+            for (auto &thread: all_threads) {
+                thread.join();
+            }
         }
     }
 
-    Dir best_dir(u64 board) {
+    void bruteforce_states() {
+        for (u64 hash = 0; hash < size; ++hash) {
+            const u64 board = from_hash(hash);
+            eval_state(board);
+            eval_afterstate(board);
+        }
+    }
+
+    //returns 8 if no transformation is found (board doesn't match B)
+    u8 transform_index(const u64 board) {
+        u8 index = 0;
+        for (const auto &b: get_transformations<4>(board)) {
+            const u64 hash = general_to_hash(b);
+            if (hash != 0) {
+                return index;
+            }
+            ++index;
+        }
+        return index;
+    }
+
+    r_t general_state_eval(const u64 board, const u8 index) {
+        if (index == 8) { cout << "NOP" << endl; }
+        const u64 b = get_transformations<4>(board)[index];
+        const u64 hash = general_to_hash(b);
+        if (hash == 0) { return 0; }
+        return eval_state(b);
+    }
+
+    r_t general_afterstate_eval(const u64 board, const u8 index) {
+        if (index == 8) { cout << "NOP" << endl; }
+        const u64 b = get_transformations<4>(board)[index];
+        const u64 hash = general_to_hash(b);
+        if (hash == 0) { return 0; }
+        return eval_afterstate(b);
+    }
+
+    /*Dir best_dir(u64 board) {
         Dir best_dir = None;
         r_t best_eval = 0;
         for (const Dir dir: DIRS) {
@@ -257,7 +296,7 @@ public:
         u8 byte = packed[hash / 4];
         u8 bits = (byte >> ((hash % 4) * 2)) & 0b11u;
         return Dir(bits + 1);
-    }
+    }*/
 };
 
 
