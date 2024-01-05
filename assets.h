@@ -18,7 +18,7 @@
 #include <random>
 
 #define DEBUG 0
-#define REDIRECT 0
+#define REDIRECT 1
 
 using namespace std;
 

@@ -1,6 +1,7 @@
 #include "testing.h"
-#include "algorithm.h"
-#include "endgame_bruteforce.h"
+#include "learn.h"
+//#include "algorithm.h"
+//#include "endgame_bruteforce.h"
 
 void init() {
     auto start = time_now();
@@ -446,6 +447,10 @@ void run2() {
     eg.eval_all_states();
     cout << "Eval time: " << time_since(start) / 1e6 << endl;
     eg.play_game();*/
+
+    for (u32 t = 0; t < 20; ++t) {
+        fixed_learn<N>(0.1, 50, 100000, 10000, 12);
+    }
 }
 
 template<u8 N>
@@ -460,9 +465,9 @@ void run3() {
     const u32 threads = thread::hardware_concurrency();
     cout << "Number of cores: " << threads << endl;
 
-    run_algorithm_episodes<N>(1000, 10, [](const u64 board) {
-        return eval_state<N>(board).dir;
-    });
+    //run_algorithm_episodes<N>(1000, 10, [](const u64 board) {
+    //    return eval_state<N>(board).dir;
+    //});
 
     //run_algorithm_episodes<N>(20, 10, [](const u64 board) {
     //    return expectimax_limited_states<N>(board, 10).dir;
@@ -473,14 +478,13 @@ void run3() {
     //    return expectimax_limited_depth_prob<N>(board, 4, 1e10).dir;
     //});
 
-    //run_algorithm_episodes<N>(100, 10, [](const u64 board) {
-    //    //print_board<N>(board);
-    //    return expectimax_limited_states<N>(board, 10000).dir;
+    //run_algorithm_episodes<N>(1200, 10, [](const u64 board) {
+    //    return expectimax_limited_states<N>(board, 250).dir;
     //});
 
-    run_algorithm_episodes<N>(10, 10, [](const u64 board) {
-        return expectimax_limited_depth_prob<N>(board, 3, 1e10).dir;
-    });
+    //run_algorithm_episodes<N>(100, 10, [](const u64 board) {
+    //    return expectimax_limited_depth_prob<N>(board, 3, 1e10).dir;
+    //});
 
     //const u64 board = 0x2021000000000000ull;
     //print_board<N>(board);
@@ -496,15 +500,15 @@ int main() {
         cout.rdbuf(fileBuffer);
 
         //run<4>();
-        //run2<4>();
-        run3<4>();
+        run2<4>();
+        //run3<4>();
 
         cout.rdbuf(consoleBuffer);
         file.close();
     } else {
         //run<4>();
-        //run2<4>();
-        run3<4>();
+        run2<4>();
+        //run3<4>();
     }
 
     return 0;

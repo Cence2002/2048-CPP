@@ -2,6 +2,15 @@
 
 #include "eval.h"
 
+u8 highest_tile(u64 board) {
+    u8 highest = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        highest = max(highest, u8(board & 0xFu));
+        board >>= 4;
+    }
+    return highest;
+}
+
 template<u8 N>
 Game_stat algorithm_episode(Dir (*algorithm)(const u64)) {
     u64 board = 0;
@@ -17,6 +26,16 @@ Game_stat algorithm_episode(Dir (*algorithm)(const u64)) {
         ++moves;
 
         move_board<N>(board, dir);
+        /*if (highest_tile(board) == 0xEu) {
+            //if (highest_tile(board & 0x0FF00FF00FF00FF0) == 0xEu) {
+            //    cout << "ERROR: 0xE tile in the middle of the board" << endl;
+            //    break;
+            //}
+            //print board as 16 hex digits, always 16 digits with leading zeros
+            cout << hex << setfill('0') << setw(16) << board << endl;
+            cout << dec;
+            break;
+        }*/
         fill_board<N>(board);
     }
 
