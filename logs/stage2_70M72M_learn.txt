@@ -1,0 +1,86 @@
+Init time: 0.061674
+
+Average score: 1099.36
+Time: 0.162685
+
+Loading weights-0107_131725.bin finished: 147104 us
+Learning started (1 episodes, LR=0.001)
+Testing started (100000 games)
+    Score A:        	1 / game
+    Score B:        	1 / game
+    Score C:        	1 / game
+    Score D:        	1 / game
+    Score E:        	1 / game
+    Score F:        	0.331133 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	1.68278
+    Move per game:  	8570.16
+    Score per game: 	228343
+Testing finished (168.271 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.68851
+    Move per game:  	9072
+Training finished (2688.5 s)
+Testing started (100000 games)
+    Score A:        	1 / game
+    Score B:        	1 / game
+    Score C:        	1 / game
+    Score D:        	1 / game
+    Score E:        	1 / game
+    Score F:        	0.370835 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	1.57566
+    Move per game:  	9121.18
+    Score per game: 	244857
+Testing finished (157.559 s)
+
+Learning finished (2846.06 s)
+
+Timestamp: 0107_164823
+Saving weights-0107_164823.bin finished: 957083 us
+
+Learning started (1 episodes, LR=0.001)
+Testing started (100000 games)
+    Score A:        	1 / game
+    Score B:        	1 / game
+    Score C:        	1 / game
+    Score D:        	1 / game
+    Score E:        	1 / game
+    Score F:        	0.369115 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	1.63168
+    Move per game:  	9106.06
+    Score per game: 	244383
+Testing finished (163.161 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	2.44235
+    Move per game:  	9121.93
+Training finished (2442.34 s)
+Testing started (100000 games)
+    Score A:        	1 / game
+    Score B:        	1 / game
+    Score C:        	1 / game
+    Score D:        	1 / game
+    Score E:        	1 / game
+    Score F:        	0.373215 / game
+    Score G:        	0 / game
+    Score H:        	0 / game
+    Ms per game:    	1.49235
+    Move per game:  	9143.57
+    Score per game: 	245614
+Testing finished (149.229 s)
+
+Learning finished (2591.57 s)
+
+Timestamp: 0107_173419
+Saving weights-0107_173419.bin finished: 1.01998e+06 us
+
+Learning started (1 episodes, LR=0.001)
+Testing started (100000 games)

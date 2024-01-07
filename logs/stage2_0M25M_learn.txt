@@ -1,0 +1,349 @@
+Init time: 0.064527
+
+Average score: 1090.17
+Time: 0.139733
+
+Learning started (5 episodes, LR=0.1)
+Testing started (100000 games)
+    Ms per game:    	0.0189961
+    Move per game:  	147.95
+    Score per game: 	1584.72
+Testing finished (1.89958 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	0.528619
+    Move per game:  	2044.52
+Training finished (528.617 s)
+Testing started (100000 games)
+    Ms per game:    	0.467272
+    Move per game:  	2661.59
+    Score per game: 	57406.4
+Testing finished (46.7254 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	0.94565
+    Move per game:  	3609.52
+Training finished (945.646 s)
+Testing started (100000 games)
+    Ms per game:    	0.713133
+    Move per game:  	3943.95
+    Score per game: 	92000.7
+Testing finished (71.3105 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	1.123
+    Move per game:  	4199.4
+Training finished (1123 s)
+Testing started (100000 games)
+    Ms per game:    	0.775122
+    Move per game:  	4304.29
+    Score per game: 	101063
+Testing finished (77.5091 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	1.17569
+    Move per game:  	4432.16
+Training finished (1175.68 s)
+Testing started (100000 games)
+    Ms per game:    	0.833535
+    Move per game:  	4575.72
+    Score per game: 	108130
+Testing finished (83.3502 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	1.22055
+    Move per game:  	4580.87
+Training finished (1220.55 s)
+Testing started (100000 games)
+    Ms per game:    	0.848226
+    Move per game:  	4633.15
+    Score per game: 	109516
+Testing finished (84.8192 s)
+
+Learning finished (5357.21 s)
+
+Timestamp: 0105_162434
+Saving weights-0105_162434.bin finished: 442739 us
+
+Learning started (5 episodes, LR=0.1)
+Testing started (100000 games)
+    Ms per game:    	0.854632
+    Move per game:  	4632.49
+    Score per game: 	109504
+Testing finished (85.4598 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	1.249
+    Move per game:  	4663.11
+Training finished (1248.99 s)
+Testing started (100000 games)
+    Ms per game:    	0.872383
+    Move per game:  	4677.33
+    Score per game: 	110486
+Testing finished (87.2349 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	1.26333
+    Move per game:  	4713.16
+Training finished (1263.33 s)
+Testing started (100000 games)
+    Ms per game:    	0.867243
+    Move per game:  	4723.92
+    Score per game: 	111701
+Testing finished (86.7208 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	1.27833
+    Move per game:  	4758.92
+Training finished (1278.32 s)
+Testing started (100000 games)
+    Ms per game:    	0.891591
+    Move per game:  	4831.35
+    Score per game: 	114319
+Testing finished (89.1556 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	1.30964
+    Move per game:  	4885.61
+Training finished (1309.63 s)
+Testing started (100000 games)
+    Ms per game:    	0.91609
+    Move per game:  	4986.11
+    Score per game: 	120406
+Testing finished (91.6054 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	1.38404
+    Move per game:  	5172.35
+Training finished (1384.04 s)
+Testing started (100000 games)
+    Ms per game:    	0.961199
+    Move per game:  	5217.23
+    Score per game: 	127835
+Testing finished (96.1161 s)
+
+Learning finished (6935.15 s)
+
+Timestamp: 0105_182135
+Saving weights-0105_182135.bin finished: 444800 us
+
+Learning started (5 episodes, LR=0.1)
+Testing started (100000 games)
+    Ms per game:    	0.971442
+    Move per game:  	5208.47
+    Score per game: 	127615
+Testing finished (97.1404 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	1.44201
+    Move per game:  	5344.64
+Training finished (1442.01 s)
+Testing started (100000 games)
+    Ms per game:    	1.03405
+    Move per game:  	5551.19
+    Score per game: 	137667
+Testing finished (103.4 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	1.47579
+    Move per game:  	5468.55
+Training finished (1475.78 s)
+Testing started (100000 games)
+    Ms per game:    	1.05776
+    Move per game:  	5633.63
+    Score per game: 	140439
+Testing finished (105.771 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	1.50516
+    Move per game:  	5530.46
+Training finished (1505.15 s)
+Testing started (100000 games)
+    Ms per game:    	1.04186
+    Move per game:  	5612.64
+    Score per game: 	139852
+Testing finished (104.182 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	1.5147
+    Move per game:  	5569.25
+Training finished (1514.69 s)
+Testing started (100000 games)
+    Ms per game:    	1.04967
+    Move per game:  	5553.17
+    Score per game: 	138106
+Testing finished (104.963 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	1.53487
+    Move per game:  	5613.76
+Training finished (1534.87 s)
+Testing started (100000 games)
+    Ms per game:    	1.08605
+    Move per game:  	5771.89
+    Score per game: 	144392
+Testing finished (108.601 s)
+
+Learning finished (7999.42 s)
+
+Timestamp: 0105_203632
+Saving weights-0105_203632.bin finished: 436329 us
+
+Learning started (5 episodes, LR=0.1)
+Testing started (100000 games)
+    Ms per game:    	1.09763
+    Move per game:  	5804.24
+    Score per game: 	145374
+Testing finished (109.759 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	1.54765
+    Move per game:  	5658.66
+Training finished (1547.64 s)
+Testing started (100000 games)
+    Ms per game:    	1.06008
+    Move per game:  	5608.95
+    Score per game: 	139884
+Testing finished (106.004 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	1.5619
+    Move per game:  	5696.35
+Training finished (1561.89 s)
+Testing started (100000 games)
+    Ms per game:    	1.06905
+    Move per game:  	5586.79
+    Score per game: 	139212
+Testing finished (106.9 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	1.57378
+    Move per game:  	5742.48
+Training finished (1573.78 s)
+Testing started (100000 games)
+    Ms per game:    	1.10834
+    Move per game:  	5794.6
+    Score per game: 	145774
+Testing finished (110.829 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	1.59265
+    Move per game:  	5781.95
+Training finished (1592.64 s)
+Testing started (100000 games)
+    Ms per game:    	1.18264
+    Move per game:  	5843.04
+    Score per game: 	146904
+Testing finished (118.26 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	1.59712
+    Move per game:  	5806.23
+Training finished (1597.11 s)
+Testing started (100000 games)
+    Ms per game:    	1.11453
+    Move per game:  	5852.73
+    Score per game: 	147365
+Testing finished (111.448 s)
+
+Learning finished (8426.51 s)
+
+Timestamp: 0105_225849
+Saving weights-0105_225849.bin finished: 1.17164e+06 us
+
+Learning started (5 episodes, LR=0.1)
+Testing started (100000 games)
+    Ms per game:    	1.13799
+    Move per game:  	5858.54
+    Score per game: 	147518
+Testing finished (113.794 s)
+
+Episode 1
+Training started (1000000 games)
+    Ms per game:    	1.61756
+    Move per game:  	5825.41
+Training finished (1617.55 s)
+Testing started (100000 games)
+    Ms per game:    	1.18667
+    Move per game:  	5916.84
+    Score per game: 	148742
+Testing finished (118.663 s)
+
+Episode 2
+Training started (1000000 games)
+    Ms per game:    	1.61907
+    Move per game:  	5841.13
+Training finished (1619.06 s)
+Testing started (100000 games)
+    Ms per game:    	1.14882
+    Move per game:  	6010.32
+    Score per game: 	151751
+Testing finished (114.878 s)
+
+Episode 3
+Training started (1000000 games)
+    Ms per game:    	1.81305
+    Move per game:  	5861.31
+Training finished (1813.04 s)
+Testing started (100000 games)
+    Ms per game:    	1.21399
+    Move per game:  	5916.18
+    Score per game: 	149052
+Testing finished (121.395 s)
+
+Episode 4
+Training started (1000000 games)
+    Ms per game:    	1.80123
+    Move per game:  	5893.55
+Training finished (1801.22 s)
+Testing started (100000 games)
+    Ms per game:    	1.24303
+    Move per game:  	5912.97
+    Score per game: 	149069
+Testing finished (124.298 s)
+
+Episode 5
+Training started (1000000 games)
+    Ms per game:    	1.70501
+    Move per game:  	5911.94
+Training finished (1705 s)
+Testing started (100000 games)
+    Ms per game:    	1.08038
+    Move per game:  	5917.78
+    Score per game: 	148953
+Testing finished (108.034 s)
+
+Learning finished (9143.15 s)
+
+Timestamp: 0106_013307
+Saving weights-0106_013307.bin finished: 1.28549e+06 us
+
+Learning started (5 episodes, LR=0.1)
+Testing started (100000 games)
+    Ms per game:    	1.07128
+    Move per game:  	5912.62
+    Score per game: 	148813
+Testing finished (107.124 s)
+
+Episode 1
+Training started (1000000 games)

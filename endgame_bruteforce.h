@@ -3,7 +3,6 @@
 #include "board.h"
 #include "eval.h"
 
-
 // E D C B
 // 6 8 9 A
 // 0 2 2 1
@@ -299,7 +298,102 @@ public:
     }*/
 };
 
+//set all tiles smaller than threshold to 0
+u64 filter_large_tiles(u64 board, u8 threshold) {
+    u64 filtered = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell >= threshold) {
+            filtered |= u64(cell) << (i * 4);
+        }
+    }
+    return filtered;
+}
 
+//i-th bit 1 if there is a tile exactly 2^i (only for i larger than threshold)
+u16 large_tiles_mask(u64 board, u8 threshold) {
+    u16 mask = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell >= threshold) {
+            mask |= u16(1) << i;
+        }
+    }
+    return mask;
+}
+
+//how many times a filtered board occurred for a specific mask for a specific threshold
+unordered_map<u16, unordered_map<u64, u32>> count_occurrences(u8 threshold, u32 games) {
+    unordered_map<u16, unordered_map<u64, u32>> occurrences;
+    for (u64 t = 0; t < games; ++t) {
+        if (t % 1000 == 0) {
+            cout << "Progress: " << t << endl;
+        }
+        u64 board = 0;
+        fill_board<4>(board);
+        fill_board<4>(board);
+        for (u8 i = 0; i < threshold; ++i) {
+            //Dir dir= expectimax_limited_states<4>(board, 100).dir;
+            Dir dir = eval_state<4>(board).dir;
+            if (dir == None) { break; }
+            move_board<4>(board, dir);
+            fill_board<4>(board);
+            u64 filtered = 0;
+            for (u64 b: get_transformations<4>(board)) {
+                filtered = max(filtered, filter_large_tiles(b, threshold));
+            }
+            u16 mask = large_tiles_mask(filtered, threshold);
+            if (mask == 0) { continue; }
+            if (occurrences[mask].count(filtered) == 0) {
+                occurrences[mask][filtered] = 1;
+            } else {
+                ++occurrences[mask][filtered];
+            }
+        }
+    }
+    return occurrences;
+}
+
+//first, count total number of occurrences for each mask
+//then, sort masks by frequency
+//then, print masks and frequencies
+vector<pair<u16, u64>> print_mask_probs(const unordered_map<u16, unordered_map<u64, u32>> &occurrences) {
+    unordered_map<u16, u64> mask_counts;
+    for (const auto &[mask, boards]: occurrences) {
+        u64 count = 0;
+        for (const auto &[board, occurrences]: boards) {
+            count += occurrences;
+        }
+        mask_counts[mask] = count;
+    }
+    vector<pair<u16, u64>> masks;
+    for (const auto &[mask, prob]: mask_counts) {
+        for (u8 i = 0; i < 16; ++i) {
+            if (mask & (u16(1) << i)) {
+                cout << "1";
+            } else {
+                cout << "0";
+            }
+        }
+        cout << " " << prob << endl;
+    }
+    return masks;
+}
+
+//sort boards by frequency
+void print_board_probs(unordered_map<u64, u32> &occurrences) {
+    vector<pair<u64, u32>> boards;
+    for (const auto &[board, occurrences]: occurrences) {
+        boards.emplace_back(board, occurrences);
+    }
+    sort(boards.begin(), boards.end(), [](const auto &a, const auto &b) {
+        return a.second > b.second;
+    });
+    for (const auto &[board, occurrences]: boards) {
+        print_board<4>(board);
+        cout << " " << occurrences << endl;
+    }
+}
 
 
 /*

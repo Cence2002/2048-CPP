@@ -1,7 +1,7 @@
 #include "testing.h"
 #include "learn.h"
-//#include "algorithm.h"
-//#include "endgame_bruteforce.h"
+#include "algorithm.h"
+#include "endgame_bruteforce.h"
 
 void init() {
     auto start = time_now();
@@ -448,9 +448,17 @@ void run2() {
     cout << "Eval time: " << time_since(start) / 1e6 << endl;
     eg.play_game();*/
 
-    for (u32 t = 0; t < 20; ++t) {
-        fixed_learn<N>(0.1, 50, 100000, 10000, 12);
-    }
+    load_packed_weights<N>("final");
+    run_testing_episodes<N>(1000, 10);
+    load_packed_weights<N>("final2");
+    run_testing_episodes<N>(1000, 10);
+
+    //auto occurences = count_occurrences(15, 100);
+    //auto sorted = print_mask_probs(occurences);
+    //for (const auto &p: sorted) {
+    //    cout << hex << p.first << dec << endl;
+    //    print_board_probs(occurences[p.first]);
+    //}
 }
 
 template<u8 N>
