@@ -19,6 +19,10 @@ struct Tuple {
         return weights[index];
     }
 
+    inline const r_t &operator[](const u32 index) const {
+        return weights[index];
+    }
+
     inline void update_const(const u32 index, const r_t gradient) {
         weights[index] += gradient * learning_rate;
     }
