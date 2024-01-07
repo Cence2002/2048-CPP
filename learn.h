@@ -28,9 +28,9 @@ Game_stat training_episode() {
 
     r_t scaled_learning_rate = learning_rate / 8;
     if constexpr (N == 4) {
-        scaled_learning_rate /= r_t(tuples_size_4);
+        scaled_learning_rate /= r_t(tuples_4.size());
     } else {
-        scaled_learning_rate /= r_t(tuples_size_3);
+        scaled_learning_rate /= r_t(tuples_3.size());
     }
 
     r_t target = 0;

@@ -12,10 +12,10 @@ void init() {
     init_moves_123();
 
     for (auto &t: tuples_4) {
-        t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_4));
+        t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_4.size()));
     }
     for (auto &t: tuples_3) {
-        t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_size_3));
+        t.weights.assign(t.weights.size(), tuple_init / (8 * tuples_3.size()));
     }
 
     cout << "Init time: " << time_since(start) / 1e6 << endl << endl;

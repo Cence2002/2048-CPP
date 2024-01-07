@@ -25,16 +25,9 @@ inline r_t update_weights(const u64 board, const r_t gradient) {
     r_t sum = 0;
     for (const auto &b: get_transformations<N>(board)) {
         if constexpr (N == 4) {
-            for (auto &t: tuples_4) { sum += (t.weights[pext(b, t.mask)] += gradient); }
-            //for (u8 i = 0; i < tuples_size_4; ++i) { tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient; }
-            //for (u8 i = 0; i < tuples_size_4; ++i) {
-            //    sum += (tuples_4[i].weights[pext(b, tuples_4[i].mask)] += gradient);
-            //}
+            for (auto &t: tuples_4) { sum += (t[pext(b, t.mask)] += gradient); }
         } else {
-            for (auto &t: tuples_3) { sum += (t.weights[pext(b, t.mask)] += gradient); }
-            //for (u8 i = 0; i < tuples_size_3; ++i) {
-            //    sum += (tuples_3[i].weights[pext(b, tuples_3[i].mask)] += gradient);
-            //}
+            for (auto &t: tuples_3) { sum += (t[pext(b, t.mask)] += gradient); }
         }
     }
     return sum;

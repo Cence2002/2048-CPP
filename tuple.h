@@ -5,13 +5,12 @@
 constexpr r_t tuple_init = 2e5;
 r_t learning_rate = 0;
 
-template<u32 N>
 struct Tuple {
     const string name;
-    u64 mask;
+    const u64 mask;
     vector<r_t> weights;
 
-    Tuple(string name, const u64 mask) : name(std::move(name)), mask(mask) {
+    Tuple(const u8 N, const string name, const u64 mask) : name(name), mask(mask) {
         weights.resize(E(N * 4), 0);
     }
 
@@ -81,19 +80,19 @@ struct Tuple {
     }*/
 };
 
-array<Tuple<6>, 12> tuples_4_bence = {
-        Tuple<6>("FFF0FFF", 0xFFF0FFFull),
-        Tuple<6>("FF00FF00FF0", 0xFF00FF00FF0ull),
-        Tuple<6>("FFFFFF", 0xFFFFFFull),
-        Tuple<6>("FFFFFF0000", 0xFFFFFF0000ull),
-        Tuple<6>("FFFFFF0", 0xFFFFFF0ull),
-        Tuple<6>("F000FFFFF", 0xF000FFFFFull),
-        Tuple<6>("F0FFFF000F", 0xF0FFFF000Full),
-        Tuple<6>("F0FFFFF00", 0xF0FFFFF00ull),
-        Tuple<6>("F00FFFFF", 0xF00FFFFFull),
-        Tuple<6>("FFFF0F0F", 0xFFFF0F0Full),
-        Tuple<6>("F0F0F0FFF", 0xF0F0F0FFFull),
-        Tuple<6>("FFFFFF000", 0xFFFFFF000ull),
+array<Tuple, 12> tuples_4_bence = {
+        Tuple(6, "FFF0FFF", 0xFFF0FFFull),
+        Tuple(6, "FF00FF00FF0", 0xFF00FF00FF0ull),
+        Tuple(6, "FFFFFF", 0xFFFFFFull),
+        Tuple(6, "FFFFFF0000", 0xFFFFFF0000ull),
+        Tuple(6, "FFFFFF0", 0xFFFFFF0ull),
+        Tuple(6, "F000FFFFF", 0xF000FFFFFull),
+        Tuple(6, "F0FFFF000F", 0xF0FFFF000Full),
+        Tuple(6, "F0FFFFF00", 0xF0FFFFF00ull),
+        Tuple(6, "F00FFFFF", 0xF00FFFFFull),
+        Tuple(6, "FFFF0F0F", 0xFFFF0F0Full),
+        Tuple(6, "F0F0F0FFF", 0xF0F0F0FFFull),
+        Tuple(6, "FFFFFF000", 0xFFFFFF000ull),
 };
 
 /*
@@ -143,22 +142,19 @@ array<Tuple<5>, 33> tuples_4_all5 = {
 };
 */
 
-array<Tuple<4>, 2> tuples_3_4 = {
-        Tuple<4>("FFFF", 0xFFFFull),
-        Tuple<4>("F0FFF", 0xF0FFFull),
+array<Tuple, 2> tuples_3_4 = {
+        Tuple(4, "FFFF", 0xFFFFull),
+        Tuple(4, "F0FFF", 0xF0FFFull),
 };
 
-array<Tuple<5>, 2> tuples_3_5 = {
-        Tuple<5>("FFFFF", 0xFFFFFull),
-        Tuple<5>("F00FFFF", 0xF00FFFFull)
+array<Tuple, 2> tuples_3_5 = {
+        Tuple(5, "FFFFF", 0xFFFFFull),
+        Tuple(5, "F00FFFF", 0xF00FFFFull)
 };
 
-
-auto tuples_4 = tuples_4_bence;
-constexpr u8 tuples_size_4 = tuples_4.size();
 
 auto tuples_3 = tuples_3_4;
-constexpr u8 tuples_size_3 = tuples_3.size();
+auto tuples_4 = tuples_4_bence;
 
 template<u8 N>
 void save_packed_weights(const string &id) {
@@ -170,16 +166,14 @@ void save_packed_weights(const string &id) {
         return;
     }
     if constexpr (N == 4) {
-        for (u8 i = 0; i < tuples_size_4; ++i) {
-            auto &t = tuples_4[i];
+        for (const auto &t: tuples_4) {
             size_t size = t.weights.size() * sizeof(t.weights[0]);
             file.write(t.name.c_str(), streamsize(t.name.size()));
             file.write((const char *) &size, sizeof(size));
             file.write((const char *) &t.weights[0], streamsize(size));
         }
     } else {
-        for (u8 i = 0; i < tuples_size_3; ++i) {
-            auto &t = tuples_3[i];
+        for (const auto &t: tuples_3) {
             size_t size = t.weights.size() * sizeof(t.weights[0]);
             file.write(t.name.c_str(), streamsize(t.name.size()));
             file.write((const char *) &size, sizeof(size));
@@ -200,8 +194,7 @@ void load_packed_weights(const string &id) {
         return;
     }
     if constexpr (N == 4) {
-        for (u8 i = 0; i < tuples_size_4; ++i) {
-            auto &t = tuples_4[i];
+        for (auto &t: tuples_4) {
             size_t size;
             string nameBuffer(t.name.size(), '\0');
             file.read(&nameBuffer[0], streamsize(t.name.size()));
@@ -211,8 +204,7 @@ void load_packed_weights(const string &id) {
             file.read((char *) &t.weights[0], streamsize(size));
         }
     } else {
-        for (u8 i = 0; i < tuples_size_3; ++i) {
-            auto &t = tuples_3[i];
+        for (auto &t: tuples_3) {
             size_t size;
             string nameBuffer(t.name.size(), '\0');
             file.read(&nameBuffer[0], streamsize(t.name.size()));
