@@ -31,7 +31,7 @@ private:
     }
 
     static u64 get_size(const u64 B) {
-        return power(get_G(B) + 1, count_empty(B));
+        return power(get_G(B) + 1, count_empty<4>(B));
     }
 
     u64 to_hash(const u64 board) const {
@@ -131,7 +131,7 @@ private:
 
     bool is_goal_state(const u64 state) const {
         for (const Dir dir: DIRS) {
-            const u64 afterstate = moved_board(state, dir);
+            const u64 afterstate = moved_board<4>(state, dir);
             if (afterstate == state) { continue; }
             if (is_goal(afterstate)) { return true; }
         }
@@ -144,9 +144,9 @@ private:
         if (evals[hash] != -1) { return evals[hash]; }
         r_t max_eval = 0;
         for (const Dir dir: DIRS) {
-            const u64 afterstate = moved_board(state, dir);
+            const u64 afterstate = moved_board<4>(state, dir);
             if (afterstate == state) { continue; }
-            r_t reward = r_t(get_reward(state, dir));
+            r_t reward = r_t(get_reward<4>(state, dir));
             //TODO remove
             reward *= 0;
             const r_t eval = reward + eval_afterstate(afterstate);
@@ -158,7 +158,7 @@ private:
 
     r_t eval_afterstate(const u64 afterstate) {
         if (to_hash(afterstate) == 0) { return 0; }
-        u64 empty = empty_mask(afterstate);
+        u64 empty = empty_mask<4>(afterstate);
         const u8 count = popcnt(empty);
         u64 mask = 1;
         r_t sum = 0;
@@ -188,7 +188,7 @@ public:
                 if (is_goal_state(board)) {
                     //TODO replace
                     //const u64 general_board = general_from_hash(hash);
-                    //const r_t eval = expectimax_limited_states(general_board, 100).eval;
+                    //const r_t eval = expectimax_limited_states<4>(general_board, 100).eval;
                     //evals[hash] = eval;
                     evals[hash] = 1;
                 }
@@ -202,7 +202,7 @@ public:
                         if (is_goal_state(board)) {
                             //TODO replace
                             //const u64 general_board = general_from_hash(hash);
-                            //const r_t eval = expectimax_limited_states(general_board, 100).eval;
+                            //const r_t eval = expectimax_limited_states<4>(general_board, 100).eval;
                             //evals[hash] = eval;
                             evals[hash] = 1;
                         }
@@ -226,7 +226,7 @@ public:
     //returns 8 if no transformation is found (board doesn't match B)
     u8 transform_index(const u64 board) {
         u8 index = 0;
-        for (const auto &b: get_transformations(board)) {
+        for (const auto &b: get_transformations<4>(board)) {
             const u64 hash = general_to_hash(b);
             if (hash != 0) {
                 return index;
@@ -238,7 +238,7 @@ public:
 
     r_t general_state_eval(const u64 board, const u8 index) {
         if (index == 8) { cout << "NOP" << endl; }
-        const u64 b = get_transformations(board)[index];
+        const u64 b = get_transformations<4>(board)[index];
         const u64 hash = general_to_hash(b);
         if (hash == 0) { return 0; }
         return eval_state(b);
@@ -246,7 +246,7 @@ public:
 
     r_t general_afterstate_eval(const u64 board, const u8 index) {
         if (index == 8) { cout << "NOP" << endl; }
-        const u64 b = get_transformations(board)[index];
+        const u64 b = get_transformations<4>(board)[index];
         const u64 hash = general_to_hash(b);
         if (hash == 0) { return 0; }
         return eval_afterstate(b);
@@ -256,7 +256,7 @@ public:
         Dir best_dir = None;
         r_t best_eval = 0;
         for (const Dir dir: DIRS) {
-            u64 afterstate = moved_board(board, dir);
+            u64 afterstate = moved_board<4>(board, dir);
             if (afterstate == board) { continue; }
             r_t eval = eval_afterstate(afterstate);
             if (eval > best_eval) {
@@ -269,14 +269,14 @@ public:
 
     void play_game() {
         u64 board = B;
-        fill_board(board);
-        print_board(board);
+        fill_board<4>(board);
+        print_board<4>(board);
         while (!is_goal_state(board)) {
             Dir dir = best_dir(board);
             if (dir == None) { break; }
-            board = moved_board(board, dir);
-            fill_board(board);
-            print_board(board);
+            board = moved_board<4>(board, dir);
+            fill_board<4>(board);
+            print_board<4>(board);
         }
         cout << "done" << endl;
     }
@@ -330,16 +330,16 @@ unordered_map<u16, unordered_map<u64, u32>> count_occurrences(u8 threshold, u32 
             cout << "Progress: " << t << endl;
         }
         u64 board = 0;
-        fill_board(board);
-        fill_board(board);
+        fill_board<4>(board);
+        fill_board<4>(board);
         for (u8 i = 0; i < threshold; ++i) {
-            //Dir dir= expectimax_limited_states(board, 100).dir;
-            Dir dir = eval_state(board, tuples_4_stage_1).dir;
+            //Dir dir= expectimax_limited_states<4>(board, 100).dir;
+            Dir dir = eval_state<4>(board).dir;
             if (dir == None) { break; }
-            move_board(board, dir);
-            fill_board(board);
+            move_board<4>(board, dir);
+            fill_board<4>(board);
             u64 filtered = 0;
-            for (u64 b: get_transformations(board)) {
+            for (u64 b: get_transformations<4>(board)) {
                 filtered = max(filtered, filter_large_tiles(b, threshold));
             }
             u16 mask = large_tiles_mask(filtered, threshold);
@@ -390,7 +390,7 @@ void print_board_probs(unordered_map<u64, u32> &occurrences) {
         return a.second > b.second;
     });
     for (const auto &[board, occurrences]: boards) {
-        print_board(board);
+        print_board<4>(board);
         cout << " " << occurrences << endl;
     }
 }

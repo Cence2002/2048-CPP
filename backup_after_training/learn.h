@@ -2,7 +2,8 @@
 
 #include "eval.h"
 
-Game_stat training_episode(NTuple &tuples) {
+template<u8 N>
+Game_stat training_episode() {
     vector<r_t> evals;
     vector<s_t> rewards;
     vector<u64> afterstates;
@@ -10,10 +11,10 @@ Game_stat training_episode(NTuple &tuples) {
     u64 board = 0;
     s_t score = 0;
 
-    fill_board(board);
-    fill_board(board);
+    fill_board<N>(board);
+    fill_board<N>(board);
     while (true) {
-        const auto [dir, eval, reward, afterstate] = eval_state(board, tuples);
+        const auto [dir, eval, reward, afterstate] = eval_state<N>(board);
         if (dir == None) { break; }
         evals.push_back(eval);
         rewards.push_back(reward);
@@ -21,48 +22,54 @@ Game_stat training_episode(NTuple &tuples) {
         score += reward;
 
         board = afterstate;
-        fill_board(board);
+        fill_board<N>(board);
     }
     const u32 moves = evals.size();
 
     r_t scaled_learning_rate = learning_rate / 8;
-    scaled_learning_rate /= r_t(tuples.size());
+    if constexpr (N == 4) {
+        scaled_learning_rate /= r_t(tuples_4.size());
+    } else {
+        scaled_learning_rate /= r_t(tuples_3.size());
+    }
 
     r_t target = 0;
     for (u32 t = moves - 1; t < moves; --t) {
-        const r_t error = target - add_weights(afterstates[t], tuples);
-        target = r_t(rewards[t]) + update_weights(afterstates[t], error * scaled_learning_rate, tuples);
+        const r_t error = target - add_weights<N>(afterstates[t]);
+        target = r_t(rewards[t]) + update_weights<N>(afterstates[t], error * scaled_learning_rate);
 
         //const r_t error = target - evals[t];
-        //update_weights(afterstates[t], error * scaled_learning_rate);
+        //update_weights<N>(afterstates[t], error * scaled_learning_rate);
         //target = r_t(rewards[t]) + evals[t];
     }
 
     return {board, score, moves};
 }
 
-Game_stat testing_episode(const NTuple &tuples) {
+template<u8 N>
+Game_stat testing_episode() {
     u64 board = 0;
     s_t score = 0;
     u32 moves = 0;
 
-    fill_board(board);
-    fill_board(board);
+    fill_board<N>(board);
+    fill_board<N>(board);
     while (true) {
         const auto [dir, eval, reward, afterstate]
-                = eval_state(board, tuples);
+                = eval_state<N>(board);
         if (dir == None) { break; }
         score += reward;
         ++moves;
 
         board = afterstate;
-        fill_board(board);
+        fill_board<N>(board);
     }
 
     return {board, score, moves};
 }
 
-vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
+template<u8 N>
+vector<Game_stat> run_training_episodes(u32 games, u8 threads) {
     srand(42);
     cout << "Training started (" << games << " games)" << endl;
 
@@ -71,16 +78,16 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
     auto start = time_now();
     if (threads == 0) {
         for (u32 i = 0; i < games; i++) {
-            games_stats.push_back(training_episode(tuples));
+            games_stats.push_back(training_episode<N>());
         }
     } else {
         vector<thread> all_threads;
         const u32 threads_games = games / threads;
         vector<vector<Game_stat>> threads_stats(threads);
         for (u8 t = 0; t < threads; ++t) {
-            all_threads.emplace_back([t, threads_games, &threads_stats, &tuples]() {
+            all_threads.emplace_back([t, threads_games, &threads_stats]() {
                 for (u32 i = 0; i < threads_games; ++i) {
-                    threads_stats[t].push_back(training_episode(tuples));
+                    threads_stats[t].push_back(training_episode<N>());
                 }
             });
         }
@@ -117,7 +124,8 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
     return games_stats;
 }
 
-vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tuples) {
+template<u8 N>
+vector<Game_stat> run_testing_episodes(u32 games, u8 threads) {
     srand(42);
     cout << "Testing started (" << games << " games)" << endl;
 
@@ -126,16 +134,16 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tupl
     auto start = time_now();
     if (threads == 0) {
         for (u32 i = 0; i < games; i++) {
-            games_stats.push_back(testing_episode(tuples));
+            games_stats.push_back(testing_episode<N>());
         }
     } else {
         vector<thread> all_threads;
         const u32 threads_games = games / threads;
         vector<vector<Game_stat>> threads_stats(threads);
         for (u8 t = 0; t < threads; ++t) {
-            all_threads.emplace_back([t, threads_games, &threads_stats, &tuples]() {
+            all_threads.emplace_back([t, threads_games, &threads_stats]() {
                 for (u32 i = 0; i < threads_games; ++i) {
-                    threads_stats[t].push_back(testing_episode(tuples));
+                    threads_stats[t].push_back(testing_episode<N>());
                 }
             });
         }
@@ -173,25 +181,26 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tupl
     return games_stats;
 }
 
-void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 threads, NTuple &tuples) {
+template<u8 N>
+void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 threads) {
     cout << "Learning started (" << episodes << " episodes, LR=" << learning_rate << ")" << endl;
 
     run_stats_t all_run_stats = {};
     game_stats_t all_training_stats = {};
     game_stats_t all_testing_stats = {};
 
-    run_testing_episodes(testing_games, threads, tuples);
+    run_testing_episodes<N>(testing_games, threads);
     cout << endl;
 
     auto start = time_now();
     for (u32 i = 0; i < episodes; i++) {
         cout << "Episode " << i + 1 << endl;
 
-        run_training_episodes(training_games, threads, tuples);
+        run_training_episodes<N>(training_games, threads);
         all_training_stats.append_stats(training_stats);
         all_run_stats.append_stats(run_stats);
 
-        run_testing_episodes(testing_games, threads, tuples);
+        run_testing_episodes<N>(testing_games, threads);
         all_run_stats.append_stats(run_stats);
         all_testing_stats.append_stats(testing_stats);
 
@@ -247,11 +256,12 @@ void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 thread
     cout << endl;
 }
 
-void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games, u8 threads, NTuple &tuples) {
+template<u8 N>
+void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games, u8 threads) {
     learning_rate = LR;
-    run_learning(episodes, training_games, testing_games, threads, tuples);
+    run_learning<N>(episodes, training_games, testing_games, threads);
     string ts_str = get_time_str();
     cout << "Timestamp: " << ts_str << endl;
-    save_packed_weights(ts_str, tuples);
+    save_packed_weights<N>(ts_str);
     cout << endl;
 }

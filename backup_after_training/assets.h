@@ -122,18 +122,6 @@ constexpr u64 power(u64 base, u8 exp) {
     return res;
 }
 
-constexpr u64 factorial(u8 n) {
-    u64 res = 1;
-    for (u8 i = 2; i <= n; ++i) {
-        res *= i;
-    }
-    return res;
-}
-
-constexpr u64 binomial(u8 n, u8 k) {
-    return factorial(n) / (factorial(k) * factorial(n - k));
-}
-
 constexpr r_t st_dev(const u64 sum, const u64 sum_squared, const u64 n) {
     return sqrt(r_t(sum_squared) / r_t(n) - r_t(sum) * r_t(sum) / r_t(n * n));
 }
@@ -203,10 +191,11 @@ void print_cell(const u8 cell) {
     }
 }
 
+template<u8 N>
 void print_board(const u64 board) {
-    for (u8 y = 0; y < 4; ++y) {
-        for (u8 x = 0; x < 4; ++x) {
-            print_cell((board >> (y * 16 + x * 4)) & 0xFu);
+    for (u8 y = 0; y < N; ++y) {
+        for (u8 x = 0; x < N; ++x) {
+            print_cell((board >> (y * (N * 4) + x * 4)) & 0xFu);
             cout << " ";
         }
         cout << endl;

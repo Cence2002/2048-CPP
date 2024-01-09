@@ -11,29 +11,39 @@ u8 highest_tile(u64 board) {
     return highest;
 }
 
-Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
+template<u8 N>
+Game_stat algorithm_episode(Dir (*algorithm)(const u64)) {
     u64 board = 0;
     s_t score = 0;
     u32 moves = 0;
 
-    fill_board(board);
-    fill_board(board);
-    bool next_stage = false;
+    fill_board<N>(board);
+    fill_board<N>(board);
     while (true) {
-        const Dir dir = algorithm(board, next_stage ? tuples_4_stage_2 : tuples_4_stage_1);
+        const Dir dir = algorithm(board);
         if (dir == None) { break; }
-        score += get_reward(board, dir);
+        score += get_reward<N>(board, dir);
         ++moves;
 
-        move_board(board, dir);
-        fill_board(board);
-        next_stage |= highest_tile(board) >= 14;
+        move_board<N>(board, dir);
+        /*if (highest_tile(board) == 0xEu) {
+            //if (highest_tile(board & 0x0FF00FF00FF00FF0) == 0xEu) {
+            //    cout << "ERROR: 0xE tile in the middle of the board" << endl;
+            //    break;
+            //}
+            //print board as 16 hex digits, always 16 digits with leading zeros
+            cout << hex << setfill('0') << setw(16) << board << endl;
+            cout << dec;
+            break;
+        }*/
+        fill_board<N>(board);
     }
 
     return {board, score, moves};
 }
 
-vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const u64, NTuple &)) {
+template<u8 N>
+vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const u64)) {
     srand(42);
     cout << "Testing started (" << games << " games)" << endl;
 
@@ -42,7 +52,7 @@ vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)
     auto start = time_now();
     if (threads == 0) {
         for (u32 i = 0; i < games; i++) {
-            games_stats.push_back(algorithm_episode(algorithm));
+            games_stats.push_back(algorithm_episode<N>(algorithm));
         }
     } else {
         vector<thread> all_threads;
@@ -51,7 +61,7 @@ vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)
         for (u8 t = 0; t < threads; ++t) {
             all_threads.emplace_back([t, threads_games, &threads_stats, algorithm]() {
                 for (u32 i = 0; i < threads_games; ++i) {
-                    threads_stats[t].push_back(algorithm_episode(algorithm));
+                    threads_stats[t].push_back(algorithm_episode<N>(algorithm));
                 }
             });
         }
