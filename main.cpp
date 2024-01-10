@@ -403,12 +403,17 @@ void run2() {
     load_packed_weights("stage1", tuples_4_stage_1);
     load_packed_weights("stage2", tuples_4_stage_2);
 
-    /*run_algorithm_episodes(30, 10, [](const u64 board, NTuple &tuples) {
+    run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
+        /*if (++cnt > cnt_2) {
+            cnt_2 += 2000;
+            //cout << "Deci games: " << cnt / 2000 << endl;
+        }*/
         //print_board(board);
-        return expectimax_limited_states(board, 10000, 0.05, tuples).dir;
-        //return expectimax_limited_depth_prob(board, 4, 1e10, tuples).dir;
+        return expectimax_limited_states(board, 10000, 0.01, tuples).dir;
+        //const u8 depth = 3;
+        //return expectimax_limited_depth_prob(board, depth, 1 / get_min_prob(depth, 0.05), tuples).dir;
         //return eval_state(board, tuples).dir;
-    });*/
+    });
     /*
         - - 1 6
         1 3 3 8
@@ -426,9 +431,10 @@ void run2() {
      copy this board
      */
     board = 0x0189017B126C234Dull;
-    print_board(board);
+    /*print_board(board);
     for (u8 depth = 0; depth <= 5; ++depth) {
         cnt = 0;
+        cnt_adds = 0;
         cnt_state = 0;
         cnt_afterstate = 0;
         cnt_probs.clear();
@@ -439,7 +445,8 @@ void run2() {
         cout << "Time: " << time_since(start) / 1e6 << endl;
         cout << "States: " << cnt_state << " (" << cnt_state / time_since(start) * 1e6 << " states/s)" << endl;
         cout << "Afterstates: " << cnt_afterstate << " (" << cnt_afterstate / time_since(start) * 1e6 << " afterstates/s)" << endl;
-        cout << "Total: " << cnt << " (" << cnt / time_since(start) * 1e6 << " states/s)" << endl;
+        cout << "Total: " << cnt_adds << " (" << cnt_adds / time_since(start) * 1e6 << " states/s)" << endl;
+        cout << "Small prob: " << cnt << endl;
         cout << "Max prob: " << used_prob << endl;
         cout << "Depths:" << endl;
         vector<pair<u8, r_t>> all_depths;
@@ -464,7 +471,7 @@ void run2() {
             cout << used_prob / p.first << " " << p.second << endl;
         }
         cout << endl << endl;
-    }
+    }*/
 
     //run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
     //    return expectimax_limited_states(board, 100, tuples).dir;

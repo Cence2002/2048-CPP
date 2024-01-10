@@ -5,9 +5,11 @@
 #define FIXNEGATIVE 0
 #define DOWNGRADE 0
 
+u64 cnt_adds = 0;
+
 inline r_t add_weights(const u64 board, const NTuple &tuples) {
     //++run_stats.eval_board_counter;
-    cnt++;
+    //cnt_adds++;
     r_t sum = 0;
     for (const auto &b: get_transformations(board)) {
         for (const auto &t: tuples) { sum += t[pext(b, t.mask)]; }
@@ -26,7 +28,7 @@ inline r_t update_weights(const u64 board, const r_t gradient, NTuple &tuples) {
 
 inline Eval eval_state(const u64 state, const NTuple &tuples) {
     //++run_stats.eval_moves_counter;
-    Eval best = {None, 0, 0, 0};
+    Eval best = Eval::None();
     for (const Dir dir: DIRS) {
         u64 afterstate = moved_board(state, dir);
         if (afterstate == state) { continue; }
@@ -44,12 +46,13 @@ u64 cnt_state, cnt_afterstate;
 r_t expectimax_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_states, const NTuple &tuples);
 
 Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_states, const NTuple &tuples) {
-    Eval best = {None, 0, 0, 0};
+    Eval best = Eval::None();
     if (max_states == 0) { return best; }
     --max_states;
-    cnt_state++;
+    if (max_states == 0) { return best; }
+    //cnt_state++;
     for (const Dir dir: DIRS) {
-        u64 afterstate = moved_board(state, dir);
+        const u64 afterstate = moved_board(state, dir);
         if (afterstate == state) { continue; }
         r_t eval = expectimax_afterstate(afterstate, max_depth, max_prob, max_states, tuples);
         if (max_states == 0) { return best; }
@@ -72,41 +75,33 @@ unordered_map<u8, u64> cnt_depths;
 //detect small probabilities sooner
 r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, u64 &max_states, const NTuple &tuples) {
     if (max_states == 0) { return 0; }
-    if (cnt_depths.find(max_depth) == cnt_depths.end()) { cnt_depths[max_depth] = 0; }
+    /*if (cnt_depths.find(max_depth) == cnt_depths.end()) { cnt_depths[max_depth] = 0; }
     cnt_depths[max_depth]++;
+    if(max_prob <= 1) {
+        cnt++;
+    }*/
     if (max_depth == 0 || max_prob <= 1) {
-        if (cnt_probs.find(max_prob) == cnt_probs.end()) { cnt_probs[max_prob] = 0; }
-        cnt_probs[max_prob]++;
+        /*if (cnt_probs.find(max_prob) == cnt_probs.end()) { cnt_probs[max_prob] = 0; }
+        cnt_probs[max_prob]++;*/
         if (FIXNEGATIVE) {
             return max(r_t(0), add_weights(afterstate, tuples));
         } else {
             return add_weights(afterstate, tuples);
         }
     }
-    /*const u8 empty = count_empty<N>(afterstate);
-    max_prob /= r_t(empty);
-    r_t avg_eval = 0;
-    b_t mask = 0xFu;
-    b_t val = 0x1u;
-    for (u8 i = 0; i < N * N; ++i) {
-        if ((afterstate & mask) == 0) {
-            avg_eval += r_t(0.9) * eval_state<N>(
-                    afterstate | val, max_depth, max_prob * r_t(0.9), max_moves).e;
-            avg_eval += r_t(0.1) * eval_state<N>(
-                    afterstate | (val << 1), max_depth, max_prob * r_t(0.1), max_moves).e;
-        }
-        mask <<= 4;
-        val <<= 4;
-    }
-    return avg_eval / r_t(empty);*/
-    u64 empty = empty_mask(afterstate);
-    const u8 count = popcnt(empty);
+    const u64 empty = empty_mask(afterstate);
+    const u8 empty_count = popcnt(empty);
     u64 mask = 1;
     r_t sum = 0;
-    cnt_afterstate++;
-    for (u8 i = 0; i < count;) {
+    r_t significance = 0;
+    //cnt_afterstate++;
+    for (u8 i = 0; i < empty_count; mask <<= 4) {
         if (empty & mask) {
             for (const auto &[shift, prob]: SHIFTS) {
+                if (prob * max_prob <= 1) {
+                    significance += prob;
+                    continue;
+                }
                 sum += prob * expectimax_state(
                         afterstate | (mask << shift),
                         max_depth - 1,
@@ -117,12 +112,14 @@ r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t ma
             }
             ++i;
         }
-        mask <<= 4;
     }
-    return sum / r_t(count);
+    if (significance > 0) {
+        sum += significance * add_weights(afterstate, tuples);
+    }
+    return sum / r_t(empty_count);
 }
 
-Eval expectimax_limited_depth_prob(const u64 board, u8 depth, r_t prob, const NTuple &tuples) {
+Eval expectimax_limited_depth_prob(const u64 board, const u8 depth, const r_t prob, const NTuple &tuples) {
     u64 states = numeric_limits<u64>::max();
     return expectimax_state(board, depth, prob, states, tuples);
 }
@@ -132,13 +129,13 @@ r_t get_prob(const u8 cnt1, const u8 cnt2) {
 }
 
 r_t get_ratio(const u64 cnt1, const u64 cnt2) {
-    return r_t(binomial(cnt1 + cnt2, cnt1)) * get_prob(cnt1, cnt2);
+    return binomial(cnt1 + cnt2, cnt1) * get_prob(cnt1, cnt2);
 }
 
 r_t get_min_prob(const u8 depth, const r_t min_ratio) {
     u8 cnt1 = 0;
     u8 cnt2 = depth;
-    while (get_ratio(cnt1, cnt2) < min_ratio) {
+    while (cnt1 < depth && cnt2 > 0 && get_ratio(cnt1, cnt2) < min_ratio) {
         ++cnt1;
         --cnt2;
     }
@@ -149,12 +146,12 @@ r_t get_min_prob(const u8 depth, const r_t min_ratio) {
 }
 
 Eval expectimax_limited_states(const u64 board, u64 states, const r_t min_ratio, const NTuple &tuples) { // const r_t threshold = 0.05
-    Eval best = {None, 0, 0, 0};
+    Eval best = Eval::None();
     for (u8 depth = 0; depth < 100; ++depth) {
         //TODO replace
         //Eval eval = expectimax_state(board, depth, r_t(E(depth + 4)), states, tuples);
         //Eval eval = expectimax_state(board, depth, 1.0f / get_min_prob(depth, min_ratio), states, tuples);
-        Eval eval = expectimax_state(board, depth, 1e10, states, tuples);
+        const Eval eval = expectimax_state(board, depth, r_t(1) / get_min_prob(depth, min_ratio), states, tuples);
         if (states == 0) { break; }
         best = eval;
     }

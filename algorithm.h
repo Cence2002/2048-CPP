@@ -29,6 +29,7 @@ Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
         fill_board(board);
         next_stage |= highest_tile(board) >= 14;
     }
+    cout << "Score: " << score << " Moves: " << moves << endl;
 
     return {board, score, moves};
 }
