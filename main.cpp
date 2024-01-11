@@ -5,6 +5,7 @@
 void init() {
     auto start = time_now();
 
+    init_rng(SEED);
     init_zeroes();
     init_moves_0();
     init_moves_123();
@@ -368,7 +369,7 @@ void run2() {
 
     //run_tests();
     //cout << endl;
-    perf_test(10000);
+    //perf_test(10000);
     //perf_test_general(10000);
 
     //load_packed_weights("final");

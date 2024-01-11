@@ -51,6 +51,7 @@ vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)
         vector<vector<Game_stat>> threads_stats(threads);
         for (u8 t = 0; t < threads; ++t) {
             all_threads.emplace_back([t, threads_games, &threads_stats, algorithm]() {
+                init_rng();
                 for (u32 i = 0; i < threads_games; ++i) {
                     threads_stats[t].push_back(algorithm_episode(algorithm));
                 }

@@ -16,9 +16,12 @@
 #include <unordered_set>
 #include <thread>
 #include <random>
+#include <mutex>
 
 #define DEBUG 0
 #define REDIRECT 0
+//replace with printed seed to repeat experiment
+#define SEED 0
 
 using namespace std;
 
@@ -66,7 +69,32 @@ constexpr pair<u8, r_t> SHIFTS[2] = {{0, 0.9},
 
 constexpr u64 E(const u8 n) { return u64(1) << n; }
 
-thread_local mt19937 rng(random_device{}());
+auto time_now() {
+    return chrono::high_resolution_clock::now();
+}
+
+r_t time_since(chrono::high_resolution_clock::time_point start) {
+    const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
+    return r_t(duration.count());
+}
+
+void wait(r_t time) {
+    auto start = time_now();
+    while (time_since(start) < time) {}
+}
+
+auto execution_start = time_now();
+mutex init_rng_mutex;
+thread_local mt19937 rng;
+
+void init_rng(u32 seed = 0) {
+    lock_guard<mutex> lock(init_rng_mutex);
+    if (seed == 0) {
+        seed = u32(time_since(execution_start));
+    }
+    cout << "Thread " << this_thread::get_id() << " seed: " << seed << endl;
+    rng.seed(seed);
+}
 
 thread_local array<uniform_int_distribution<u32>, 20> dists = {
         uniform_int_distribution<u32>(0, 0), // should never be used
@@ -93,20 +121,6 @@ thread_local array<uniform_int_distribution<u32>, 20> dists = {
 
 u32 random(const u32 n) {
     return dists[n](rng);
-}
-
-auto time_now() {
-    return chrono::high_resolution_clock::now();
-}
-
-r_t time_since(chrono::high_resolution_clock::time_point start) {
-    const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
-    return r_t(duration.count());
-}
-
-void wait(r_t time) {
-    auto start = time_now();
-    while (time_since(start) < time) {}
 }
 
 inline u8 popcnt(const u64 x) { return __builtin_popcountll(x); }
