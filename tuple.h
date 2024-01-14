@@ -73,7 +73,7 @@ void save_packed_weights(const string &id, const NTuple &tuples) {
         file.write((const char *) &t.weights[0], streamsize(size));
     }
     file.close();
-    cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
+    cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
 }
 
 void load_packed_weights(const string &id, const NTuple &tuples) {
@@ -86,13 +86,13 @@ void load_packed_weights(const string &id, const NTuple &tuples) {
     }
     for (auto &t: tuples) {
         size_t size;
-        string nameBuffer(t.name.size(), '\0');
-        file.read(&nameBuffer[0], streamsize(t.name.size()));
-        assert(nameBuffer == t.name);
+        string name_buffer(t.name.size(), '\0');
+        file.read(&name_buffer[0], streamsize(t.name.size()));
+        assert(name_buffer == t.name);
         file.read((char *) &size, sizeof(size));
         assert(size == t.weights.size() * sizeof(t.weights[0]));
         file.read((char *) &t.weights[0], streamsize(size));
     }
     file.close();
-    cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
+    cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
 }

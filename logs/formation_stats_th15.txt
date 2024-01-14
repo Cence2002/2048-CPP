@@ -1,0 +1,39 @@
+Thread 1 seed: 238636
+Init time: 0.005301
+
+Loading weights-stage1.bin finished: 137519 us
+Loading weights-stage2.bin finished: 135894 us
+Thread 3 seed: 517630
+Thread 4 seed: 517665
+Thread 5 seed: 517691
+Thread 2 seed: 517741
+Thread 6 seed: 517780
+Thread 7 seed: 517966
+Thread 8 seed: 518039
+Thread 10 seed: 518300
+Thread 9 seed: 519778
+Thread 11 seed: 528835
+0000000000000001 prob: 1
+
+0000000000000001
+prob: 0.91627
+f000000000000000
+- - - - 
+- - - - 
+- - - - 
+- - - F 
+
+prob: 0.0650591
+f00000000000000
+- - - - 
+- - - - 
+- - - - 
+- - F - 
+
+prob: 0.0186709
+f0000000000
+- - - - 
+- - - - 
+- - F - 
+- - - - 
+

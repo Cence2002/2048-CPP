@@ -1,6 +1,6 @@
 #include "testing.h"
-#include "algorithm.h"
 #include "endgame_bruteforce.h"
+#include "algorithm.h"
 
 void init() {
     auto start = time_now();
@@ -10,7 +10,7 @@ void init() {
     init_moves_0();
     init_moves_123();
 
-    cout << "Init time: " << time_since(start) / 1e6 << endl << endl;
+    cout << "Init time: " << time_since(start) / 1e6 << " s" << endl << endl;
 }
 
 s_t play_random_game() {
@@ -404,17 +404,17 @@ void run2() {
     load_packed_weights("stage1", tuples_4_stage_1);
     load_packed_weights("stage2", tuples_4_stage_2);
 
-    run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
-        /*if (++cnt > cnt_2) {
+    /*run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
+        if (++cnt > cnt_2) {
             cnt_2 += 2000;
-            //cout << "Deci games: " << cnt / 2000 << endl;
-        }*/
+            cout << "Deci games: " << cnt / 2000 << endl;
+        }
         //print_board(board);
-        return expectimax_limited_states(board, 10000, 0.01, tuples).dir;
+        return expectimax_limited_states(board, 1000, 0.01, tuples).dir;
         //const u8 depth = 3;
         //return expectimax_limited_depth_prob(board, depth, 1 / get_min_prob(depth, 0.05), tuples).dir;
         //return eval_state(board, tuples).dir;
-    });
+    });*/
     /*
         - - 1 6
         1 3 3 8
@@ -489,12 +489,75 @@ void run2() {
         cout << hex << differences[i].first << dec << " " << differences[i].second << endl;
     }*/
 
-    //auto occurences = count_occurrences(15, 100);
-    //auto sorted = print_mask_probs(occurences);
-    //for (const auto &p: sorted) {
-    //    cout << hex << p.first << dec << endl;
-    //    print_board_probs(occurences[p.first]);
-    //}
+    /*count_occurrences(9, 10000);
+    auto sorted = print_mask_probs();
+    cout << endl;
+    for (const auto &p: sorted) {
+        for (u8 i = 0; i < 16; ++i) {
+            if (p.first & (u16(1) << i)) {
+                cout << "1";
+            } else {
+                cout << "0";
+            }
+        }
+        cout << endl;
+        print_board_probs(p.first);
+    }*/
+
+    count_masks.fill(0);
+    count_boards.clear();
+    run_algorithm_episodes(500, 10, [](const u64 board, NTuple &tuples) {
+        /*if (++cnt > cnt_2) {
+            cnt_2 += 200000;
+            cout << "Deca Games: " << cnt / 200000 << endl;
+        }*/
+        //return eval_state(board, tuples).dir;
+        return expectimax_limited_states(board, 500, 0.05, tuples).dir;
+        //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
+    });
+
+    vector<pair<u32, u64>> stats;
+    for (u32 i = 0; i < E(16); i += E(large_th)) {
+        stats.emplace_back(i, count_masks[i]);
+    }
+    cout << endl;
+    for (u32 i = stats.size() - 1; i > 0; --i) {
+        stats[i - 1].second += stats[i].second;
+    }
+    cout << endl;
+    vector<tuple<u32, u32, r_t, r_t>> probs;
+    for (u32 i = 0; i < stats.size() - 1; ++i) {
+        if (stats[i].second == 0) {
+            probs.emplace_back(stats[i].first, stats[i + 1].first, 0, 0);
+        } else {
+            probs.emplace_back(stats[i].first, stats[i + 1].first, r_t(stats[i + 1].second) / r_t(stats[i].second), r_t(stats[i + 1].second) / r_t(stats[i].second));
+        }
+    }
+    cout << endl;
+    for (u32 i = 1; i < probs.size(); ++i) {
+        get<3>(probs[i]) *= get<3>(probs[i - 1]);
+    }
+    for (const auto &p: probs) {
+        cout << get<0>(p) << "->" << get<1>(p) << ": " << get<2>(p) << " " << get<3>(p) << endl;
+    }
+    cout << endl;
+
+    /*vector<pair<u64, r_t>>
+    board_probs;
+    u64 total = 0;
+    for (const auto &[board, cnt]: count_boards) {
+        total += cnt;
+    }
+    for (const auto &[board, cnt]: count_boards) {
+        board_probs.emplace_back(board, r_t(cnt) / r_t(total));
+    }
+    sort(board_probs.begin(), board_probs.end(), [](const auto &a, const auto &b) {
+        return a.second > b.second;
+    });
+    for (const auto &p: board_probs) {
+        cout << p.second << endl;
+        print_board(p.first);
+    }*/
 }
 
 template<u8 N>
@@ -535,6 +598,91 @@ void run3() {
     //print_dir(expectimax_limited_states(board, 100).dir);
 }
 
+Endgame endgame(0xFFFFFF8000000000ull);
+
+void run4() {
+    init();
+    load_packed_weights("stage1", tuples_4_stage_1);
+    load_packed_weights("stage2", tuples_4_stage_2);
+
+    //print largest weight in tuples_4_stage_2
+    /*r_t max_weight = 0;
+    r_t min_weight = 1e6;
+    for (const auto &tuple: tuples_4_stage_2) {
+        for (const auto &weight: tuple.weights) {
+            max_weight = max(max_weight, weight);
+            min_weight = min(min_weight, weight);
+        }
+    }
+    cout << max_weight << endl;
+    cout << min_weight << endl;*/
+
+    //endgame.load_packed_evals("8-9-prob");
+
+    /*run_algorithm_episodes(100, 10, [](const u64 board, NTuple &tuples) {
+        return eval_state(board, tuples).dir;
+        //return expectimax_limited_states(board, 100, 0.01, tuples).dir;
+        //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
+    });*/
+
+    /*run_algorithm_episodes(10000, 10, [](const u64 board, NTuple &tuples) {
+        Eval eval = endgame.eval_board(board);
+        if (eval.dir != None && eval.eval > 0.01) {
+            return eval.dir;
+        }
+        return eval_state(board, tuples).dir;
+        //return eval_state(board, tuples).dir;
+        //return expectimax_limited_states(board, 100, 0.01, tuples).dir;
+        //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
+    });*/
+
+    /*auto start = time_now();
+    Endgame eg(0xFFFFFF8000000000ull);
+    cout << endl;
+
+    if (0) {
+        eg.init_goal_states();
+        cout << endl;
+        cnt = 0;
+        eg.bruteforce_states();
+        cout << cnt << endl;
+        cout << endl;
+        eg.save_packed_evals("8-9-eval");
+        cout << endl;
+    } else {
+        eg.load_packed_evals("8-9-prob");
+        cout << endl;
+    }
+    //eg.print_evals();
+    //cout << endl;
+    cout << eg.get_state_eval(0x1220100008FFFFFFull) << endl;
+    cout << eg.get_afterstate_eval(0x1220100008FFFFFFull) << endl;
+    //cout << add_weights(0xEBCDA98700000001ull, tuples_4_stage_2) << endl;
+    //cout << expectimax_limited_states(0xEBCDA98700000001ull, 1000000, 0.01, tuples_4_stage_2).eval << endl;*/
+
+    /*cnt = 0;
+    u64 total_score = 0;
+    for (u32 i = 0; i < 100000; ++i) {
+        u64 b = 0xEBCDA98700000001ull;
+        u32 score = 0;
+        while (true) {
+            Dir d = eg.best_dir(b);
+            score += get_reward(b, d);
+            u64 b2 = moved_board(b, d);
+            if (b2 == b) { break; }
+            b = b2;
+            fill_board(b);
+            if (eg.is_goal_state_2(b)) {
+                ++cnt;
+                break;
+            }
+        }
+        total_score += score;
+    }
+    cout << r_t(cnt) / 100000 << endl;
+    cout << r_t(total_score) / 100000 << endl;*/
+}
+
 int main() {
     srand(42);
     if (REDIRECT) {
@@ -546,6 +694,7 @@ int main() {
         //run();
         run2();
         //run3();
+        //run4();
 
         cout.rdbuf(consoleBuffer);
         file.close();
@@ -553,6 +702,7 @@ int main() {
         //run();
         run2();
         //run3();
+        //run4();
     }
 
     return 0;

@@ -11,6 +11,41 @@ u8 highest_tile(u64 board) {
     return highest;
 }
 
+u16 get_large_tiles_mask(const u64 board, const u8 threshold) {
+    u16 mask = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell >= threshold) {
+            mask |= u16(1) << cell;
+        }
+    }
+    return mask;
+}
+
+u64 filter_large_tiles(const u64 board, u8 threshold) {
+    u64 filtered = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell >= threshold) {
+            filtered |= u64(cell) << (i * 4);
+        }
+    }
+    return filtered;
+}
+
+u64 get_filtered(u64 board, u8 threshold) {
+    u64 filtered = 0;
+    for (u64 b: get_transformations(board)) {
+        filtered = max(filtered, filter_large_tiles(b, threshold));
+    }
+    return filtered;
+}
+
+array<u32, E(16)> count_masks;
+u8 large_th = 6;
+
+unordered_map<u64, u64> count_boards;
+
 Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
     u64 board = 0;
     s_t score = 0;
@@ -28,8 +63,13 @@ Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
         move_board(board, dir);
         fill_board(board);
         next_stage |= highest_tile(board) >= 14;
+        /*if (get_large_tiles_mask(board, large_th) == 0b111111100000000ull) {
+            ++count_boards[get_filtered(board, large_th)];
+        }*/
     }
-    cout << "Score: " << score << " Moves: " << moves << endl;
+    ++count_masks[get_large_tiles_mask(board, large_th)];
+
+    //cout << "Score: " << score << " Moves: " << moves << endl;
 
     return {board, score, moves};
 }
@@ -76,7 +116,7 @@ vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)
     cout << indent << "S per game:    \t" << (elapsed / 1e6) / r_t(testing_stats.game_counter) << endl;
     cout << indent << "Ms per move:    \t" << (elapsed / 1e3) / r_t(testing_stats.moves_counter) << endl;
 
-    cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << endl;
+    cout << "Testing finished: " << time_since(start) / 1e6 << " s" << endl;
 
     return games_stats;
 }

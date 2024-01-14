@@ -18,10 +18,9 @@
 #include <random>
 #include <mutex>
 
-#define DEBUG 0
-#define REDIRECT 0
-//replace with printed seed to repeat experiment
+#define REDIRECT 1
 #define SEED 0
+#define DEBUG 0
 
 using namespace std;
 
@@ -63,7 +62,10 @@ struct Game_stat {
     u32 moves;
 };
 
-constexpr Dir DIRS[4] = {Left, Up, Right, Down};
+constexpr Dir DIRS[4] = {Left,
+                         Up,
+                         Right,
+                         Down};
 constexpr pair<u8, r_t> SHIFTS[2] = {{0, 0.9},
                                      {1, 0.1}};
 
@@ -165,27 +167,27 @@ constexpr r_t conf_rad(const u64 sum, const u64 sum_squared, const u64 n) {
 void save_array(const string &filename, const char *arr, const size_t size) {
     cout << "Saving " << filename << " started" << endl;
     auto start = time_now();
-    ofstream file("../weights_backups/" + filename, ios::binary);
+    ofstream file(filename, ios::binary);
     if (!file.is_open()) {
         cout << "Error opening: " << filename << endl;
         return;
     }
     file.write(arr, streamsize(size));
     file.close();
-    cout << "Saving " << filename << " finished: " << time_since(start) << " us" << endl;
+    cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
 }
 
 void load_array(const string &filename, char *arr, const size_t size) {
     cout << "Loading " << filename << " started" << endl;
     auto start = time_now();
-    ifstream file("../weights_backups/" + filename, ios::binary);
+    ifstream file(filename, ios::binary);
     if (!file.is_open()) {
         cout << "Error opening: " << filename << endl;
         return;
     }
     file.read(arr, streamsize(size));
     file.close();
-    cout << "Loading " << filename << " finished: " << time_since(start) << " us" << endl;
+    cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
 }
 
 string get_time_str() {
