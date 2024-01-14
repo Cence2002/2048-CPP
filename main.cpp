@@ -1,6 +1,7 @@
 #include "testing.h"
 #include "endgame_bruteforce.h"
 #include "algorithm.h"
+#include "stats.h"
 
 void init() {
     auto start = time_now();
@@ -302,69 +303,7 @@ void run_tests() {
     }
 }
 
-template<u8 N>
 void run() {
-    //load_all_weights("1216-21-10-12");
-    //run_testing_episodes(1000);
-
-    //interactive_learn(1000, 100);
-    //for (u32 i = 0; i < 2; ++i) { fixed_learn(0.1, 10, 10000, 1000); }
-
-    //IMPLEMENT run_learning(10, 10000, 1000, 0.75);
-    //fixed_learn(0.75, 10, 10000, 1000);
-
-    //constexpr u64 board = 0xFFFFFFF600000000ull;
-    //cout << Endgame<board>.get_size() << endl;
-    //cout << get_size(board) * 4.0f / 1e6 << endl;
-    //cout << (int) get_G(board) << endl;
-    //cout << to_hash(board, 0xFFFFFFF612500000ull) << endl;
-    //cout << endl;
-    //cout << hex << from_hash<board>(to_hash<board>(0xFFFFFFF610000000ull)) << endl;
-
-    //cout << endgame.prob_afterstate(0xFFFFFFF600000000ull) << endl;
-    //cout << endgame.prob_state(0xFFF0FFF0F7422222ull) << endl;
-
-    /*u64 temp = 0xFFFFFFF700000000ull;
-    Endgame endgame_temp(temp);
-    endgame_temp.init_goals();
-    u64 tem2 = 0xFFFFFFF734561122ull;
-    print_board(tem2);
-    cout << endgame_temp.prob_state(tem2) << endl;
-    cout << (int) endgame_temp.best_dir(tem2) << endl;
-    print_board(moved_board(tem2, endgame_temp.best_dir(tem2)));*/
-
-    /*
-    //replace 6 with 7 or 8 to get example probabilities
-    u64 board = 0xFFFFFF8000000000ull;
-    //board = 0xFFF0FFF0F7000000ull;
-    board = 0xFFFFFF8000000000ull;
-    print_board(board);
-    Endgame endgame(board);
-    endgame.init_goals();
-    vector<u8> packed = endgame.pack_dirs();
-
-    u64 b = 0xFFFFFF8000000002ull;
-    while (true) {
-        print_board(b);
-        Dir d = endgame.unpack_dir(packed, endgame.to_hash(b));
-        if (endgame.is_goal_state(b)) {
-            cout << "GOAL" << endl;
-            break;
-        }
-
-        u64 b2 = moved_board(b, d);
-        if (b2 == b) {
-            cout << "GAME OVER" << endl;
-            break;
-        }
-        b = b2;
-        fill_board(b);
-        //wait(500000);
-    }
-    */
-}
-
-void run2() {
     init();
 
     //run_tests();
@@ -403,207 +342,14 @@ void run2() {
 
     load_packed_weights("stage1", tuples_4_stage_1);
     load_packed_weights("stage2", tuples_4_stage_2);
-
-    /*run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
-        if (++cnt > cnt_2) {
-            cnt_2 += 2000;
-            cout << "Deci games: " << cnt / 2000 << endl;
-        }
-        //print_board(board);
-        return expectimax_limited_states(board, 1000, 0.01, tuples).dir;
-        //const u8 depth = 3;
-        //return expectimax_limited_depth_prob(board, depth, 1 / get_min_prob(depth, 0.05), tuples).dir;
-        //return eval_state(board, tuples).dir;
-    });*/
-    /*
-        - - 1 6
-        1 3 3 8
-        - 2 5 B
-        2 1 3 C
-     copy this board
-     */
-
-    u64 board = 0x00161338025B213Cull;
-    /*
-        - 1 8 9
-        - 1 7 B
-        1 2 6 C
-        2 3 4 D
-     copy this board
-     */
-    board = 0x0189017B126C234Dull;
-    /*print_board(board);
-    for (u8 depth = 0; depth <= 5; ++depth) {
-        cnt = 0;
-        cnt_adds = 0;
-        cnt_state = 0;
-        cnt_afterstate = 0;
-        cnt_probs.clear();
-        auto start = time_now();
-        r_t used_prob = 1 / get_min_prob(depth, 0.05);
-        cout << expectimax_limited_depth_prob(board, depth, used_prob, tuples_4_stage_1).eval << endl;
-        cout << "Depth: " << (int) depth << endl;
-        cout << "Time: " << time_since(start) / 1e6 << endl;
-        cout << "States: " << cnt_state << " (" << cnt_state / time_since(start) * 1e6 << " states/s)" << endl;
-        cout << "Afterstates: " << cnt_afterstate << " (" << cnt_afterstate / time_since(start) * 1e6 << " afterstates/s)" << endl;
-        cout << "Total: " << cnt_adds << " (" << cnt_adds / time_since(start) * 1e6 << " states/s)" << endl;
-        cout << "Small prob: " << cnt << endl;
-        cout << "Max prob: " << used_prob << endl;
-        cout << "Depths:" << endl;
-        vector<pair<u8, r_t>> all_depths;
-        for (const auto &[depth, cnt]: cnt_depths) {
-            all_depths.emplace_back(depth, cnt);
-        }
-        sort(all_depths.begin(), all_depths.end(), [](const auto &a, const auto &b) {
-            return a.first > b.first;
-        });
-        for (const auto &p: all_depths) {
-            cout << (int) p.first << " " << p.second << endl;
-        }
-        cout << "Probs:" << endl;
-        vector<pair<r_t, u64>> all_probs;
-        for (const auto &[prob, cnt]: cnt_probs) {
-            all_probs.emplace_back(prob, cnt);
-        }
-        sort(all_probs.begin(), all_probs.end(), [](const auto &a, const auto &b) {
-            return a.first > b.first;
-        });
-        for (const auto &p: all_probs) {
-            cout << used_prob / p.first << " " << p.second << endl;
-        }
-        cout << endl << endl;
-    }*/
-
-    //run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
-    //    return expectimax_limited_states(board, 100, tuples).dir;
-    //});
-
-    /*vector<pair<u32, r_t>> differences;
-    for (u32 i = 0; i < tuples_4_stage_1[0].weights.size(); ++i) {
-        differences.emplace_back(i, abs(tuples_4_stage_1[0][i] - tuples_4_stage_2[0][i]));
-    }
-    sort(differences.begin(), differences.end(), [](const auto &a, const auto &b) {
-        return a.second > b.second;
-    });
-    for (u32 i = 0; i < 100; ++i) {
-        cout << hex << differences[i].first << dec << " " << differences[i].second << endl;
-    }*/
-
-    /*count_occurrences(9, 10000);
-    auto sorted = print_mask_probs();
-    cout << endl;
-    for (const auto &p: sorted) {
-        for (u8 i = 0; i < 16; ++i) {
-            if (p.first & (u16(1) << i)) {
-                cout << "1";
-            } else {
-                cout << "0";
-            }
-        }
-        cout << endl;
-        print_board_probs(p.first);
-    }*/
-
-    count_masks.fill(0);
-    count_boards.clear();
-    run_algorithm_episodes(500, 10, [](const u64 board, NTuple &tuples) {
-        /*if (++cnt > cnt_2) {
-            cnt_2 += 200000;
-            cout << "Deca Games: " << cnt / 200000 << endl;
-        }*/
-        //return eval_state(board, tuples).dir;
-        return expectimax_limited_states(board, 500, 0.05, tuples).dir;
-        //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
-    });
-
-    vector<pair<u32, u64>> stats;
-    for (u32 i = 0; i < E(16); i += E(large_th)) {
-        stats.emplace_back(i, count_masks[i]);
-    }
-    cout << endl;
-    for (u32 i = stats.size() - 1; i > 0; --i) {
-        stats[i - 1].second += stats[i].second;
-    }
-    cout << endl;
-    vector<tuple<u32, u32, r_t, r_t>> probs;
-    for (u32 i = 0; i < stats.size() - 1; ++i) {
-        if (stats[i].second == 0) {
-            probs.emplace_back(stats[i].first, stats[i + 1].first, 0, 0);
-        } else {
-            probs.emplace_back(stats[i].first, stats[i + 1].first, r_t(stats[i + 1].second) / r_t(stats[i].second), r_t(stats[i + 1].second) / r_t(stats[i].second));
-        }
-    }
-    cout << endl;
-    for (u32 i = 1; i < probs.size(); ++i) {
-        get<3>(probs[i]) *= get<3>(probs[i - 1]);
-    }
-    for (const auto &p: probs) {
-        cout << get<0>(p) << "->" << get<1>(p) << ": " << get<2>(p) << " " << get<3>(p) << endl;
-    }
-    cout << endl;
-
-    /*vector<pair<u64, r_t>>
-    board_probs;
-    u64 total = 0;
-    for (const auto &[board, cnt]: count_boards) {
-        total += cnt;
-    }
-    for (const auto &[board, cnt]: count_boards) {
-        board_probs.emplace_back(board, r_t(cnt) / r_t(total));
-    }
-    sort(board_probs.begin(), board_probs.end(), [](const auto &a, const auto &b) {
-        return a.second > b.second;
-    });
-    for (const auto &p: board_probs) {
-        cout << p.second << endl;
-        print_board(p.first);
-    }*/
-}
-
-template<u8 N>
-void run3() {
-    init();
-    load_packed_weights("final", tuples_4_stage_1);
-
-    //run_tests();
-    //perf_test(10000);
-    //perf_test_general(10000);
-
-    const u32 threads = thread::hardware_concurrency();
-    cout << "Number of cores: " << threads << endl;
-
-    //run_algorithm_episodes(1000, 10, [](const u64 board) {
-    //    return eval_state(board).dir;
-    //});
-
-    //run_algorithm_episodes(20, 10, [](const u64 board) {
-    //    return expectimax_limited_states(board, 10).dir;
-    //});
-
-    //run_algorithm_episodes(1, 0, [](const u64 board) {
-    //    print_board(board);
-    //    return expectimax_limited_depth_prob(board, 4, 1e10).dir;
-    //});
-
-    //run_algorithm_episodes(1200, 10, [](const u64 board) {
-    //    return expectimax_limited_states(board, 250).dir;
-    //});
-
-    //run_algorithm_episodes(100, 10, [](const u64 board) {
-    //    return expectimax_limited_depth_prob(board, 3, 1e10).dir;
-    //});
-
-    //const u64 board = 0x2021000000000000ull;
-    //print_board(board);
-    //print_dir(expectimax_limited_states(board, 100).dir);
 }
 
 Endgame endgame(0xFFFFFF8000000000ull);
 
-void run4() {
+void run2() {
     init();
-    load_packed_weights("stage1", tuples_4_stage_1);
-    load_packed_weights("stage2", tuples_4_stage_2);
+    //load_packed_weights("stage1", tuples_4_stage_1);
+    //load_packed_weights("stage2", tuples_4_stage_2);
 
     //print largest weight in tuples_4_stage_2
     /*r_t max_weight = 0;
@@ -681,6 +427,17 @@ void run4() {
     }
     cout << r_t(cnt) / 100000 << endl;
     cout << r_t(total_score) / 100000 << endl;*/
+
+
+    //cout << get_newtiles_score(0, 10, 32) << endl;
+    //cout << get_newtiles_score(0, 6, 1024) << endl;
+    //cout << get_newtiles_score(65344, 6, 3) << endl;
+    //cout << endl;
+    //print_newtile_score_for_all_additions(6);
+    // [\d]+\s[\d]*\.[\d]*\n
+    // ->[\d]+: [\d.]*
+
+    print_all_prob_score_stuff();
 }
 
 int main() {
@@ -693,16 +450,12 @@ int main() {
 
         //run();
         run2();
-        //run3();
-        //run4();
 
         cout.rdbuf(consoleBuffer);
         file.close();
     } else {
         //run();
         run2();
-        //run3();
-        //run4();
     }
 
     return 0;

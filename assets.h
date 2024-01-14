@@ -18,7 +18,7 @@
 #include <random>
 #include <mutex>
 
-#define REDIRECT 1
+#define REDIRECT 0
 #define SEED 0
 #define DEBUG 0
 
