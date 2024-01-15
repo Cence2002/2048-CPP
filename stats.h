@@ -487,13 +487,13 @@ void print_all_bruteforces(r_t GB_limit) {
             filtered_all_cases.push_back(c);
         }
     }
-    //sort by (1 - d_probs) * cumulative_score_gain
+    //sort by (1 - d_prob) * cumulative_score_gain * prob
     sort(filtered_all_cases.begin(), filtered_all_cases.end(), [](const auto &a, const auto &b) {
-        return (1 - get<2>(a)) * get<4>(a) > (1 - get<2>(b)) * get<4>(b);
+        return (1 - get<2>(a)) * get<4>(a) * get<3>(a) > (1 - get<2>(b)) * get<4>(b) * get<3>(b);
     });
     cout << fixed << setprecision(2);
     for (const auto &c: filtered_all_cases) {
         cout << "G,sp= " << u32(get<5>(c)) << "," << u32(get<6>(c)) << " | GB= " << power(get<5>(c) + 1, get<6>(c)) / 8e9 * 32 << "\t| ";
-        cout << get<0>(c) << "->" << get<1>(c) << ": " << get<2>(c) << " " << get<3>(c) << " " << (1 - get<2>(c)) * get<4>(c) << endl;
+        cout << get<0>(c) << "->" << get<1>(c) << ": " << get<2>(c) << " " << get<3>(c) << " " << (1 - get<2>(c)) * get<4>(c) * get<3>(c) << endl;
     }
 }

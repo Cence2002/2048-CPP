@@ -447,7 +447,7 @@ void run2() {
 
     //cout << (int) calculate_space(0b011101100000000ull, 8) << endl;
 
-    print_all_bruteforces(420);
+    print_all_bruteforces(42);
 }
 
 int main() {
