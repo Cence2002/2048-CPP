@@ -437,7 +437,23 @@ void run2() {
     // [\d]+\s[\d]*\.[\d]*\n
     // ->[\d]+: [\d.]*
 
-    print_all_prob_score_stuff();
+    //print_all_prob_score_stuff();
+
+    // space_perf_test(40);
+
+    //cout << (int) calculate_space(0b011101100000000ull, 8) << endl;
+
+    for (u8 G = 6; G <= 11; ++G) {
+        for (u8 space = 0; space <= 13; ++space) {
+            r_t GB = power(G + 1, space) / 1e9 * 4;
+            u32 cases = print_bruteforce_stats(G, space);
+            if (cases > 0) {
+                cout << "G=" << u32(G) << " space=" << u32(space) << " GB=" << GB << endl;
+                cout << endl;
+            }
+        }
+    }
+    //calculate_stage_starts(8, 9);
 }
 
 int main() {
