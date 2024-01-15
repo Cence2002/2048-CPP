@@ -68,6 +68,7 @@ Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
         }*/
     }
     ++count_masks[get_large_tiles_mask(board, large_th)];
+    cout << "Game " << ++cnt << " score: " << score << endl;
 
     //cout << "Score: " << score << " Moves: " << moves << endl;
 

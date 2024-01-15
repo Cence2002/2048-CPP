@@ -132,17 +132,14 @@ void print_formation_stats() {
 }
 
 void print_reach_probs() {
-
-
     count_masks.fill(0);
-    count_boards.clear();
-    run_algorithm_episodes(500, 10, [](const u64 board, NTuple &tuples) {
+    run_algorithm_episodes(10000, 10, [](const u64 board, NTuple &tuples) {
         /*if (++cnt > cnt_2) {
             cnt_2 += 200000;
             cout << "Deca Games: " << cnt / 200000 << endl;
         }*/
         //return eval_state(board, tuples).dir;
-        return expectimax_limited_states(board, 500, 0.05, tuples).dir;
+        return expectimax_limited_states(board, 1000, 0.015, tuples).dir;
         //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
     });
 
@@ -529,7 +526,7 @@ u32 print_bruteforce_stats(const u8 G, const u8 space) {
         const u8 act_G = calculate_G(sum, G);
         const u8 act_space = calculate_space(sum, G);
         if (probs[i].second == 0) { continue; }
-        if (d_probs[i].second > 0.98) { continue; }
+        if (d_probs[i].second > 0.99) { continue; }
         if (act_G != G || act_space != space) { continue; }
         cout << probs[i].first << " " << probs[i].second << " " << d_probs[i].second << " " << cumulative_score_gains[i].second << endl;
         ++count_cases;
