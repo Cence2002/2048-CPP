@@ -351,7 +351,8 @@ void run2() {
     load_packed_weights("stage1", tuples_4_stage_1);
     load_packed_weights("stage2", tuples_4_stage_2);
 
-    print_reach_probs();
+    //print_reach_probs();
+    print_all_prob_score_stuff();
 
 
     //print largest weight in tuples_4_stage_2
