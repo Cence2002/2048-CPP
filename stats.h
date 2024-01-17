@@ -1,9 +1,36 @@
 #pragma once
 
-//include every file
 #include "eval.h"
-#include "endgame_bruteforce.h"
-#include "algorithm.h"
+
+u16 get_large_tiles_mask(const u64 board, const u8 threshold) {
+    u16 mask = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell >= threshold) {
+            mask |= u16(1) << cell;
+        }
+    }
+    return mask;
+}
+
+u64 filter_large_tiles(const u64 board, u8 threshold) {
+    u64 filtered = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        if (cell >= threshold) {
+            filtered |= u64(cell) << (i * 4);
+        }
+    }
+    return filtered;
+}
+
+u64 get_filtered(u64 board, u8 threshold) {
+    u64 filtered = 0;
+    for (u64 b: get_transformations(board)) {
+        filtered = max(filtered, filter_large_tiles(b, threshold));
+    }
+    return filtered;
+}
 
 void space_perf_test(r_t gigabytes) {
     const size_t num_bytes = size_t(gigabytes * E(30));
@@ -130,6 +157,11 @@ void print_formation_stats() {
         print_board(p.first);
     }*/
 }
+
+array<u32, E(16)> count_masks;
+u8 large_th = 6;
+
+unordered_map<u64, u64> count_boards;
 
 void print_reach_probs() {
     count_masks.fill(0);
@@ -436,7 +468,7 @@ vector<tuple<u32, u32, r_t, r_t, r_t, u8, u8>> print_bruteforce_stats(const u8 G
     for (u32 i = 0; i < d_probs.size(); ++i) {
         const u32 sum = d_probs[i].first;
         const u8 act_G = calculate_G(sum, G);
-        const u8 act_space = calculate_space(sum, G);
+        const u8 act_space = calculate_space(sum, act_G);
         if (probs[i].second == 0) { continue; }
         if (d_probs[i].second > 0.99) { continue; }
         if (act_G != G || act_space != space) { continue; }
@@ -496,4 +528,183 @@ void print_all_bruteforces(r_t GB_limit) {
         cout << "G,sp= " << u32(get<5>(c)) << "," << u32(get<6>(c)) << " | GB= " << power(get<5>(c) + 1, get<6>(c)) / 8e9 * 32 << "\t| ";
         cout << get<0>(c) << "->" << get<1>(c) << ": " << get<2>(c) << " " << get<3>(c) << " " << (1 - get<2>(c)) * get<4>(c) * get<3>(c) << endl;
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Verify the assumption that large tiles stay in the same place
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+u64 get_largest_transformation(u64 board) {
+    for (const u64 b: get_transformations(board)) {
+        board = max(board, b);
+    }
+    return board;
+}
+
+u64 get_base_type(const u64 board, const u8 G) {
+    u64 base_type = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = (board >> (i * 4)) & 0xFu;
+        u8 base = 0;
+        if (cell == G) {
+            base = G;
+        } else if (cell > G) {
+            base = 0xFu;
+        }
+        base_type |= u64(base) << (i * 4);
+    }
+    return base_type;
+}
+
+vector<u64> get_level_starts(const u32 n, const u16 level_mask, const u8 G, Dir (*algorithm)(const u64, NTuple &)) {
+    vector<u64> level_starts;
+    while (level_starts.size() < n) {
+        u64 board = 0;
+        fill_board(board);
+        fill_board(board);
+        bool next_stage = false;
+        while (true) {
+            const Dir dir = algorithm(board, next_stage ? tuples_4_stage_2 : tuples_4_stage_1);
+            if (dir == None) { break; }
+            move_board(board, dir);
+            fill_board(board);
+            next_stage |= highest_tile(board) >= 14;
+            if (get_large_tiles_mask(board, G) == level_mask) {
+                level_starts.push_back(board);
+                break;
+            }
+        }
+        if (level_starts.size() % 10 == 0) {
+            cout << "Progress: " << r_t(level_starts.size()) / r_t(n) << endl;
+        }
+    }
+    return level_starts;
+}
+
+tuple<u64, bool, pair<u64, u64>> save_level(const u64 level_start, const u16 level_mask, const u8 G, Dir (*algorithm)(const u64, NTuple &)) {
+    u64 board = level_start;
+    bool next_stage = false;
+    pair<u64, u64> optional_change = {0, 0};
+    while (true) {
+        const Dir dir = algorithm(board, next_stage ? tuples_4_stage_2 : tuples_4_stage_1);
+        if (dir == None) { break; }
+        const u64 old_board = board;
+        move_board(board, dir);
+        fill_board(board);
+        next_stage |= highest_tile(board) >= 14;
+
+        if (get_large_tiles_mask(board, G) != level_mask) {
+            return {level_start, true, optional_change};
+        }
+        if (optional_change.first != 0) {
+            continue;
+        }
+        bool changed = false;
+        for (u8 i = 0; i < 16; ++i) {
+            const u8 base = (get_base_type(level_start, G) >> (i * 4)) & 0xFu;
+            const u8 start = (level_start >> (i * 4)) & 0xFu;
+            const u8 cell = (board >> (i * 4)) & 0xFu;
+            if (base != 0 && cell != start) {
+                //cout << u32(i) << endl;
+                //cout << u32(base) << endl;
+                //cout << u32(start) << endl;
+                //cout << u32(cell) << endl;
+                //print_board(level_start);
+                //print_board(get_base_type(level_start, G));
+                //print_board(old_board);
+                //print_board(board);
+                //cout << endl << endl;
+                changed = true;
+                break;
+            }
+        }
+        if (changed) {
+            optional_change = {old_board, board};
+        }
+    }
+
+    return {level_start, false, optional_change};
+}
+
+vector<tuple<u64, bool, pair<u64, u64>>> collect_levels(const u32 n, const u32 k, const u16 level_mask, const u8 G, Dir (*algorithm)(const u64, NTuple &)) {
+    vector<u64> level_starts = get_level_starts(n, level_mask, G, algorithm);
+    vector<tuple<u64, bool, pair<u64, u64>>> levels;
+    for (const u64 level_start: level_starts) {
+        for (u32 i = 0; i < k; ++i) {
+            //u64 board = save_level(level_mask, algorithm);
+            auto [start, success, optional_change] = save_level(level_start, level_mask, G, algorithm);
+            if (start == 0) { continue; }
+            levels.emplace_back(start, success, optional_change);
+        }
+    }
+    return levels;
+}
+
+//base, success rate, no change rate, no change success rate, change success rate, change success boards
+vector<tuple<u64, r_t, r_t, r_t, r_t, vector<pair<u64, u64>>, r_t>> get_all_level_stats(const u32 n, const u32 k, const u16 level_mask, const u8 G, Dir (*algorithm)(const u64, NTuple &)) {
+    //no change success, no change fail, change success, change fail
+    unordered_map<u64, tuple<u32, u32, u32, u32>> counts;
+    unordered_map<u64, vector<pair<u64, u64>>> change_success_boards;
+    for (const auto [level_start, success, optional_change]: collect_levels(n, k, level_mask, G, algorithm)) {
+        const u64 base_type = get_largest_transformation(get_base_type(level_start, G));
+        bool change = optional_change.first != 0;
+        auto [A, B, C, D] = counts[base_type];
+        if (change) {
+            if (success) {
+                C++;
+                change_success_boards[base_type].push_back(optional_change);
+            } else {
+                D++;
+            }
+        } else {
+            if (success) {
+                A++;
+            } else {
+                B++;
+            }
+        }
+        counts[base_type] = {A, B, C, D};
+    }
+    vector<tuple<u64, u32, u32, u32, u32>> counts_vec;
+    for (const auto &[base, ABCD]: counts) {
+        counts_vec.push_back({base, get<0>(ABCD), get<1>(ABCD), get<2>(ABCD), get<3>(ABCD)});
+    }
+    //sort by total count
+    sort(counts_vec.begin(), counts_vec.end(), [](const auto &a, const auto &b) {
+        return get<1>(a) + get<2>(a) + get<3>(a) + get<4>(a) > get<1>(b) + get<2>(b) + get<3>(b) + get<4>(b);
+    });
+    vector<tuple<u64, r_t, r_t, r_t, r_t, vector<pair<u64, u64>>, r_t>> result;
+    for (const auto &[base, A, B, C, D]: counts_vec) {
+        const r_t success_rate = r_t(A + C) / r_t(A + B + C + D);
+        const r_t no_change_rate = r_t(A + B) / r_t(A + B + C + D);
+        const r_t no_change_success_rate = r_t(A) / r_t(A + B);
+        const r_t change_success_rate = r_t(C) / r_t(C + D);
+        const r_t frequency = r_t(A + B + C + D) / r_t(n * k);
+        result.emplace_back(base, success_rate, no_change_rate, no_change_success_rate, change_success_rate, change_success_boards[base], frequency);
+    }
+    return result;
+}
+
+void collect_results() {
+    /*
+    repeat playgame {
+        if doesnt reach start mask:
+            throw out
+        else:
+            save level start formation
+            continue game
+            if formation changes:
+                save why it changed
+            if mask changes:
+                save that is succeeded
+            if terminates:
+                save that it failed
+    }
+    */
+    /*
+    data stored:
+    - level start formation
+    - succeeded or failed
+    - why it changed (new board is enough)
+    */
 }

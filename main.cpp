@@ -348,8 +348,34 @@ void run() {
 
 void run2() {
     init();
-    //load_packed_weights("stage1", tuples_4_stage_1);
-    //load_packed_weights("stage2", tuples_4_stage_2);
+
+    load_packed_weights("stage1", tuples_4_stage_1);
+    load_packed_weights("stage2", tuples_4_stage_2);
+    cout << endl;
+
+    /*run_algorithm_episodes(1, 0, [](const u64 board, NTuple &tuples) {
+        //cout << get_large_tiles_mask(board, large_th) << endl;
+        return expectimax_limited_states(board, 100, 0.01, tuples).dir;
+    });*/
+
+    auto res = get_all_level_stats(1000, 100, 32512, 8, [](const u64 board, NTuple &tuples) {
+        return eval_state(board, tuples).dir;
+    });
+    for (const auto [base, success_rate, no_change_rate, no_change_success_rate, change_success_rate, change_success_boards, frequency]: res) {
+        cout << "frequency: " << frequency << endl;
+        cout << "success: " << success_rate << endl;
+        cout << "no change: " << no_change_rate << endl;
+        cout << "no change success: " << no_change_success_rate << endl;
+        cout << "change success: " << change_success_rate << endl;
+        print_board(base);
+        continue;
+        cout << "change success boards: " << endl;
+        for (const auto [old_board, new_board]: change_success_boards) {
+            print_board(old_board);
+            print_board(new_board);
+            cout << endl;
+        }
+    }
 
     //print_reach_probs();
     //print_all_prob_score_stuff();
@@ -447,7 +473,7 @@ void run2() {
 
     //cout << (int) calculate_space(0b011101100000000ull, 8) << endl;
 
-    print_all_bruteforces(42);
+    //print_all_bruteforces(42);
 }
 
 int main() {

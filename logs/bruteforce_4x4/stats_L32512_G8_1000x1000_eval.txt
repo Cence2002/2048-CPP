@@ -1,0 +1,286 @@
+Thread 1 seed: 257439
+Init time: 0.005345 s
+
+Loading weights-stage1.bin finished: 0.157956 s
+Loading weights-stage2.bin finished: 0.165811 s
+
+Progress 0.01
+Progress 0.01
+Progress 0.02
+Progress 0.03
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.04
+Progress 0.05
+Progress 0.06
+Progress 0.06
+Progress 0.07
+Progress 0.08
+Progress 0.08
+Progress 0.08
+Progress 0.08
+Progress 0.09
+Progress 0.1
+Progress 0.1
+Progress 0.1
+Progress 0.1
+Progress 0.11
+Progress 0.12
+Progress 0.12
+Progress 0.12
+Progress 0.12
+Progress 0.12
+Progress 0.13
+Progress 0.14
+Progress 0.15
+Progress 0.15
+Progress 0.15
+Progress 0.16
+Progress 0.17
+Progress 0.18
+Progress 0.18
+Progress 0.18
+Progress 0.19
+Progress 0.19
+Progress 0.19
+Progress 0.2
+Progress 0.2
+Progress 0.21
+Progress 0.21
+Progress 0.21
+Progress 0.21
+Progress 0.21
+Progress 0.22
+Progress 0.23
+Progress 0.23
+Progress 0.23
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.24
+Progress 0.25
+Progress 0.25
+Progress 0.25
+Progress 0.26
+Progress 0.26
+Progress 0.27
+Progress 0.28
+Progress 0.29
+Progress 0.3
+Progress 0.3
+Progress 0.3
+Progress 0.31
+Progress 0.32
+Progress 0.32
+Progress 0.32
+Progress 0.33
+Progress 0.34
+Progress 0.34
+Progress 0.34
+Progress 0.35
+Progress 0.35
+Progress 0.36
+Progress 0.37
+Progress 0.38
+Progress 0.39
+Progress 0.4
+Progress 0.4
+Progress 0.41
+Progress 0.42
+Progress 0.42
+Progress 0.43
+Progress 0.44
+Progress 0.44
+Progress 0.44
+Progress 0.45
+Progress 0.45
+Progress 0.45
+Progress 0.46
+Progress 0.47
+Progress 0.47
+Progress 0.47
+Progress 0.48
+Progress 0.48
+Progress 0.49
+Progress 0.5
+Progress 0.5
+Progress 0.51
+Progress 0.52
+Progress 0.53
+Progress 0.53
+Progress 0.53
+Progress 0.53
+Progress 0.53
+Progress 0.53
+Progress 0.53
+Progress 0.53
+Progress 0.54
+Progress 0.54
+Progress 0.55
+Progress 0.56
+Progress 0.57
+Progress 0.57
+Progress 0.58
+Progress 0.59
+Progress 0.59
+Progress 0.59
+Progress 0.59
+Progress 0.6
+Progress 0.6
+Progress 0.61
+Progress 0.62
+Progress 0.62
+Progress 0.63
+Progress 0.63
+Progress 0.63
+Progress 0.64
+Progress 0.65
+Progress 0.65
+Progress 0.66
+Progress 0.66
+Progress 0.67
+Progress 0.67
+Progress 0.67
+Progress 0.68
+Progress 0.68
+Progress 0.69
+Progress 0.7
+Progress 0.7
+Progress 0.7
+Progress 0.71
+Progress 0.71
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.72
+Progress 0.73
+Progress 0.73
+Progress 0.74
+Progress 0.74
+Progress 0.74
+Progress 0.74
+Progress 0.74
+Progress 0.74
+Progress 0.75
+Progress 0.75
+Progress 0.75
+Progress 0.76
+Progress 0.76
+Progress 0.77
+Progress 0.77
+Progress 0.78
+Progress 0.79
+Progress 0.79
+Progress 0.79
+Progress 0.8
+Progress 0.81
+Progress 0.81
+Progress 0.81
+Progress 0.81
+Progress 0.82
+Progress 0.82
+Progress 0.82
+Progress 0.83
+Progress 0.83
+Progress 0.83
+Progress 0.84
+Progress 0.85
+Progress 0.86
+Progress 0.87
+Progress 0.88
+Progress 0.89
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.9
+Progress 0.91
+Progress 0.91
+Progress 0.91
+Progress 0.92
+Progress 0.92
+Progress 0.93
+Progress 0.94
+Progress 0.95
+Progress 0.95
+Progress 0.95
+Progress 0.95
+Progress 0.96
+Progress 0.96
+Progress 0.97
+Progress 0.98
+Progress 0.99
+Progress 0.99
+Progress 1
+frequency: 0.955
+success: 0.749661
+no change: 0.63675
+no change success: 0.798522
+change success: 0.664011
+- - - - 
+- - - - 
+- 8 F F 
+F F F F 
+
+frequency: 0.034
+success: 0.7905
+no change: 0.0985588
+no change success: 0
+change success: 0.876929
+- - - - 
+- - - - 
+- F F 8 
+F F F F 
+
+frequency: 0.007
+success: 0.120571
+no change: 0.258429
+no change success: 0.196241
+change success: 0.0942015
+- - - - 
+- - - - 
+F 8 F F 
+- F F F 
+
+frequency: 0.003
+success: 0.141
+no change: 0.299333
+no change success: 0
+change success: 0.201237
+- - - - 
+8 - - - 
+F F F - 
+- F F F 
+
+frequency: 0.001
+success: 0
+no change: 0
+no change success: nan
+change success: 0
+- - - - 
+- - F - 
+F F 8 - 
+- F F F 
+
