@@ -38,6 +38,10 @@ constexpr array<array<u8, 4>, 4> to_matrix(const u64 board) {
     return cells;
 }
 
+constexpr inline u8 get_cell(const u64 board, const u8 i) {
+    return (board >> (i * 4)) & 0xFu;
+}
+
 template<u8 y>
 constexpr inline u16 get_row(const u64 board) {
     return (board >> (y * 16)) & 0xFFFFu;

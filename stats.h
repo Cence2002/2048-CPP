@@ -708,3 +708,18 @@ void collect_results() {
     - why it changed (new board is enough)
     */
 }
+
+vector<pair<u64, r_t>> change_success_bases(const vector<pair<u64, u64>> change_success_boards, const u8 G) {
+    unordered_map<u64, r_t> bases;
+    for (const auto [old_board, new_board]: change_success_boards) {
+        bases[get_largest_transformation(get_base_type(new_board, G))]++;
+    }
+    vector<pair<u64, r_t>> bases_vec;
+    for (const auto &[base, count]: bases) {
+        bases_vec.push_back({base, count / r_t(change_success_boards.size())});
+    }
+    sort(bases_vec.begin(), bases_vec.end(), [](const auto &a, const auto &b) {
+        return a.second > b.second;
+    });
+    return bases_vec;
+}

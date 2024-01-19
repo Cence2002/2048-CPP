@@ -1,0 +1,207 @@
+frequency: 0.956
+success: 0.746684
+no change: 0.625272
+no change success: 0.796273
+change success: 0.66394
+- - - -
+- - - -
+- 8 F F
+F F F F
+
+change success boards:
+0.432289
+- - - -
+F - - -
+F F 8 -
+- F F F
+
+0.286904
+- - - -
+- - - -
+- F F 8
+F F F F
+
+0.260458
+- - - -
+- - - -
+F 8 F F
+- F F F
+
+0.0139584
+- - - -
+- - - F
+F 8 F F
+- F F -
+
+0.00395207
+F - - -
+F - - -
+- F 8 -
+- F F F
+
+0.00201808
+- - F -
+- 8 F -
+- F F -
+- F F -
+
+0.000420433
+- - - -
+F - - -
+- 8 F F
+- F F F
+
+frequency: 0.033
+success: 0.788182
+no change: 0.0987879
+no change success: 0
+change success: 0.87458
+- - - -
+- - - -
+- F F 8
+F F F F
+
+change success boards:
+0.844291
+- - - -
+- - - -
+F F F 8
+- F F F
+
+0.0699731
+- - - -
+8 - - -
+F F F -
+- F F F
+
+0.0357555
+- - - -
+F - - -
+- F F 8
+- F F F
+
+0.035371
+- - - -
+- - - 8
+F F F F
+- F F -
+
+0.00615148
+8 - - -
+F - - -
+- F F -
+- F F F
+
+0.00499808
+- - - -
+8 F - -
+F F F -
+- - F F
+
+0.00192234
+8 - - -
+F F - -
+- F F -
+- - F F
+
+0.0011534
+8 - - -
+F - F -
+- F F -
+- F - F
+
+0.000384468
+- - - -
+8 - F -
+F F F -
+- F - F
+
+frequency: 0.005
+success: 0.108
+no change: 0.238
+no change success: 0.235294
+change success: 0.0682415
+- - - -
+- - - -
+F 8 F F
+- F F F
+
+change success boards:
+0.769231
+- - - -
+F - - -
+- 8 F F
+- F F F
+
+0.230769
+- - - -
+- - - F
+F 8 F F
+- F F -
+
+frequency: 0.001
+success: 0
+no change: 0.08
+no change success: 0
+change success: 0
+- - - -
+- F 8 -
+F F F F
+- - F -
+
+change success boards:
+frequency: 0.001
+success: 0
+no change: 0
+no change success: nan
+change success: 0
+- - - -
+- - - 8
+F F F F
+- F F -
+
+change success boards:
+frequency: 0.001
+success: 0
+no change: 0.22
+no change success: 0
+change success: 0
+- - F -
+- F F -
+- F F -
+- - 8 F
+
+change success boards:
+frequency: 0.001
+success: 0.01
+no change: 0.04
+no change success: 0.25
+change success: 0
+- - - -
+- - - -
+F F F 8
+- F F F
+
+change success boards:
+frequency: 0.001
+success: 0
+no change: 0.04
+no change success: 0
+change success: 0
+- - - -
+8 - - -
+F F F -
+- F F F
+
+change success boards:
+frequency: 0.001
+success: 0
+no change: 0
+no change success: nan
+change success: 0
+- - - -
+- - F -
+- F F 8
+- F F F
+
+change success boards:

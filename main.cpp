@@ -340,8 +340,8 @@ void run() {
     cout << "Eval time: " << time_since(start) / 1e6 << endl;
     eg.play_game();*/
 
-    load_packed_weights("stage1", tuples_4_stage_1);
-    load_packed_weights("stage2", tuples_4_stage_2);
+    //load_packed_weights("stage1", tuples_4_stage_1);
+    //load_packed_weights("stage2", tuples_4_stage_2);
 }
 
 //Endgame endgame(0xFFFFFF8000000000ull);
@@ -358,7 +358,7 @@ void run2() {
         return expectimax_limited_states(board, 100, 0.01, tuples).dir;
     });*/
 
-    auto res = get_all_level_stats(1000, 100, 32512, 8, [](const u64 board, NTuple &tuples) {
+    auto res = get_all_level_stats(1000, 1000, 32256, 9, [](const u64 board, NTuple &tuples) {
         return eval_state(board, tuples).dir;
     });
     for (const auto [base, success_rate, no_change_rate, no_change_success_rate, change_success_rate, change_success_boards, frequency]: res) {
@@ -368,13 +368,25 @@ void run2() {
         cout << "no change success: " << no_change_success_rate << endl;
         cout << "change success: " << change_success_rate << endl;
         print_board(base);
-        continue;
+        //continue;
         cout << "change success boards: " << endl;
-        for (const auto [old_board, new_board]: change_success_boards) {
+        auto change_success_freqs = change_success_bases(change_success_boards, 9);
+        for (const auto [base, freq]: change_success_freqs) {
+            cout << freq << endl;
+            print_board(base);
+        }
+        r_t avg_sum = 0;
+        /*for (const auto [old_board, new_board]: change_success_boards) {
             print_board(old_board);
             print_board(new_board);
             cout << endl;
+            for (u32 i = 0; i < 16; ++i) {
+                if (get_cell(old_board, i) < 8) {
+                    avg_sum += E(get_cell(old_board, i));
+                }
+            }
         }
+        cout << "avg sum: " << avg_sum / r_t(change_success_boards.size()) << endl;*/
     }
 
     //print_reach_probs();
