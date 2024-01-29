@@ -723,3 +723,35 @@ vector<pair<u64, r_t>> change_success_bases(const vector<pair<u64, u64>> change_
     });
     return bases_vec;
 }
+
+void print_change_success_bases(u32 n, u32 k, u16 level_mask, u8 G, Dir (*algorithm)(const u64, NTuple &)) {
+    auto res = get_all_level_stats(n, k, level_mask, G, algorithm);
+    for (const auto [base, success_rate, no_change_rate, no_change_success_rate, change_success_rate, change_success_boards, frequency]: res) {
+        cout << "frequency: " << frequency << endl;
+        cout << "success: " << success_rate << endl;
+        cout << "no change: " << no_change_rate << endl;
+        cout << "no change success: " << no_change_success_rate << endl;
+        cout << "change success: " << change_success_rate << endl;
+        print_board(base);
+        //continue;
+        cout << "change success boards: " << endl;
+        auto change_success_freqs = change_success_bases(change_success_boards, G);
+        for (const auto [base, freq]: change_success_freqs) {
+            cout << freq << endl;
+            print_board(base);
+        }
+
+        r_t avg_sum = 0;
+        for (const auto [old_board, new_board]: change_success_boards) {
+            print_board(old_board);
+            print_board(new_board);
+            cout << endl;
+            for (u32 i = 0; i < 16; ++i) {
+                if (get_cell(old_board, i) < G) {
+                    avg_sum += E(get_cell(old_board, i));
+                }
+            }
+        }
+        cout << "avg sum: " << avg_sum / r_t(change_success_boards.size()) << endl;
+    }
+}

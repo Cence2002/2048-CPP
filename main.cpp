@@ -59,250 +59,6 @@ void perf_test_general(u64 n) {
     cout << "Time: " << time_since(start) / 1e6 << endl << endl;
 }
 
-void run_tests() {
-    /*if (false) {
-        {
-            test_line_hash<4, 16>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.hash(16);
-            });
-            test_line_hash<4, 18>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.hash(18);
-            });
-            test_line_hash<3, 16>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.hash(16);
-            });
-            test_line_hash<3, 11>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.hash(11);
-            });
-        }
-
-        {
-            test_line_left_move<4, 16>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.left_moved().to_array();
-            });
-            test_line_left_move<4, 18>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.left_moved().to_array();
-            });
-            test_line_left_move<3, 16>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.left_moved().to_array();
-            });
-            test_line_left_move<3, 11>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.left_moved().to_array();
-            });
-        }
-
-        {
-            test_line_right_move<4, 16>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.right_moved().to_array();
-            });
-            test_line_right_move<4, 18>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.right_moved().to_array();
-            });
-            test_line_right_move<3, 16>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.right_moved().to_array();
-            });
-            test_line_right_move<3, 11>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.right_moved().to_array();
-            });
-        }
-
-        {
-            test_line_reward<4, 16>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.reward();
-            });
-            test_line_reward<4, 18>([](array<u8, 4> line) {
-                Line<4> l(line);
-                return l.reward();
-            });
-            test_line_reward<3, 16>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.reward();
-            });
-            test_line_reward<3, 11>([](array<u8, 3> line) {
-                Line<3> l(line);
-                return l.reward();
-            });
-        }
-
-        {
-            test_board_move<4, 16>([](array<array<u8, 4>, 4> board, Dir dir) {
-                Board<4> b(board);
-                return b.moved(dir).to_array();
-            });
-            test_board_move<4, 18>([](array<array<u8, 4>, 4> board, Dir dir) {
-                Board<4> b(board);
-                return b.moved(dir).to_array();
-            });
-            test_board_move<3, 16>([](array<array<u8, 3>, 3> board, Dir dir) {
-                Board<3> b(board);
-                return b.moved(dir).to_array();
-            });
-            test_board_move<3, 11>([](array<array<u8, 3>, 3> board, Dir dir) {
-                Board<3> b(board);
-                return b.moved(dir).to_array();
-            });
-        }
-
-        {
-            test_board_reward<4, 16>([](array<array<u8, 4>, 4> board, Dir dir) {
-                Board<4> b(board);
-                return b.reward(dir);
-            });
-            test_board_reward<4, 18>([](array<array<u8, 4>, 4> board, Dir dir) {
-                Board<4> b(board);
-                return b.reward(dir);
-            });
-            test_board_reward<3, 16>([](array<array<u8, 3>, 3> board, Dir dir) {
-                Board<3> b(board);
-                return b.reward(dir);
-            });
-            test_board_reward<3, 11>([](array<array<u8, 3>, 3> board, Dir dir) {
-                Board<3> b(board);
-                return b.reward(dir);
-            });
-        }
-
-        {
-            test_board_count_empty<4, 16>([](array<array<u8, 4>, 4> board) {
-                Board<4> b(board);
-                return b.count_empty();
-            });
-            test_board_count_empty<4, 18>([](array<array<u8, 4>, 4> board) {
-                Board<4> b(board);
-                return b.count_empty();
-            });
-            test_board_count_empty<3, 16>([](array<array<u8, 3>, 3> board) {
-                Board<3> b(board);
-                return b.count_empty();
-            });
-            test_board_count_empty<3, 11>([](array<array<u8, 3>, 3> board) {
-                Board<3> b(board);
-                return b.count_empty();
-            });
-        }
-
-        {
-            test_board_empty_mask<4, 16>([](array<array<u8, 4>, 4> board) {
-                Board<4> b(board);
-                return b.empty_mask();
-            });
-            test_board_empty_mask<4, 18>([](array<array<u8, 4>, 4> board) {
-                Board<4> b(board);
-                return b.empty_mask();
-            });
-            test_board_empty_mask<3, 16>([](array<array<u8, 3>, 3> board) {
-                Board<3> b(board);
-                return b.empty_mask();
-            });
-            test_board_empty_mask<3, 11>([](array<array<u8, 3>, 3> board) {
-                Board<3> b(board);
-                return b.empty_mask();
-            });
-        }
-
-        {
-            test_board_tuple_hash<4, 16>([](array<array<u8, 4>, 4> board, u16 mask) {
-                Board<4> b(board);
-                return b.tuple_hash(mask, 16);
-            });
-            test_board_tuple_hash<4, 18>([](array<array<u8, 4>, 4> board, u16 mask) {
-                Board<4> b(board);
-                return b.tuple_hash(mask, 18);
-            });
-            test_board_tuple_hash<3, 16>([](array<array<u8, 3>, 3> board, u16 mask) {
-                Board<3> b(board);
-                return b.tuple_hash(mask, 16);
-            });
-            test_board_tuple_hash<3, 11>([](array<array<u8, 3>, 3> board, u16 mask) {
-                Board<3> b(board);
-                return b.tuple_hash(mask, 11);
-            });
-        }
-
-        {
-            test_board_fill<4, 16>([](array<array<u8, 4>, 4> board) {
-                Board<4> b(board);
-                return b.filled().to_array();
-            });
-            test_board_fill<4, 18>([](array<array<u8, 4>, 4> board) {
-                Board<4> b(board);
-                return b.filled().to_array();
-            });
-            test_board_fill<3, 16>([](array<array<u8, 3>, 3> board) {
-                Board<3> b(board);
-                return b.filled().to_array();
-            });
-            test_board_fill<3, 11>([](array<array<u8, 3>, 3> board) {
-                Board<3> b(board);
-                return b.filled().to_array();
-            });
-        }
-    }
-    if (true) {
-        test_board_move<3, 11>([](const array<array<u8, 3>, 3> board, Dir d) {
-            u64 b = from_array(board);
-            move_board(b, d);
-            return to_array(b);
-        });
-        test_board_reward<3, 11>([](const array<array<u8, 3>, 3> board, Dir d) {
-            u64 b = from_array(board);
-            return u32(get_reward(b, d));
-        });
-        test_board_count_empty<3, 11>([](const array<array<u8, 3>, 3> board) {
-            u64 b = from_array(board);
-            return count_empty(b);
-        });
-        test_board_fill<3, 11>([](const array<array<u8, 3>, 3> board) {
-            u64 b = from_array(board);
-            fill_board(b);
-            return to_array(b);
-        });
-    }*/
-    if (true) {
-        test_board_move<4, 16>([](const array<array<u8, 4>, 4> board, Dir d) {
-            u64 b = from_matrix(board);
-            move_board(b, d);
-            return to_matrix(b);
-        });
-        test_board_reward<4, 16>([](const array<array<u8, 4>, 4> board, Dir d) {
-            u64 b = from_matrix(board);
-            return get_reward(b, d);
-        });
-        test_board_count_empty<4, 16>([](const array<array<u8, 4>, 4> board) {
-            u64 b = from_matrix(board);
-            return count_empty(b);
-        });
-        test_board_fill<4, 16>([](const array<array<u8, 4>, 4> board) {
-            u64 b = from_matrix(board);
-            fill_board(b);
-            return to_matrix(b);
-        });
-    }
-    if (true) {
-        test_line_left_move<4, 15>([](array<u8, 4> line) {
-            u16 l = from_array(line);
-            return to_array(l ^ left_0_4[l]);
-        });
-        test_line_right_move<4, 15>([](array<u8, 4> line) {
-            u16 l = from_array(line);
-            return to_array(l ^ right_0_4[l]);
-        });
-    }
-}
-
 void run() {
     init();
 
@@ -344,7 +100,94 @@ void run() {
     //load_packed_weights("stage2", tuples_4_stage_2);
 }
 
-//Endgame endgame(0xFFFFFF8000000000ull);
+void endgameG8S9_prob() {
+    /*Endgame endgame({
+                            0xFFFF'FF80'0000'0000ull,
+                            0xFFF0'FF8F'0000'0000ull,
+                            0x0FFF'FF80'F000'0000ull,
+                            0x0FF0'FF8F'F000'0000ull,
+                            0xFFFF'8FF0'0000'0000ull,
+                            0xFFF0'8FFF'0000'0000ull,
+                            0x0FFF'FFF0'8000'0000ull,
+                    }); // 0.841903*/
+    /*Endgame endgame({
+                            0xFFFF'FF80'0000'0000ull,
+                            0xFFF0'FF8F'0000'0000ull,
+                            0x0FFF'FF80'F000'0000ull,
+                            0x0FF0'FF8F'F000'0000ull,
+                            0xFFFF'8FF0'0000'0000ull,
+                            0xFFF0'8FFF'0000'0000ull,
+                    }); // 0.841902*/
+    Endgame endgame({
+                            0xFFFF'FF80'0000'0000ull,
+                            0xFFFF'8FF0'0000'0000ull,
+                            0xFFF0'8FFF'0000'0000ull,
+                            0x0FFF'FF80'F000'0000ull,
+                            0x0FFF'F8FF'0000'0000ull
+                    }); // 0.841384
+    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull}); // 0.815005
+    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull}); // 0.752513
+    //Endgame endgame({0xFFFFFF8000000000ull}); // 0.733328
+    endgame.load_values("8-9-prob-5");
+    //endgame.init_goal_states(1);
+    //endgame.bruteforce_values();
+    cout << endgame.get_state_value(0xFFFFFF8000000120ull) << endl;
+    cout << endgame.get_state_value(0xFFFF8FF000000120ull) << endl;
+    //endgame.save_values("8-9-prob-7");
+    //endgame.print_known_ratios();
+}
+
+void endgame_G8S10_prob() {
+    Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull, 0x0FFF'F800'F000'0000ull});
+    //Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}); // 0.986459
+    //Endgame endgame({0xFFFF'F800'0000'0000ull}); // 0.98588
+    //endgame.load_values("8-10-prob-2");
+    endgame.init_goal_states(1);
+    endgame.bruteforce_values();
+    cout << endgame.get_state_value(0xFFFF'F821'0000'0120ull) << endl;
+    cout << endgame.get_state_value(0xFFFF'2F81'0000'0120ull) << endl;
+    endgame.save_values("8-10-prob-3");
+}
+
+void endgameG8S9_eval() {
+    /*Endgame endgame({
+                            0xFFFF'FF80'0000'0000ull,
+                            0xFFF0'FF8F'0000'0000ull,
+                            0x0FFF'FF80'F000'0000ull,
+                            0x0FF0'FF8F'F000'0000ull,
+                            0xFFFF'8FF0'0000'0000ull,
+                            0xFFF0'8FFF'0000'0000ull,
+                            0x0FFF'FFF0'8000'0000ull,
+                    }); // 0.841903*/
+    /*Endgame endgame({
+                            0xFFFF'FF80'0000'0000ull,
+                            0xFFF0'FF8F'0000'0000ull,
+                            0x0FFF'FF80'F000'0000ull,
+                            0x0FF0'FF8F'F000'0000ull,
+                            0xFFFF'8FF0'0000'0000ull,
+                            0xFFF0'8FFF'0000'0000ull,
+                    }); // 0.841902*/
+    Endgame endgame({
+                            0xFFFF'FF80'0000'0000ull,
+                            0xFFFF'8FF0'0000'0000ull,
+                            0xFFF0'8FFF'0000'0000ull,
+                            0x0FFF'FF80'F000'0000ull,
+                            0x0FFF'F8FF'0000'0000ull
+                    });
+    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull}); // 0.815005
+    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull}); // 0.752513
+    //Endgame endgame({0xFFFFFF8000000000ull}); // 0.733328
+    endgame.load_values("8-9-eval-5");
+    endgame.init_goal_states(833243.136); // 378759 / 0.5682 = 666594.509 * 1.25 = 833243.136
+    // 1.25 * 528886 = 661107.5, max average eval
+    endgame.bruteforce_values();
+    cout << endgame.get_state_value(0xFFFFFF8000000120ull) << endl;
+    cout << endgame.get_state_value(0xFFFF8FF000000120ull) << endl;
+    endgame.save_values("8-9-eval-5");
+    //endgame.print_known_ratios();
+}
+
+vector<Endgame> endgames;
 
 void run2() {
     init();
@@ -353,41 +196,58 @@ void run2() {
     load_packed_weights("stage2", tuples_4_stage_2);
     cout << endl;
 
+    //endgameG8S9_eval();
+
+    /*r_t avg = 0;
+    for (u32 i = 0; i < remaining_scores.size(); ++i) {
+        cout << i << ": " << remaining_scores[i].first << " " << remaining_scores[i].second << " " << importance(remaining_scores[i].first) << endl;
+        avg += importance(remaining_scores[i].first);
+    }
+    cout << avg / remaining_scores.size() << endl;
+    return;*/
+
+    //endgames.push_back(Endgame({0xFFFF'FF80'0000'0000ull, 0xFFFF'8FF0'0000'0000ull, 0xFFF0'8FFF'0000'0000ull, 0x0FFF'FF80'F000'0000ull, 0x0FFF'F8FF'0000'0000ull}));
+    //endgames[0].load_values("8-9-prob-5");
+    //endgames.push_back(Endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}));
+    //endgames[1].load_values("8-10-prob-2");
+    run_algorithm_episodes(1000, 10, [](const u64 board, NTuple &tuples) {
+        for (auto &endgame: endgames) {
+            Eval eval = endgame.eval_board(board);
+            if (eval.dir == None) { continue; }
+            if (eval.eval <= 0.01 || eval.eval >= 0.99) { continue; }
+            return eval.dir;
+        }
+        //const u32 states = u32(importance(sum_cells(board)));
+        //return expectimax_limited_states(downgraded(board), states, 0.01, tuples).dir;
+        //return expectimax_limited_states(downgraded(board), 100, 0.01, tuples).dir;
+        return eval_state(board, tuples).dir;
+    });
+
+    //endgame_G8S10();
+
+    /*//Endgame endgame({0xFFFF'F900'0000'0000ull, 0xFFFF'0F90'0000'0000ull}); //0.72751
+    //Endgame endgame({0xFFFF'F900'0000'0000ull, 0x0FFF'F900'F000'0000ull}); // 0.721984
+    //Endgame endgame({0xFFFF'F900'0000'0000ull, 0xFFF0'F90F'0000'0000ull}); // 0.721983
+    //Endgame endgame({0xFFFF'F900'0000'0000ull}); // 0.721983
+    Endgame endgame({0xFFF0'FF90'0000'0000ull}); // 0.833637
+    endgame.load_values("9-10-prob-1B");
+    //endgame.init_goal_states(1);
+    //endgame.bruteforce_values();
+    //cout << endgame.get_state_value(0xFFFF'F921'0000'0120ull) << endl;
+    //cout << endgame.get_afterstate_value(0xFFFF'F900'0000'0010ull) << endl;
+    //cout << endgame.get_state_value(0xFFFF'2F91'0000'0010ull) << endl;
+    cout << endgame.get_state_value(0xFFF0'FF90'0001'0100ull) << endl;
+    //endgame.save_values("9-10-prob-1B");*/
+
+    /*print_change_success_bases(100, 100, 32000, 8, [](const u64 board, NTuple &tuples) {
+        //return eval_state(board, tuples).dir;
+        return expectimax_limited_states(board, 100, 0.01, tuples).dir;
+    });*/
+
     /*run_algorithm_episodes(1, 0, [](const u64 board, NTuple &tuples) {
         //cout << get_large_tiles_mask(board, large_th) << endl;
         return expectimax_limited_states(board, 100, 0.01, tuples).dir;
     });*/
-
-    auto res = get_all_level_stats(1000, 1000, 32256, 9, [](const u64 board, NTuple &tuples) {
-        return eval_state(board, tuples).dir;
-    });
-    for (const auto [base, success_rate, no_change_rate, no_change_success_rate, change_success_rate, change_success_boards, frequency]: res) {
-        cout << "frequency: " << frequency << endl;
-        cout << "success: " << success_rate << endl;
-        cout << "no change: " << no_change_rate << endl;
-        cout << "no change success: " << no_change_success_rate << endl;
-        cout << "change success: " << change_success_rate << endl;
-        print_board(base);
-        //continue;
-        cout << "change success boards: " << endl;
-        auto change_success_freqs = change_success_bases(change_success_boards, 9);
-        for (const auto [base, freq]: change_success_freqs) {
-            cout << freq << endl;
-            print_board(base);
-        }
-        r_t avg_sum = 0;
-        /*for (const auto [old_board, new_board]: change_success_boards) {
-            print_board(old_board);
-            print_board(new_board);
-            cout << endl;
-            for (u32 i = 0; i < 16; ++i) {
-                if (get_cell(old_board, i) < 8) {
-                    avg_sum += E(get_cell(old_board, i));
-                }
-            }
-        }
-        cout << "avg sum: " << avg_sum / r_t(change_success_boards.size()) << endl;*/
-    }
 
     //print_reach_probs();
     //print_all_prob_score_stuff();

@@ -42,6 +42,16 @@ constexpr inline u8 get_cell(const u64 board, const u8 i) {
     return (board >> (i * 4)) & 0xFu;
 }
 
+constexpr inline void set_cell(u16 &line, const u8 i, const u8 cell) {
+    line &= ~(0xFu << (i * 4));
+    line |= u16(cell) << (i * 4);
+}
+
+constexpr inline void set_cell(u64 &board, const u8 i, const u8 cell) {
+    board &= ~(0xFull << (i * 4));
+    board |= u64(cell) << (i * 4);
+}
+
 template<u8 y>
 constexpr inline u16 get_row(const u64 board) {
     return (board >> (y * 16)) & 0xFFFFu;
@@ -178,6 +188,15 @@ constexpr bool game_over(const u64 board) {
     return true;
 }
 
+inline u32 sum_cells(u64 board) {
+    u32 sum = 0;
+    while (board) {
+        sum += E(board & 0xFu);
+        board >>= 4;
+    }
+    return sum;
+}
+
 inline u64 reverse_rows(const u64 board) {
     return ((board & 0x000F000F000F000Full) << 12) |
            ((board & 0x00F000F000F000F0ull) << 04) |
@@ -240,9 +259,9 @@ void init_moves_0() {
         u16 rev_line = 0;
         s_t reward = 0;
         for (u8 i = 0; i < 4; i++) {
-            u8 cell = (line >> (i * 4)) & 0xFu;
+            const u8 cell = get_cell(line, i);
             cells[i] = cell;
-            rev_line |= cell << ((3 - i) * 4);
+            set_cell(rev_line, 3 - i, cell);
         }
         u8 to = 0;
         bool merged = false;
@@ -268,8 +287,8 @@ void init_moves_0() {
         u16 rev_moved = 0;
         for (u8 i = 0; i < 4; i++) {
             u8 cell = cells[i];
-            moved |= cell << (i * 4);
-            rev_moved |= cell << ((3 - i) * 4);
+            set_cell(moved, i, cell);
+            set_cell(rev_moved, 3 - i, cell);
         }
         left_0_4[line] = line ^ moved;
         up_0_4[line] = pdep(line ^ moved, 0x000F000F000F000Full);

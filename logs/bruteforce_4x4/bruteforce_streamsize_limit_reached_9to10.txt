@@ -1,0 +1,67 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 436207616 bytes for G1 virtual space
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_windows.cpp:3825), pid=24268, tid=37056
+#
+# JRE version: OpenJDK Runtime Environment JBR-17.0.9+7-1087.9-jcef (17.0.9+7) (build 17.0.9+7-b1087.9)
+# Java VM: OpenJDK 64-Bit Server VM JBR-17.0.9+7-1087.9-jcef (17.0.9+7-b1087.9, mixed mode, tiered, compressed class ptrs, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: exit -XX:ErrorFile=C:\Users\herva\\java_error_in_clion64_%p.log -XX:HeapDumpPath=C:\Users\herva\\java_error_in_clion64.hprof -Xms256m -Xmx2048m -XX:ReservedCodeCacheSize=512m -Xss2m -XX:NewSize=128m -XX:MaxNewSize=128m -XX:+UseG1GC -XX:SoftRefLRUPolicyMSPerMB=50 -XX:CICompilerCount=2 -XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -XX:+IgnoreUnrecognizedVMOptions -XX:CompileCommand=exclude,com/intellij/openapi/vfs/impl/FilePartNodeRoot,trieDescend -ea -Dsun.io.useCanonCaches=false -Dsun.java2d.metal=true -Djbr.catch.SIGABRT=true -Djdk.http.auth.tunneling.disabledSchemes="" -Djdk.attach.allowAttachSelf=true -Djdk.module.illegalAccess.silent=true -Dkotlinx.coroutines.debug=off -Xmx60000m -Deditor.max.caret.count=2000 -Djb.vmOptionsFile=C:\Users\herva\AppData\Roaming\\JetBrains\\CLion2023.3\clion64.exe.vmoptions -Djava.system.class.loader=com.intellij.util.lang.PathClassLoader -Didea.vendor.name=JetBrains -Didea.paths.selector=CLion2023.3 -Djna.boot.library.path=C:\Program Files\JetBrains\CLion 2023.1.3/lib/jna/amd64 -Dpty4j.preferred.native.folder=C:\Program Files\JetBrains\CLion 2023.1.3/lib/pty4j -Djna.nosys=true -Djna.noclasspath=true -Dintellij.platform.runtime.repository.path=C:\Program Files\JetBrains\CLion 2023.1.3/modules/module-descriptors.jar -Didea.platform.prefix=CLion -Dsplash=true -Daether.connector.resumeDownloads=false --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.ref=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/jdk.internal.vm=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.nio.fs=ALL-UNNAMED --add-opens=java.base/sun.security.ssl=ALL-UNNAMED --add-opens=java.base/sun.security.util=ALL-UNNAMED --add-opens=java.base/sun.net.dns=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED --add-opens=java.desktop/java.awt.dnd.peer=ALL-UNNAMED --add-opens=java.desktop/java.awt.event=ALL-UNNAMED --add-opens=java.desktop/java.awt.image=ALL-UNNAMED --add-opens=java.desktop/java.awt.peer=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED --add-opens=java.desktop/javax.swing=ALL-UNNAMED --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED --add-opens=java.desktop/sun.awt.datatransfer=ALL-UNNAMED --add-opens=java.desktop/sun.awt.image=ALL-UNNAMED --add-opens=java.desktop/sun.awt.windows=ALL-UNNAMED --add-opens=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.font=ALL-UNNAMED --add-opens=java.desktop/sun.java2d=ALL-UNNAMED --add-opens=java.desktop/sun.swing=ALL-UNNAMED --add-opens=java.desktop/com.sun.java.swing=ALL-UNNAMED --add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-opens=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED --add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED -Dide.native.launcher=true -Djcef.sandbox.ptr=000002B5566EB780
+
+Host: 12th Gen Intel(R) Core(TM) i7-12700H, 20 cores, 39G,  Windows 11 , 64 bit Build 22621 (10.0.22621.2506)
+Time: Sat Jan 20 15:22:58 2024 GMT Standard Time elapsed time: 78887.708205 seconds (0d 21h 54m 47s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000002c46500df80):  VMThread "VM Thread" [stack: 0x000000dc98000000,0x000000dc98100000] [id=37056]
+
+Stack: [0x000000dc98000000,0x000000dc98100000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x688349]
+V  [jvm.dll+0x841bfa]
+V  [jvm.dll+0x84383e]
+V  [jvm.dll+0x843ea3]
+V  [jvm.dll+0x24bdef]
+V  [jvm.dll+0x6850f9]
+V  [jvm.dll+0x67988a]
+V  [jvm.dll+0x30cbfb]
+V  [jvm.dll+0x3140a6]
+V  [jvm.dll+0x363ede]
+V  [jvm.dll+0x36410f]
+V  [jvm.dll+0x2e29c8]
+V  [jvm.dll+0x2e0ba4]
+V  [jvm.dll+0x2e01ac]
+V  [jvm.dll+0x32507b]
+V  [jvm.dll+0x84859b]
+V  [jvm.dll+0x8492e1]
+V  [jvm.dll+0x8497fd]
+V  [jvm.dll+0x849bd4]
+V  [jvm.dll+0x849ca0]
+V  [jvm.dll+0x7f043a]
+V  [jvm.dll+0x6871c5]
+C  [ucrtbase.dll+0x29363]
+C  [KERNEL32.DLL+0x1257d]
+C  [ntdll.dll+0x5aa58]
+
+VM_Operation (0x000000dc9b0fcd70): G1CollectForAllocation, mode: safepoint, requested by thread 0x000002c4fdfb6e00
+
+
+
+
+com.intellij.diagnostic.JBRCrash

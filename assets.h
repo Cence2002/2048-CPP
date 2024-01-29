@@ -29,10 +29,6 @@ using u16 = uint16_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
-// using c_t = uint8_t; // cell type
-// using l_t = uint16_t; // line type
-// using b_t = uint64_t; // board type
-
 using r_t = float;
 using s_t = uint32_t;
 
@@ -141,6 +137,10 @@ constexpr u64 power(u64 base, u8 exp) {
         base *= base;
     }
     return res;
+}
+
+constexpr r_t interpolate(const r_t start, const r_t end, const r_t t) {
+    return start + (end - start) * t;
 }
 
 constexpr r_t factorial(u8 n) {

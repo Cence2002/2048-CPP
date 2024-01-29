@@ -1,5 +1,6 @@
 #pragma once
 
+#include "board.h"
 #include "general_board.h"
 
 template<int N, int BASE>
@@ -251,4 +252,248 @@ void test_board_fill(array<array<u8, N>, N> (*fill)(const array<array<u8, N>, N>
     //cout << "p = " << total_p << endl;
     assert(total_p > 0.01);
     cout << "test_board_fill<" << N << ", " << BASE << "> passed: p = " << total_p << endl;
+}
+
+void run_tests() {
+    /*if (false) {
+        {
+            test_line_hash<4, 16>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.hash(16);
+            });
+            test_line_hash<4, 18>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.hash(18);
+            });
+            test_line_hash<3, 16>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.hash(16);
+            });
+            test_line_hash<3, 11>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.hash(11);
+            });
+        }
+
+        {
+            test_line_left_move<4, 16>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.left_moved().to_array();
+            });
+            test_line_left_move<4, 18>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.left_moved().to_array();
+            });
+            test_line_left_move<3, 16>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.left_moved().to_array();
+            });
+            test_line_left_move<3, 11>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.left_moved().to_array();
+            });
+        }
+
+        {
+            test_line_right_move<4, 16>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.right_moved().to_array();
+            });
+            test_line_right_move<4, 18>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.right_moved().to_array();
+            });
+            test_line_right_move<3, 16>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.right_moved().to_array();
+            });
+            test_line_right_move<3, 11>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.right_moved().to_array();
+            });
+        }
+
+        {
+            test_line_reward<4, 16>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.reward();
+            });
+            test_line_reward<4, 18>([](array<u8, 4> line) {
+                Line<4> l(line);
+                return l.reward();
+            });
+            test_line_reward<3, 16>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.reward();
+            });
+            test_line_reward<3, 11>([](array<u8, 3> line) {
+                Line<3> l(line);
+                return l.reward();
+            });
+        }
+
+        {
+            test_board_move<4, 16>([](array<array<u8, 4>, 4> board, Dir dir) {
+                Board<4> b(board);
+                return b.moved(dir).to_array();
+            });
+            test_board_move<4, 18>([](array<array<u8, 4>, 4> board, Dir dir) {
+                Board<4> b(board);
+                return b.moved(dir).to_array();
+            });
+            test_board_move<3, 16>([](array<array<u8, 3>, 3> board, Dir dir) {
+                Board<3> b(board);
+                return b.moved(dir).to_array();
+            });
+            test_board_move<3, 11>([](array<array<u8, 3>, 3> board, Dir dir) {
+                Board<3> b(board);
+                return b.moved(dir).to_array();
+            });
+        }
+
+        {
+            test_board_reward<4, 16>([](array<array<u8, 4>, 4> board, Dir dir) {
+                Board<4> b(board);
+                return b.reward(dir);
+            });
+            test_board_reward<4, 18>([](array<array<u8, 4>, 4> board, Dir dir) {
+                Board<4> b(board);
+                return b.reward(dir);
+            });
+            test_board_reward<3, 16>([](array<array<u8, 3>, 3> board, Dir dir) {
+                Board<3> b(board);
+                return b.reward(dir);
+            });
+            test_board_reward<3, 11>([](array<array<u8, 3>, 3> board, Dir dir) {
+                Board<3> b(board);
+                return b.reward(dir);
+            });
+        }
+
+        {
+            test_board_count_empty<4, 16>([](array<array<u8, 4>, 4> board) {
+                Board<4> b(board);
+                return b.count_empty();
+            });
+            test_board_count_empty<4, 18>([](array<array<u8, 4>, 4> board) {
+                Board<4> b(board);
+                return b.count_empty();
+            });
+            test_board_count_empty<3, 16>([](array<array<u8, 3>, 3> board) {
+                Board<3> b(board);
+                return b.count_empty();
+            });
+            test_board_count_empty<3, 11>([](array<array<u8, 3>, 3> board) {
+                Board<3> b(board);
+                return b.count_empty();
+            });
+        }
+
+        {
+            test_board_empty_mask<4, 16>([](array<array<u8, 4>, 4> board) {
+                Board<4> b(board);
+                return b.empty_mask();
+            });
+            test_board_empty_mask<4, 18>([](array<array<u8, 4>, 4> board) {
+                Board<4> b(board);
+                return b.empty_mask();
+            });
+            test_board_empty_mask<3, 16>([](array<array<u8, 3>, 3> board) {
+                Board<3> b(board);
+                return b.empty_mask();
+            });
+            test_board_empty_mask<3, 11>([](array<array<u8, 3>, 3> board) {
+                Board<3> b(board);
+                return b.empty_mask();
+            });
+        }
+
+        {
+            test_board_tuple_hash<4, 16>([](array<array<u8, 4>, 4> board, u16 mask) {
+                Board<4> b(board);
+                return b.tuple_hash(mask, 16);
+            });
+            test_board_tuple_hash<4, 18>([](array<array<u8, 4>, 4> board, u16 mask) {
+                Board<4> b(board);
+                return b.tuple_hash(mask, 18);
+            });
+            test_board_tuple_hash<3, 16>([](array<array<u8, 3>, 3> board, u16 mask) {
+                Board<3> b(board);
+                return b.tuple_hash(mask, 16);
+            });
+            test_board_tuple_hash<3, 11>([](array<array<u8, 3>, 3> board, u16 mask) {
+                Board<3> b(board);
+                return b.tuple_hash(mask, 11);
+            });
+        }
+
+        {
+            test_board_fill<4, 16>([](array<array<u8, 4>, 4> board) {
+                Board<4> b(board);
+                return b.filled().to_array();
+            });
+            test_board_fill<4, 18>([](array<array<u8, 4>, 4> board) {
+                Board<4> b(board);
+                return b.filled().to_array();
+            });
+            test_board_fill<3, 16>([](array<array<u8, 3>, 3> board) {
+                Board<3> b(board);
+                return b.filled().to_array();
+            });
+            test_board_fill<3, 11>([](array<array<u8, 3>, 3> board) {
+                Board<3> b(board);
+                return b.filled().to_array();
+            });
+        }
+    }
+    if (true) {
+        test_board_move<3, 11>([](const array<array<u8, 3>, 3> board, Dir d) {
+            u64 b = from_array(board);
+            move_board(b, d);
+            return to_array(b);
+        });
+        test_board_reward<3, 11>([](const array<array<u8, 3>, 3> board, Dir d) {
+            u64 b = from_array(board);
+            return u32(get_reward(b, d));
+        });
+        test_board_count_empty<3, 11>([](const array<array<u8, 3>, 3> board) {
+            u64 b = from_array(board);
+            return count_empty(b);
+        });
+        test_board_fill<3, 11>([](const array<array<u8, 3>, 3> board) {
+            u64 b = from_array(board);
+            fill_board(b);
+            return to_array(b);
+        });
+    }*/
+    if (true) {
+        test_board_move<4, 16>([](const array<array<u8, 4>, 4> board, Dir d) {
+            u64 b = from_matrix(board);
+            move_board(b, d);
+            return to_matrix(b);
+        });
+        test_board_reward<4, 16>([](const array<array<u8, 4>, 4> board, Dir d) {
+            u64 b = from_matrix(board);
+            return get_reward(b, d);
+        });
+        test_board_count_empty<4, 16>([](const array<array<u8, 4>, 4> board) {
+            u64 b = from_matrix(board);
+            return count_empty(b);
+        });
+        test_board_fill<4, 16>([](const array<array<u8, 4>, 4> board) {
+            u64 b = from_matrix(board);
+            fill_board(b);
+            return to_matrix(b);
+        });
+    }
+    if (true) {
+        test_line_left_move<4, 15>([](array<u8, 4> line) {
+            u16 l = from_array(line);
+            return to_array(l ^ left_0_4[l]);
+        });
+        test_line_right_move<4, 15>([](array<u8, 4> line) {
+            u16 l = from_array(line);
+            return to_array(l ^ right_0_4[l]);
+        });
+    }
 }

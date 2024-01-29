@@ -1,0 +1,150 @@
+load_packed_weights("stage1", tuples_4_stage_1);
+    load_packed_weights("stage2", tuples_4_stage_2);
+    cout << endl;
+
+    endgames.push_back(Endgame({
+                                       0xFFFF'FF80'0000'0000ull,
+                                       0xFFFF'8FF0'0000'0000ull,
+                                       0xFFF0'8FFF'0000'0000ull,
+                                       0x0FFF'FF80'F000'0000ull,
+                                       0x0FFF'F8FF'0000'0000ull
+                               }));
+    endgames.push_back(Endgame({
+                                       0xFFFF'F800'0000'0000ull,
+                                       0xFFFF'0F80'0000'0000ull
+                               }));
+    endgames[0].load_values("8-9-prob-5");
+    endgames[1].load_values("8-10-prob-2");
+    run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
+        for (auto &endgame: endgames) {
+            Eval eval = endgame.eval_board(board);
+            if (eval.dir == None) { continue; }
+            if (eval.eval < 0.01 || eval.eval > 0.99) { continue; }
+            return eval.dir;
+        }
+        return expectimax_limited_states(downgraded(board), 10000, 0.01, tuples).dir;
+    });
+
+
+
+
+"D:\Study\Cambridge\Part II\Project\C++\2048-CPP\cmake-build-debug\2048_CPP.exe"
+Thread 1 seed: 268579
+Init time: 0.005886 s
+
+Loading weights-stage1.bin finished: 0.336803 s
+Loading weights-stage2.bin finished: 0.35654 s
+
+Goal: 8
+Space: 9
+Size: 387420489
+GBs: 1.54968
+Allocation finished: 0.210319 s
+- - - -
+- - - -
+- 8 F F
+F F F F
+
+Goal: 8
+Space: 9
+Size: 387420489
+GBs: 1.54968
+Allocation finished: 0.212013 s
+- - - -
+- - - -
+- F F 8
+F F F F
+
+Goal: 8
+Space: 9
+Size: 387420489
+GBs: 1.54968
+Allocation finished: 0.213145 s
+- - - -
+- - - -
+F F F 8
+- F F F
+
+Goal: 8
+Space: 9
+Size: 387420489
+GBs: 1.54968
+Allocation finished: 0.236228 s
+- - - -
+- - - F
+- 8 F F
+F F F -
+
+Goal: 8
+Space: 9
+Size: 387420489
+GBs: 1.54968
+Allocation finished: 0.236731 s
+- - - -
+- - - -
+F F 8 F
+F F F -
+
+Goal: 8
+Space: 10
+Size: 3486784401
+GBs: 13.9471
+Allocation finished: 2.06565 s
+- - - -
+- - - -
+- - 8 F
+F F F F
+
+Goal: 8
+Space: 10
+Size: 3486784401
+GBs: 13.9471
+Allocation finished: 9.27597 s
+- - - -
+- - - -
+- 8 F -
+F F F F
+
+Loading endgame-8-9-prob-5.bin finished: 13.5977 s
+Loading endgame-8-10-prob-2.bin finished: 49.8506 s
+Testing started (10 games)
+Thread 3 seed: 76900424
+Thread 2 seed: 76900720
+Thread 11 seed: 76900928
+Thread 6 seed: 76901656
+Thread 10 seed: 76901968
+Thread 8 seed: 76902408
+Thread 7 seed: 76902688
+Thread 9 seed: 76903192
+Thread 5 seed: 76903488
+Thread 4 seed: 76903784
+Game 1 score: 343152
+Game 2 score: 367148
+Game 3 score: 378148
+Game 4 score: 533072
+Game 5 score: 610556
+Game 6 score: 628512
+Game 7 score: 630024
+Game 8 score: 630136
+Game 9 score: 795772
+Game 10 score: 829428
+    Average score       574595 / game
+    Confidence rad      100156
+    St dev score        161596
+    Average moves       20558.2 / game
+    Max score:          829428
+    Max moves:          29227
+    Max cell:           15
+    Score A:            1 / game
+    Score B:            1 / game
+    Score C:            1 / game
+    Score D:            1 / game
+    Score E:            1 / game
+    Score F:            0.7 / game
+    Score G:            0 / game
+    Score H:            0 / game
+    S per game:         22.3357
+    Ms per move:        1.08646
+Testing finished: 223.363 s
+
+Process finished with exit code 0
