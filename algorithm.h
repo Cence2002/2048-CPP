@@ -4,7 +4,7 @@
 
 u8 highest_tile(u64 board) {
     u8 highest = 0;
-    for (u8 i = 0; i < 16; ++i) {
+    while (board) {
         highest = max(highest, u8(board & 0xFu));
         board >>= 4;
     }

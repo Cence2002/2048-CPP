@@ -9,7 +9,10 @@ inline r_t add_weights(const u64 board, const NTuple &tuples) {
     //cnt_adds++;
     r_t sum = 0;
     for (const auto &b: get_transformations(board)) {
-        for (const auto &t: tuples) { sum += t[pext(b, t.mask)]; }
+        for (const auto &t: tuples) {
+            sum += t[pext(b, t.mask)];
+            //sum += *(const float *) &b + *(const float *) &t.mask;
+        }
     }
     return sum;
 }
@@ -40,27 +43,23 @@ inline Eval eval_state(const u64 state, const NTuple &tuples) {
 
 u64 cnt_state, cnt_afterstate;
 
-r_t expectimax_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_states, const NTuple &tuples);
+r_t expectimax_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_evals, const NTuple &tuples);
 
-Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_states, const NTuple &tuples) {
+Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_evals, const NTuple &tuples) {
     Eval best = Eval::None();
-    if (max_states == 0) { return best; }
-    --max_states;
-    if (max_states == 0) { return best; }
+    if (max_evals == 0) { return best; }
     //cnt_state++;
     for (const Dir dir: DIRS) {
         const u64 afterstate = moved_board(state, dir);
         if (afterstate == state) { continue; }
-        r_t eval = expectimax_afterstate(afterstate, max_depth, max_prob, max_states, tuples);
-        if (max_states == 0) { return best; }
+        r_t eval = expectimax_afterstate(afterstate, max_depth, max_prob, max_evals, tuples);
+        if (max_evals == 0) { return best; }
         const s_t reward = get_reward(state, dir);
         eval += r_t(reward);
         if (best.dir == None || eval > best.eval) {
             best = {dir, eval, reward, afterstate};
         }
     }
-    //TODO maybe turn on
-    //if (best.dir == None) { best.eval = eval_board<N>(state) - 1e7; }
     best.eval += 1;
     return best;
 }
@@ -68,19 +67,22 @@ Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u
 unordered_map<r_t, u64> cnt_probs;
 unordered_map<u8, u64> cnt_depths;
 
+u64 cnt_evals = 0;
+
 //TODO take evaluated afterstates partially if the children have too small probs to reduce the size of the tree and
 //detect small probabilities sooner
-r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, u64 &max_states, const NTuple &tuples) {
-    if (max_states == 0) { return 0; }
-    if (max_depth == 0 || max_prob <= 1) {
+r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, u64 &max_evals, const NTuple &tuples) {
+    if (max_depth == 0 || max_prob < 1) {
+        ++cnt_evals;
+        if (--max_evals == 0) { return 0; }
         return max(r_t(0), add_weights(afterstate, tuples));
+        //return 0;
     }
     const u64 empty = empty_mask(afterstate);
     const u8 empty_count = popcnt(empty);
     u64 mask = 1;
     r_t sum = 0;
     r_t significance = 0;
-    //cnt_afterstate++;
     for (u8 i = 0; i < empty_count; mask <<= 4) {
         if (empty & mask) {
             for (const auto &[shift, prob]: SHIFTS) {
@@ -92,9 +94,9 @@ r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t ma
                         afterstate | (mask << shift),
                         max_depth - 1,
                         max_prob * prob,
-                        max_states,
+                        max_evals,
                         tuples).eval;
-                if (max_states == 0) { return 0; }
+                if (max_evals == 0) { return 0; }
             }
             ++i;
         }
@@ -106,12 +108,12 @@ r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t ma
 }
 
 Eval expectimax_limited_depth_prob(const u64 board, const u8 depth, const r_t prob, const NTuple &tuples) {
-    u64 states = numeric_limits<u64>::max();
-    return expectimax_state(board, depth, prob, states, tuples);
+    u64 evals = numeric_limits<u64>::max();
+    return expectimax_state(board, depth, prob, evals, tuples);
 }
 
 r_t get_prob(const u8 cnt1, const u8 cnt2) {
-    return pow(0.9f, r_t(cnt1)) * pow(0.1f, r_t(cnt2));
+    return pow(r_t(0.9), r_t(cnt1)) * pow(r_t(0.1), r_t(cnt2));
 }
 
 r_t get_ratio(const u64 cnt1, const u64 cnt2) {
@@ -131,19 +133,33 @@ r_t get_min_prob(const u8 depth, const r_t min_ratio) {
     return max_prob / 2;
 }
 
-Eval expectimax_limited_states(const u64 board, u64 states, const r_t min_ratio, const NTuple &tuples) { // const r_t threshold = 0.05
+//threshold = throw away at most that portion of probabilities in total
+r_t get_max_prob(const u8 depth, r_t threshold) {
+    u8 cnt1 = 0;
+    u8 cnt2 = depth;
+    while (cnt1 < depth && cnt2 > 0) {
+        const r_t ratio = get_ratio(cnt1, cnt2);
+        if (ratio > threshold) { break; }
+        threshold -= ratio;
+        ++cnt1;
+        --cnt2;
+    }
+    //cout << int(depth) << " " << int(cnt2) << " " << get_ratio(cnt1, cnt2) << " " << threshold << endl;
+    return r_t(2) / get_prob(cnt1, cnt2);
+}
+
+Eval expectimax_limited_evals(const u64 board, u64 evals, const r_t threshold, const NTuple &tuples) { // const r_t threshold = 0.05
     Eval best = Eval::None();
-    for (u8 depth = 0; depth < 100; ++depth) {
-        //TODO replace
-        //Eval eval = expectimax_state(board, depth, r_t(E(depth + 4)), states, tuples);
-        //Eval eval = expectimax_state(board, depth, 1.0f / get_min_prob(depth, min_ratio), states, tuples);
-        const Eval eval = expectimax_state(board, depth, r_t(1) / get_min_prob(depth, min_ratio), states, tuples);
-        if (states == 0) { break; }
+    for (u8 depth = 0; depth < 64; ++depth) {
+        const Eval eval = expectimax_state(board, depth, get_max_prob(depth, threshold), evals, tuples);
+        if (evals == 0) { break; }
+        cout << int(depth) << " " << evals << " " << eval.eval << endl;
         best = eval;
     }
     return best;
 }
 
+//threshold = smallest min below which it won't downgrade
 u64 downgraded(u64 board, const u8 threshold = 15) {
     u32 used = 0;
     u8 highest = 0;
@@ -169,6 +185,64 @@ u64 downgraded(u64 board, const u8 threshold = 15) {
         }
     }
     return board;
+}
+
+//threshold = smallest number that can be modified
+u64 upgraded_old(const u64 board, const u8 threshold) {
+    array<u8, 16> counts{};
+    counts.fill(0);
+    for (u8 i = 0; i < 16; ++i) {
+        ++counts[get_cell(board, i)];
+    }
+    u8 max_double = 0;
+    for (u8 i = 1; i < 16; ++i) {
+        if (counts[i] > 1) {
+            max_double = i;
+        }
+    }
+    if (counts[15] == 0 || max_double > 10) { return board; }
+    array<u8, 16> new_cells{};
+    for (u8 i = 0; i < 16; ++i) {
+        if (i < threshold) {
+            new_cells[i] = i;
+            continue;
+        }
+        new_cells[i] = new_cells[i - 1];
+        if (counts[i] > 0) { ++new_cells[i]; }
+    }
+    u64 upgraded = 0;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = get_cell(board, i);
+        set_cell(upgraded, i, new_cells[cell]);
+    }
+    /*if (rand() % 1000 == 0) {
+        cout << int(max_double) << endl;
+        print_board(board);
+        print_board(upgraded);
+    }*/
+    return upgraded;
+}
+
+u64 upgraded(const u64 board) {
+    array<u8, 16> counts{};
+    for (u8 i = 0; i < 16; ++i) {
+        ++counts[get_cell(board, i)];
+    }
+    if (counts[15] == 0 || counts[14] > 0) { return board; }
+    u8 max_double = 0;
+    for (u8 i = 1; i < 16; ++i) {
+        if (counts[i] > 1) {
+            max_double = i;
+        }
+    }
+    if (max_double > 10) { return board; }
+    u64 upgraded = board;
+    for (u8 i = 0; i < 16; ++i) {
+        const u8 cell = get_cell(board, i);
+        if (cell < 15) { continue; }
+        set_cell(upgraded, i, 14);
+    }
+    return upgraded;
 }
 
 vector<pair<u32, r_t>> remaining_scores = {

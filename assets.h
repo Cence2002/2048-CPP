@@ -20,7 +20,6 @@
 
 #define REDIRECT 0
 #define SEED 0
-#define DEBUG 0
 
 using namespace std;
 
@@ -143,12 +142,9 @@ constexpr r_t interpolate(const r_t start, const r_t end, const r_t t) {
     return start + (end - start) * t;
 }
 
-constexpr r_t factorial(u8 n) {
-    r_t res = 1;
-    for (u8 i = 2; i <= n; ++i) {
-        res *= r_t(i);
-    }
-    return res;
+constexpr r_t factorial(const u8 n) {
+    if (n == 0) { return 1; }
+    return r_t(n) * factorial(n - 1);
 }
 
 constexpr r_t binomial(u8 n, u8 k) {
@@ -160,7 +156,8 @@ constexpr r_t st_dev(const u64 sum, const u64 sum_squared, const u64 n) {
 }
 
 constexpr r_t conf_rad(const u64 sum, const u64 sum_squared, const u64 n) {
-    constexpr r_t z = 1.95996;
+    //constexpr r_t z = 1.95996; // 95%
+    constexpr r_t z = 1.01522; // 69%
     return z * st_dev(sum, sum_squared, n) / sqrt(r_t(n));
 }
 

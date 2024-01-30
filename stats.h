@@ -171,7 +171,7 @@ void print_reach_probs() {
             cout << "Deca Games: " << cnt / 200000 << endl;
         }*/
         //return eval_state(board, tuples).dir;
-        return expectimax_limited_states(board, 1000, 0.015, tuples).dir;
+        return expectimax_limited_evals(board, 1000, 0.015, tuples).dir;
         //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
     });
 

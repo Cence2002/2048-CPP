@@ -100,6 +100,10 @@ void run() {
     //load_packed_weights("stage2", tuples_4_stage_2);
 }
 
+r_t get_goal_value(const r_t cumulative_score_gain, const r_t reaching_prob, const r_t scale) {
+    return cumulative_score_gain / reaching_prob * scale;
+}
+
 void endgameG8S9_prob() {
     /*Endgame endgame({
                             0xFFFF'FF80'0000'0000ull,
@@ -138,7 +142,7 @@ void endgameG8S9_prob() {
 }
 
 void endgame_G8S10_prob() {
-    Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull, 0x0FFF'F800'F000'0000ull});
+    Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull});
     //Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}); // 0.986459
     //Endgame endgame({0xFFFF'F800'0000'0000ull}); // 0.98588
     //endgame.load_values("8-10-prob-2");
@@ -150,23 +154,6 @@ void endgame_G8S10_prob() {
 }
 
 void endgameG8S9_eval() {
-    /*Endgame endgame({
-                            0xFFFF'FF80'0000'0000ull,
-                            0xFFF0'FF8F'0000'0000ull,
-                            0x0FFF'FF80'F000'0000ull,
-                            0x0FF0'FF8F'F000'0000ull,
-                            0xFFFF'8FF0'0000'0000ull,
-                            0xFFF0'8FFF'0000'0000ull,
-                            0x0FFF'FFF0'8000'0000ull,
-                    }); // 0.841903*/
-    /*Endgame endgame({
-                            0xFFFF'FF80'0000'0000ull,
-                            0xFFF0'FF8F'0000'0000ull,
-                            0x0FFF'FF80'F000'0000ull,
-                            0x0FF0'FF8F'F000'0000ull,
-                            0xFFFF'8FF0'0000'0000ull,
-                            0xFFF0'8FFF'0000'0000ull,
-                    }); // 0.841902*/
     Endgame endgame({
                             0xFFFF'FF80'0000'0000ull,
                             0xFFFF'8FF0'0000'0000ull,
@@ -174,17 +161,26 @@ void endgameG8S9_eval() {
                             0x0FFF'FF80'F000'0000ull,
                             0x0FFF'F8FF'0000'0000ull
                     });
-    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull}); // 0.815005
-    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull}); // 0.752513
-    //Endgame endgame({0xFFFFFF8000000000ull}); // 0.733328
-    endgame.load_values("8-9-eval-5");
-    endgame.init_goal_states(833243.136); // 378759 / 0.5682 = 666594.509 * 1.25 = 833243.136
-    // 1.25 * 528886 = 661107.5, max average eval
+    //endgame.load_values("8-9-eval-5");
+    const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
+    cout << goal_value << endl;
+    endgame.init_goal_states(goal_value);
     endgame.bruteforce_values();
     cout << endgame.get_state_value(0xFFFFFF8000000120ull) << endl;
     cout << endgame.get_state_value(0xFFFF8FF000000120ull) << endl;
     endgame.save_values("8-9-eval-5");
-    //endgame.print_known_ratios();
+}
+
+void endgame_G8S10_eval() {
+    Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull});
+    //endgame.load_values("8-10-prob-2");
+    const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
+    cout << goal_value << endl;
+    endgame.init_goal_states(goal_value);
+    endgame.bruteforce_values();
+    cout << endgame.get_state_value(0xFFFF'F821'0000'0120ull) << endl;
+    cout << endgame.get_state_value(0xFFFF'2F81'0000'0120ull) << endl;
+    endgame.save_values("8-10-eval-2");
 }
 
 vector<Endgame> endgames;
@@ -196,7 +192,42 @@ void run2() {
     load_packed_weights("stage2", tuples_4_stage_2);
     cout << endl;
 
+    //endgames.push_back(Endgame({0xFFFF'FF80'0000'0000ull, 0xFFFF'8FF0'0000'0000ull, 0xFFF0'8FFF'0000'0000ull, 0x0FFF'FF80'F000'0000ull, 0x0FFF'F8FF'0000'0000ull}));
+    //endgames[0].load_values("8-9-prob-5");
+    //endgames.push_back(Endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}));
+    //endgames[1].load_values("8-10-prob-2");
+
+    auto start = time_now();
+    cnt_evals = 0;
+    r_t asd = 0;
+    /*for (u32 t = 0; t < 10; ++t) {
+        asd += expectimax_limited_evals(0x1234, 10000000, 0.01, tuples_4_stage_2).eval;
+    }*/
+    for (u32 t = 0; t < 10000000; ++t) {
+        ++cnt_evals;
+        asd += add_weights(cnt * 185702, tuples_4_stage_2);
+    }
+    cout << asd << endl;
+    //print average time per eval in ns
+    cout << time_since(start) / cnt_evals * 1e3 << endl;
+    return;
+
+    run_algorithm_episodes(1, 0, [](const u64 board, NTuple &tuples) {
+        print_board(board);
+        /*for (auto &endgame: endgames) {
+            Eval eval = endgame.eval_board(board);
+            if (eval.dir == None) { continue; }
+            if (eval.eval <= 0.01 || eval.eval >= 0.99) { continue; }
+            return eval.dir;
+        }*/
+        //const u32 states = u32(importance(sum_cells(board)));
+        //return expectimax_limited_states(downgraded(board), states, 0.01, tuples).dir;
+        return expectimax_limited_evals(upgraded(board), 10000000, 0.01, tuples).dir; // th=11 default
+        //return eval_state(upgraded(board), tuples).dir;
+    });
+
     //endgameG8S9_eval();
+    //endgame_G8S10_eval();
 
     /*r_t avg = 0;
     for (u32 i = 0; i < remaining_scores.size(); ++i) {
@@ -205,23 +236,6 @@ void run2() {
     }
     cout << avg / remaining_scores.size() << endl;
     return;*/
-
-    //endgames.push_back(Endgame({0xFFFF'FF80'0000'0000ull, 0xFFFF'8FF0'0000'0000ull, 0xFFF0'8FFF'0000'0000ull, 0x0FFF'FF80'F000'0000ull, 0x0FFF'F8FF'0000'0000ull}));
-    //endgames[0].load_values("8-9-prob-5");
-    //endgames.push_back(Endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}));
-    //endgames[1].load_values("8-10-prob-2");
-    run_algorithm_episodes(1000, 10, [](const u64 board, NTuple &tuples) {
-        for (auto &endgame: endgames) {
-            Eval eval = endgame.eval_board(board);
-            if (eval.dir == None) { continue; }
-            if (eval.eval <= 0.01 || eval.eval >= 0.99) { continue; }
-            return eval.dir;
-        }
-        //const u32 states = u32(importance(sum_cells(board)));
-        //return expectimax_limited_states(downgraded(board), states, 0.01, tuples).dir;
-        //return expectimax_limited_states(downgraded(board), 100, 0.01, tuples).dir;
-        return eval_state(board, tuples).dir;
-    });
 
     //endgame_G8S10();
 
