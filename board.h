@@ -63,9 +63,17 @@ constexpr inline u16 get_col(const u64 board) {
 }
 
 constexpr inline u64 empty_mask(u64 board) {
-    board |= board >> 2;
+    return ~((board >> 3) |
+             (board >> 2) |
+             (board >> 1) |
+             board) & 0x1111111111111111ull;
+    /*board |= board >> 2;
     board |= board >> 1;
-    return ~board & 0x1111111111111111ull;
+    return ~board & 0x1111111111111111ull;*/
+    /*return ~(board |
+             (board >> 1) |
+             (board >> 2) |
+             (board >> 3)) & 0x1111111111111111ull;*/
 }
 
 inline u8 count_empty(const u64 board) {
@@ -74,11 +82,11 @@ inline u8 count_empty(const u64 board) {
 
 inline void fill_board(u64 &board) {
     //++run_stats.fill_board_counter;
-    u64 empty = empty_mask(board);
+    const u64 empty = empty_mask(board);
     u8 pos = random(popcnt(empty));
     u64 mask = 1;
     while (!(empty & mask) || pos-- != 0) { mask <<= 4; }
-    board |= mask << !random(10);
+    board |= mask << (random(10) == 0);
 }
 
 s_t rewards_4[E(16)];

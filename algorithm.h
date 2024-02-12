@@ -24,12 +24,15 @@ Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
         if (dir == None) { break; }
         score += get_reward(board, dir);
         ++moves;
+        //if (moves > 100) { break; }
+        //cout << moves << endl;
 
         move_board(board, dir);
         fill_board(board);
         next_stage |= highest_tile(board) >= 14;
     }
-    cout << "Game " << ++cnt << " score: " << score << endl;
+    cout << "Game " << ++cnt << " (T-" << this_thread::get_id() << ") score: " << score << endl;
+    //print_board(board);
 
     return {board, score, moves};
 }
@@ -74,7 +77,7 @@ vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)
     testing_stats.print_max_game_stats();
     testing_stats.print_score_cell_stats();
     cout << indent << "S per game:    \t" << (elapsed / 1e6) / r_t(testing_stats.game_counter) << endl;
-    cout << indent << "Ms per move:    \t" << (elapsed / 1e3) / r_t(testing_stats.moves_counter) << endl;
+    cout << indent << "Moves per uS:  \t" << r_t(testing_stats.moves_counter) / elapsed << endl;
 
     cout << "Testing finished: " << time_since(start) / 1e6 << " s" << endl;
 

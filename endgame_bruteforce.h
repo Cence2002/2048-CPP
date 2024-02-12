@@ -372,7 +372,7 @@ private:
     //static constexpr r_t UNKNOWN = -numeric_limits<r_t>::infinity();
     //static constexpr r_t INF = numeric_limits<r_t>::infinity();
 
-    /*u64 to_hash(const u64 board) const {
+    u64 to_hash(const u64 board) const {
         u64 hash = 0;
         for (u8 i = 0; i < 16; ++i) {
             const u8 base = (B >> (i * 4)) & 0xFu;
@@ -957,7 +957,7 @@ public:
         return is_goal_state(state);
     }
 
-    /*Dir best_dir(u64 board) {
+    Dir best_dir(u64 board) {
         Dir best_dir = None;
         r_t best_eval = 0;
         for (const Dir dir: DIRS) {

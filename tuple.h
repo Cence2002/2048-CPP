@@ -9,6 +9,7 @@ struct Tuple {
 
     const u64 mask;
     const u64 size = E(popcnt(mask));
+    //array<r_t, E(24)> weights;
     vector<r_t> weights;
 
     Tuple(const string name, const u64 mask) : name(name), mask(mask) {}

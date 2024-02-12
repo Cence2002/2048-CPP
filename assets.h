@@ -89,7 +89,8 @@ void init_rng(u32 seed = 0) {
     if (seed == 0) {
         seed = u32(time_since(execution_start));
     }
-    cout << "Thread " << this_thread::get_id() << " seed: " << seed << endl;
+    //cout << "Thread " << this_thread::get_id() << " seed: " << seed << endl;
+    cout << "T-" << this_thread::get_id() << " seed: " << seed << endl;
     rng.seed(seed);
 }
 
@@ -156,8 +157,8 @@ constexpr r_t st_dev(const u64 sum, const u64 sum_squared, const u64 n) {
 }
 
 constexpr r_t conf_rad(const u64 sum, const u64 sum_squared, const u64 n) {
-    //constexpr r_t z = 1.95996; // 95%
-    constexpr r_t z = 1.01522; // 69%
+    constexpr r_t z = 1.95996; // 95%
+    //constexpr r_t z = 1.01522; // 69%
     return z * st_dev(sum, sum_squared, n) / sqrt(r_t(n));
 }
 
@@ -376,8 +377,8 @@ struct game_stats_t {
         cout << indent << "Score D:        \t" << r_t(score_D_counter) / r_t(game_counter) << " / game" << endl;
         cout << indent << "Score E:        \t" << r_t(score_E_counter) / r_t(game_counter) << " / game" << endl;
         cout << indent << "Score F:        \t" << r_t(score_F_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score G:        \t" << r_t(score_G_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score H:        \t" << r_t(score_H_counter) / r_t(game_counter) << " / game" << endl;
+        //cout << indent << "Score G:        \t" << r_t(score_G_counter) / r_t(game_counter) << " / game" << endl;
+        //cout << indent << "Score H:        \t" << r_t(score_H_counter) / r_t(game_counter) << " / game" << endl;
     }
 } training_stats, testing_stats;
 

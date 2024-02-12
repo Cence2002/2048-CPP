@@ -1,7 +1,7 @@
-#include "testing.h"
 #include "endgame_bruteforce.h"
 #include "algorithm.h"
-#include "stats.h"
+//#include "testing.h"
+//#include "stats.h"
 
 void init() {
     auto start = time_now();
@@ -11,10 +11,12 @@ void init() {
     init_moves_0();
     init_moves_123();
 
+    cout << "Threads: " << thread::hardware_concurrency() << endl;
+
     cout << "Init time: " << time_since(start) / 1e6 << " s" << endl << endl;
 }
 
-s_t play_random_game() {
+/*s_t play_random_game() {
     u64 board = 0;
     s_t score = 0;
     fill_board(board);
@@ -55,6 +57,28 @@ void perf_test_general(u64 n) {
     for (u32 i = 0; i < n; ++i) {
         sum += r_t(play_random_game_general<4>());
     }
+    cout << "Average score: " << sum / r_t(n) << endl;
+    cout << "Time: " << time_since(start) / 1e6 << endl << endl;
+}*/
+
+void perf_test_eval(const u64 n) {
+    auto start = time_now();
+    u64 moves = 0;
+    r_t sum = 0;
+    for (u32 i = 0; i < n; ++i) {
+        u64 board = 0;
+        fill_board(board);
+        fill_board(board);
+        while (true) {
+            Eval eval = eval_state(board, tuples_4_stage_1);
+            if (eval.dir == None) { break; }
+            ++moves;
+            sum += eval.reward;
+            board = eval.afterstate;
+            fill_board(board);
+        }
+    }
+    cout << "Average moves: " << moves / r_t(n) << endl;
     cout << "Average score: " << sum / r_t(n) << endl;
     cout << "Time: " << time_since(start) / 1e6 << endl << endl;
 }
@@ -106,28 +130,28 @@ r_t get_goal_value(const r_t cumulative_score_gain, const r_t reaching_prob, con
 
 void endgameG8S9_prob() {
     /*Endgame endgame({
-                            0xFFFF'FF80'0000'0000ull,
-                            0xFFF0'FF8F'0000'0000ull,
-                            0x0FFF'FF80'F000'0000ull,
-                            0x0FF0'FF8F'F000'0000ull,
-                            0xFFFF'8FF0'0000'0000ull,
-                            0xFFF0'8FFF'0000'0000ull,
-                            0x0FFF'FFF0'8000'0000ull,
+                            0xFFFFFF8000000000ull,
+                            0xFFF0FF8F00000000ull,
+                            0x0FFFFF80F0000000ull,
+                            0x0FF0FF8FF0000000ull,
+                            0xFFFF8FF000000000ull,
+                            0xFFF08FFF00000000ull,
+                            0x0FFFFFF080000000ull,
                     }); // 0.841903*/
     /*Endgame endgame({
-                            0xFFFF'FF80'0000'0000ull,
-                            0xFFF0'FF8F'0000'0000ull,
-                            0x0FFF'FF80'F000'0000ull,
-                            0x0FF0'FF8F'F000'0000ull,
-                            0xFFFF'8FF0'0000'0000ull,
-                            0xFFF0'8FFF'0000'0000ull,
+                            0xFFFFFF8000000000ull,
+                            0xFFF0FF8F00000000ull,
+                            0x0FFFFF80F0000000ull,
+                            0x0FF0FF8FF0000000ull,
+                            0xFFFF8FF000000000ull,
+                            0xFFF08FFF00000000ull,
                     }); // 0.841902*/
     Endgame endgame({
-                            0xFFFF'FF80'0000'0000ull,
-                            0xFFFF'8FF0'0000'0000ull,
-                            0xFFF0'8FFF'0000'0000ull,
-                            0x0FFF'FF80'F000'0000ull,
-                            0x0FFF'F8FF'0000'0000ull
+                            0xFFFFFF8000000000ull,
+                            0xFFFF8FF000000000ull,
+                            0xFFF08FFF00000000ull,
+                            0x0FFFFF80F0000000ull,
+                            0x0FFFF8FF00000000ull
                     }); // 0.841384
     //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull}); // 0.815005
     //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull}); // 0.752513
@@ -142,24 +166,24 @@ void endgameG8S9_prob() {
 }
 
 void endgame_G8S10_prob() {
-    Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull});
-    //Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}); // 0.986459
-    //Endgame endgame({0xFFFF'F800'0000'0000ull}); // 0.98588
+    Endgame endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull});
+    //Endgame endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull}); // 0.986459
+    //Endgame endgame({0xFFFFF80000000000ull}); // 0.98588
     //endgame.load_values("8-10-prob-2");
     endgame.init_goal_states(1);
     endgame.bruteforce_values();
-    cout << endgame.get_state_value(0xFFFF'F821'0000'0120ull) << endl;
-    cout << endgame.get_state_value(0xFFFF'2F81'0000'0120ull) << endl;
+    cout << endgame.get_state_value(0xFFFFF82100000120ull) << endl;
+    cout << endgame.get_state_value(0xFFFF2F8100000120ull) << endl;
     endgame.save_values("8-10-prob-3");
 }
 
 void endgameG8S9_eval() {
     Endgame endgame({
-                            0xFFFF'FF80'0000'0000ull,
-                            0xFFFF'8FF0'0000'0000ull,
-                            0xFFF0'8FFF'0000'0000ull,
-                            0x0FFF'FF80'F000'0000ull,
-                            0x0FFF'F8FF'0000'0000ull
+                            0xFFFFFF8000000000ull,
+                            0xFFFF8FF000000000ull,
+                            0xFFF08FFF00000000ull,
+                            0x0FFFFF80F0000000ull,
+                            0x0FFFF8FF00000000ull
                     });
     //endgame.load_values("8-9-eval-5");
     const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
@@ -172,14 +196,14 @@ void endgameG8S9_eval() {
 }
 
 void endgame_G8S10_eval() {
-    Endgame endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull});
+    Endgame endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull});
     //endgame.load_values("8-10-prob-2");
     const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
     cout << goal_value << endl;
     endgame.init_goal_states(goal_value);
     endgame.bruteforce_values();
-    cout << endgame.get_state_value(0xFFFF'F821'0000'0120ull) << endl;
-    cout << endgame.get_state_value(0xFFFF'2F81'0000'0120ull) << endl;
+    cout << endgame.get_state_value(0xFFFFF82100000120ull) << endl;
+    cout << endgame.get_state_value(0xFFFF2F8100000120ull) << endl;
     endgame.save_values("8-10-eval-2");
 }
 
@@ -192,39 +216,59 @@ void run2() {
     load_packed_weights("stage2", tuples_4_stage_2);
     cout << endl;
 
-    //endgames.push_back(Endgame({0xFFFF'FF80'0000'0000ull, 0xFFFF'8FF0'0000'0000ull, 0xFFF0'8FFF'0000'0000ull, 0x0FFF'FF80'F000'0000ull, 0x0FFF'F8FF'0000'0000ull}));
+    run_algorithm_episodes(200, 200, [](const u64 board, NTuple &tuples) {
+        //return eval_state(board, tuples).dir;
+        //print_board(board);
+        //return expectimax_limited_evals(downgraded(board), 15000, 0.02, tuples).dir;
+        //return eval_state(downgraded(board), tuples).dir;
+        return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
+    });
+
+    //endgames.push_back(Endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull, 0x0FFFFF80F0000000ull, 0x0FFFF8FF00000000ull}));
     //endgames[0].load_values("8-9-prob-5");
-    //endgames.push_back(Endgame({0xFFFF'F800'0000'0000ull, 0xFFFF'0F80'0000'0000ull}));
+    //endgames.push_back(Endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull}));
     //endgames[1].load_values("8-10-prob-2");
 
-    auto start = time_now();
-    cnt_evals = 0;
+    /*auto start = time_now();
     r_t asd = 0;
-    /*for (u32 t = 0; t < 10; ++t) {
-        asd += expectimax_limited_evals(0x1234, 10000000, 0.01, tuples_4_stage_2).eval;
-    }*/
-    for (u32 t = 0; t < 10000000; ++t) {
-        ++cnt_evals;
-        asd += add_weights(cnt * 185702, tuples_4_stage_2);
+    u32 n = 10000000;
+    for (u32 t = 0; t < 1; ++t) {
+        asd += expectimax_limited_evals(0x12344321ull, 10000000, 0.01, tuples_4_stage_2).eval;
     }
-    cout << asd << endl;
     //print average time per eval in ns
-    cout << time_since(start) / cnt_evals * 1e3 << endl;
-    return;
+    cout << time_since(start) / n * 1e3 << endl;
+    cout << asd << endl;
+    return;*/
 
-    run_algorithm_episodes(1, 0, [](const u64 board, NTuple &tuples) {
-        print_board(board);
-        /*for (auto &endgame: endgames) {
+    /*auto start = time_now();
+    u32 n = 10000000;
+    u64 b = 0x1234001234;
+    for (u32 i = 0; i < n; ++i) {
+        //move_board(b, Dir((i & 3) + 1));
+        fill_board(b);
+        b &= 0xFFFF'FFFF'FFFF'FFF0ull;
+        //cnt += popcnt(b);
+    }
+    cout << r_t(n) / time_since(start) << endl;
+    cout << cnt << endl;
+    print_board(b);
+    return;*/
+
+    //perf_test_eval(100000);
+
+    /*run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
+        //print_board(board);
+        for (auto &endgame: endgames) {
             Eval eval = endgame.eval_board(board);
             if (eval.dir == None) { continue; }
             if (eval.eval <= 0.01 || eval.eval >= 0.99) { continue; }
             return eval.dir;
-        }*/
+        }
         //const u32 states = u32(importance(sum_cells(board)));
         //return expectimax_limited_states(downgraded(board), states, 0.01, tuples).dir;
-        return expectimax_limited_evals(upgraded(board), 10000000, 0.01, tuples).dir; // th=11 default
-        //return eval_state(upgraded(board), tuples).dir;
-    });
+        return expectimax_limited_evals(downgraded(board), 15000, 0.02, tuples).dir;
+        //return eval_state((board), tuples).dir;
+    });*/
 
     //endgameG8S9_eval();
     //endgame_G8S10_eval();
@@ -239,18 +283,18 @@ void run2() {
 
     //endgame_G8S10();
 
-    /*//Endgame endgame({0xFFFF'F900'0000'0000ull, 0xFFFF'0F90'0000'0000ull}); //0.72751
-    //Endgame endgame({0xFFFF'F900'0000'0000ull, 0x0FFF'F900'F000'0000ull}); // 0.721984
-    //Endgame endgame({0xFFFF'F900'0000'0000ull, 0xFFF0'F90F'0000'0000ull}); // 0.721983
-    //Endgame endgame({0xFFFF'F900'0000'0000ull}); // 0.721983
-    Endgame endgame({0xFFF0'FF90'0000'0000ull}); // 0.833637
+    /*//Endgame endgame({0xFFFFF90000000000ull, 0xFFFF0F9000000000ull}); //0.72751
+    //Endgame endgame({0xFFFFF90000000000ull, 0x0FFFF900F0000000ull}); // 0.721984
+    //Endgame endgame({0xFFFFF90000000000ull, 0xFFF0F90F00000000ull}); // 0.721983
+    //Endgame endgame({0xFFFFF90000000000ull}); // 0.721983
+    Endgame endgame({0xFFF0FF9000000000ull}); // 0.833637
     endgame.load_values("9-10-prob-1B");
     //endgame.init_goal_states(1);
     //endgame.bruteforce_values();
-    //cout << endgame.get_state_value(0xFFFF'F921'0000'0120ull) << endl;
-    //cout << endgame.get_afterstate_value(0xFFFF'F900'0000'0010ull) << endl;
-    //cout << endgame.get_state_value(0xFFFF'2F91'0000'0010ull) << endl;
-    cout << endgame.get_state_value(0xFFF0'FF90'0001'0100ull) << endl;
+    //cout << endgame.get_state_value(0xFFFFF92100000120ull) << endl;
+    //cout << endgame.get_afterstate_value(0xFFFFF90000000010ull) << endl;
+    //cout << endgame.get_state_value(0xFFFF2F9100000010ull) << endl;
+    cout << endgame.get_state_value(0xFFF0FF9000010100ull) << endl;
     //endgame.save_values("9-10-prob-1B");*/
 
     /*print_change_success_bases(100, 100, 32000, 8, [](const u64 board, NTuple &tuples) {
@@ -362,6 +406,18 @@ void run2() {
     //print_all_bruteforces(42);
 }
 
+void run3() {
+    init();
+
+    load_packed_weights("stage1", tuples_4_stage_1);
+    load_packed_weights("stage2", tuples_4_stage_2);
+    cout << endl;
+
+    run_algorithm_episodes(200, 200, [](const u64 board, NTuple &tuples) {
+        return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
+    });
+}
+
 int main() {
     srand(42);
     if (REDIRECT) {
@@ -371,13 +427,15 @@ int main() {
         cout.rdbuf(fileBuffer);
 
         //run();
-        run2();
+        //run2();
+        run3();
 
         cout.rdbuf(consoleBuffer);
         file.close();
     } else {
         //run();
-        run2();
+        //run2();
+        run3();
     }
 
     return 0;
@@ -415,4 +473,9 @@ int main() {
 // Score for H = 131072 => 2073320.7
 
 // Moves for N = 2^N => 2^N/2.2
+
+// g++ -g -m64 -mbmi2 -pthread -O2 -o 2024_CPP ../main.cpp
+// valgrind --tool=callgrind --simulate-cache=yes ./2024_CPP
+// callgrind_annotate callgrind.out.126551 -> full array
+// callgrind_annotate callgrind.out.
 

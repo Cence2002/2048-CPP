@@ -2,17 +2,25 @@
 
 #include "tuple.h"
 
-u64 cnt_adds = 0;
+//u64 cnt_adds = 0;
 
 inline r_t add_weights(const u64 board, const NTuple &tuples) {
     //++run_stats.eval_board_counter;
-    //cnt_adds++;
     r_t sum = 0;
     for (const auto &b: get_transformations(board)) {
-        for (const auto &t: tuples) {
-            sum += t[pext(b, t.mask)];
-            //sum += *(const float *) &b + *(const float *) &t.mask;
-        }
+        for (const auto &t: tuples) { sum += t[pext(b, t.mask)]; }
+        /*sum += tuples_4_stage_1[0].weights[pext(b, 0xFFF0FFFull)] +
+               tuples_4_stage_1[1].weights[pext(b, 0xFF00FF00FF0ull)] +
+               tuples_4_stage_1[2].weights[pext(b, 0xFFFFFFull)] +
+               tuples_4_stage_1[3].weights[pext(b, 0xFFFFFF0000ull)] +
+               tuples_4_stage_1[4].weights[pext(b, 0xFFFFFF0ull)] +
+               tuples_4_stage_1[5].weights[pext(b, 0xF000FFFFFull)] +
+               tuples_4_stage_1[6].weights[pext(b, 0xF0FFFF000Full)] +
+               tuples_4_stage_1[7].weights[pext(b, 0xF0FFFFF00ull)] +
+               tuples_4_stage_1[8].weights[pext(b, 0xF00FFFFFull)] +
+               tuples_4_stage_1[9].weights[pext(b, 0xFFFF0F0Full)] +
+               tuples_4_stage_1[10].weights[pext(b, 0xF0F0F0FFFull)] +
+               tuples_4_stage_1[11].weights[pext(b, 0xFFFFFF000ull)];*/
     }
     return sum;
 }
@@ -30,10 +38,10 @@ inline Eval eval_state(const u64 state, const NTuple &tuples) {
     //++run_stats.eval_moves_counter;
     Eval best = Eval::None();
     for (const Dir dir: DIRS) {
-        u64 afterstate = moved_board(state, dir);
+        const u64 afterstate = moved_board(state, dir);
         if (afterstate == state) { continue; }
-        s_t reward = get_reward(state, dir);
-        r_t eval = r_t(reward) + add_weights(afterstate, tuples);
+        const s_t reward = get_reward(state, dir);
+        const r_t eval = r_t(reward) + add_weights(afterstate, tuples);
         if (best.dir == None || eval > best.eval) {
             best = {dir, eval, reward, afterstate};
         }
@@ -43,17 +51,17 @@ inline Eval eval_state(const u64 state, const NTuple &tuples) {
 
 u64 cnt_state, cnt_afterstate;
 
-r_t expectimax_afterstate(u64 afterstate, u8 max_depth, r_t max_prob, u64 &max_evals, const NTuple &tuples);
+r_t expectimax_afterstate(u64 afterstate, u8 depth, r_t max_prob, u64 &evals, const NTuple &tuples);
 
-Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u64 &max_evals, const NTuple &tuples) {
+Eval expectimax_state(const u64 state, const u8 depth, const r_t max_prob, u64 &evals, const NTuple &tuples) {
     Eval best = Eval::None();
-    if (max_evals == 0) { return best; }
-    //cnt_state++;
+    if (evals == 0) { return best; }
+    cnt_state++;
     for (const Dir dir: DIRS) {
         const u64 afterstate = moved_board(state, dir);
         if (afterstate == state) { continue; }
-        r_t eval = expectimax_afterstate(afterstate, max_depth, max_prob, max_evals, tuples);
-        if (max_evals == 0) { return best; }
+        r_t eval = expectimax_afterstate(afterstate, depth, max_prob, evals, tuples);
+        if (evals == 0) { return best; }
         const s_t reward = get_reward(state, dir);
         eval += r_t(reward);
         if (best.dir == None || eval > best.eval) {
@@ -64,20 +72,15 @@ Eval expectimax_state(const u64 state, const u8 max_depth, const r_t max_prob, u
     return best;
 }
 
-unordered_map<r_t, u64> cnt_probs;
-unordered_map<u8, u64> cnt_depths;
-
-u64 cnt_evals = 0;
-
-//TODO take evaluated afterstates partially if the children have too small probs to reduce the size of the tree and
-//detect small probabilities sooner
-r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t max_prob, u64 &max_evals, const NTuple &tuples) {
-    if (max_depth == 0 || max_prob < 1) {
-        ++cnt_evals;
-        if (--max_evals == 0) { return 0; }
+r_t expectimax_afterstate(const u64 afterstate, u8 depth, const r_t max_prob, u64 &evals, const NTuple &tuples) {
+    if (evals == 0) { return 0; }
+    if (depth == 0 || max_prob < 1) {
+        --evals;
+        if (evals == 0) { return 0; }
         return max(r_t(0), add_weights(afterstate, tuples));
-        //return 0;
     }
+    cnt_afterstate++;
+    --depth;
     const u64 empty = empty_mask(afterstate);
     const u8 empty_count = popcnt(empty);
     u64 mask = 1;
@@ -92,11 +95,11 @@ r_t expectimax_afterstate(const u64 afterstate, const u8 max_depth, const r_t ma
                 }
                 sum += prob * expectimax_state(
                         afterstate | (mask << shift),
-                        max_depth - 1,
+                        depth,
                         max_prob * prob,
-                        max_evals,
+                        evals,
                         tuples).eval;
-                if (max_evals == 0) { return 0; }
+                if (evals == 0) { return 0; }
             }
             ++i;
         }
@@ -148,14 +151,28 @@ r_t get_max_prob(const u8 depth, r_t threshold) {
     return r_t(2) / get_prob(cnt1, cnt2);
 }
 
+//unordered_map<u8, r_t> depth_evals;
+//unordered_map<u8, u32> depth_evals_cnt;
+
 Eval expectimax_limited_evals(const u64 board, u64 evals, const r_t threshold, const NTuple &tuples) { // const r_t threshold = 0.05
     Eval best = Eval::None();
     for (u8 depth = 0; depth < 64; ++depth) {
+        const u64 evals_backup = evals;
         const Eval eval = expectimax_state(board, depth, get_max_prob(depth, threshold), evals, tuples);
         if (evals == 0) { break; }
-        cout << int(depth) << " " << evals << " " << eval.eval << endl;
+        /*if (depth_evals.count(depth) == 0) {
+            depth_evals[depth] = evals_backup - evals;
+            depth_evals_cnt[depth] = 1;
+        } else {
+            depth_evals[depth] += evals_backup - evals;
+            ++depth_evals_cnt[depth];
+        }*/
+        //cout << int(depth) << " " << evals << " " << eval.eval << endl;
         best = eval;
     }
+    /*for (auto &[depth, evals]: depth_evals) {
+        cout << int(depth) << " " << evals / r_t(depth_evals_cnt[depth]) << endl;
+    }*/
     return best;
 }
 
