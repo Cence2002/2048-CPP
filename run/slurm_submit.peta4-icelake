@@ -15,17 +15,21 @@
 #SBATCH -A HUSZAR-SL3-CPU
 #SBATCH -p icelake
 #! How many whole nodes should be allocated?
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #! How many (MPI) tasks will there be in total? (<= nodes*76)
 #! The Ice Lake (icelake) nodes have 76 CPUs (cores) each and
 #! 3380 MiB of memory per CPU.
-#SBATCH --ntasks=100
-#SBATCH --array=0-49
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=75
+#SBATCH --array=1-10%5
+#SBATCH --output=2048_%A_%a.out
+#SBATCH --error=2048_%A_%a.err
+
 
 #! How much wallclock time will be required?
-#SBATCH --time=00:10:00
+#SBATCH --time=08:00:00
 #! What types of email messages do you wish to receive?
-#SBATCH --mail-type=NONE
+#SBATCH --mail-type=ALL
 #! Uncomment this to prevent the job from being requeued (e.g. if
 #! interrupted by node failure or system downtime):
 ##SBATCH --no-requeue

@@ -147,11 +147,11 @@ void endgameG8S9_prob() {
                             0xFFF08FFF00000000ull,
                     }); // 0.841902*/
     Endgame endgame({
-                            0xFFFFFF8000000000ull,
-                            0xFFFF8FF000000000ull,
-                            0xFFF08FFF00000000ull,
-                            0x0FFFFF80F0000000ull,
-                            0x0FFFF8FF00000000ull
+                        0xFFFFFF8000000000ull,
+                        0xFFFF8FF000000000ull,
+                        0xFFF08FFF00000000ull,
+                        0x0FFFFF80F0000000ull,
+                        0x0FFFF8FF00000000ull
                     }); // 0.841384
     //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull}); // 0.815005
     //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull}); // 0.752513
@@ -179,11 +179,11 @@ void endgame_G8S10_prob() {
 
 void endgameG8S9_eval() {
     Endgame endgame({
-                            0xFFFFFF8000000000ull,
-                            0xFFFF8FF000000000ull,
-                            0xFFF08FFF00000000ull,
-                            0x0FFFFF80F0000000ull,
-                            0x0FFFF8FF00000000ull
+                        0xFFFFFF8000000000ull,
+                        0xFFFF8FF000000000ull,
+                        0xFFF08FFF00000000ull,
+                        0x0FFFFF80F0000000ull,
+                        0x0FFFF8FF00000000ull
                     });
     //endgame.load_values("8-9-eval-5");
     const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
@@ -215,14 +215,6 @@ void run2() {
     load_packed_weights("stage1", tuples_4_stage_1);
     load_packed_weights("stage2", tuples_4_stage_2);
     cout << endl;
-
-    run_algorithm_episodes(200, 200, [](const u64 board, NTuple &tuples) {
-        //return eval_state(board, tuples).dir;
-        //print_board(board);
-        //return expectimax_limited_evals(downgraded(board), 15000, 0.02, tuples).dir;
-        //return eval_state(downgraded(board), tuples).dir;
-        return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
-    });
 
     //endgames.push_back(Endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull, 0x0FFFFF80F0000000ull, 0x0FFFF8FF00000000ull}));
     //endgames[0].load_values("8-9-prob-5");
@@ -413,9 +405,13 @@ void run3() {
     load_packed_weights("stage2", tuples_4_stage_2);
     cout << endl;
 
-    run_algorithm_episodes(200, 200, [](const u64 board, NTuple &tuples) {
+    run_algorithm_episodes(100, 10, [](const u64 board, const NTuple &tuples) {
         return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
     });
+
+    /*run_algorithm_episodes(75, 75, [](const u64 board, NTuple &tuples) {
+        return expectimax_limited_evals(downgraded(board), 1000000, 0.02, tuples).dir;
+    });*/
 }
 
 int main() {
@@ -478,4 +474,3 @@ int main() {
 // valgrind --tool=callgrind --simulate-cache=yes ./2024_CPP
 // callgrind_annotate callgrind.out.126551 -> full array
 // callgrind_annotate callgrind.out.
-

@@ -2,7 +2,7 @@
 
 #include "eval.h"
 
-u8 highest_tile(u64 board) {
+inline u8 highest_tile(u64 board) {
     u8 highest = 0;
     while (board) {
         highest = max(highest, u8(board & 0xFu));
@@ -11,7 +11,7 @@ u8 highest_tile(u64 board) {
     return highest;
 }
 
-Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
+inline Game_stat algorithm_episode(Dir (*algorithm)(const u64, const NTuple &)) {
     u64 board = 0;
     s_t score = 0;
     u32 moves = 0;
@@ -31,15 +31,16 @@ Game_stat algorithm_episode(Dir (*algorithm)(const u64, NTuple &)) {
         fill_board(board);
         next_stage |= highest_tile(board) >= 14;
     }
-    cout << "Game " << ++cnt << " (T-" << this_thread::get_id() << ") score: " << score << endl;
-    //print_board(board);
+    //cout << "Game " << ++cnt << " (T-" << this_thread::get_id() << ") score: " << score << endl;
+    ostringstream oss;
+    oss << "Game " << ++cnt << " => score=" << score << " moves=" << moves << " board=" << hex << board << dec << endl;
+    cout << oss.str();
 
     return {board, score, moves};
 }
 
-vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const u64, NTuple &)) {
+inline vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const u64, const NTuple &)) {
     srand(42);
-    cout << "Testing started (" << games << " games)" << endl;
 
     run_stats = {};
     vector<Game_stat> games_stats;
@@ -60,26 +61,24 @@ vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)
                 }
             });
         }
-        for (auto &thread: all_threads) {
+        for (auto &thread : all_threads) {
             thread.join();
         }
-        for (const auto &thread_stats: threads_stats) {
+        for (const auto &thread_stats : threads_stats) {
             games_stats.insert(games_stats.end(), thread_stats.begin(), thread_stats.end());
         }
     }
     testing_stats = {};
-    for (const auto &game_stats: games_stats) {
+    for (const auto &game_stats : games_stats) {
         testing_stats.update_board_stats(game_stats.board, game_stats.score, game_stats.moves);
     }
     r_t elapsed = time_since(start);
 
     testing_stats.print_average_game_stats();
-    testing_stats.print_max_game_stats();
-    testing_stats.print_score_cell_stats();
-    cout << indent << "S per game:    \t" << (elapsed / 1e6) / r_t(testing_stats.game_counter) << endl;
-    cout << indent << "Moves per uS:  \t" << r_t(testing_stats.moves_counter) / elapsed << endl;
-
-    cout << "Testing finished: " << time_since(start) / 1e6 << " s" << endl;
+    //testing_stats.print_max_game_stats();
+    //testing_stats.print_score_cell_stats();
+    //cout << indent << "S per game:    \t" << (elapsed / 1e6) / r_t(testing_stats.game_counter) << endl;
+    //cout << indent << "Moves per uS:  \t" << r_t(testing_stats.moves_counter) / elapsed << endl;
 
     return games_stats;
 }

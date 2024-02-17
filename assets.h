@@ -10,13 +10,13 @@
 #include <fstream>
 #include <chrono>
 #include <iomanip>
-#include <cassert>
 #include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
 #include <thread>
 #include <random>
 #include <mutex>
+#include <cassert>
+//#include <unordered_map>
+//#include <unordered_set>
 
 #define REDIRECT 0
 #define SEED 0
@@ -57,34 +57,37 @@ struct Game_stat {
     u32 moves;
 };
 
-constexpr Dir DIRS[4] = {Left,
-                         Up,
-                         Right,
-                         Down};
-constexpr pair<u8, r_t> SHIFTS[2] = {{0, 0.9},
-                                     {1, 0.1}};
+constexpr Dir DIRS[4] = {
+    Left,
+    Up,
+    Right,
+    Down
+};
+constexpr pair<u8, r_t> SHIFTS[2] = {
+    {0, 0.9},
+    {1, 0.1}
+};
 
 constexpr u64 E(const u8 n) { return u64(1) << n; }
 
-auto time_now() {
+inline auto time_now() {
     return chrono::high_resolution_clock::now();
 }
 
-r_t time_since(chrono::high_resolution_clock::time_point start) {
+inline r_t time_since(chrono::high_resolution_clock::time_point start) {
     const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
     return r_t(duration.count());
 }
 
-void wait(r_t time) {
-    auto start = time_now();
-    while (time_since(start) < time) {}
+inline void wait(const r_t time) {
+    this_thread::sleep_for(chrono::seconds(u32(time)));
 }
 
-auto execution_start = time_now();
-mutex init_rng_mutex;
-thread_local mt19937 rng;
+inline const auto execution_start = time_now();
+inline mutex init_rng_mutex;
+inline thread_local mt19937 rng;
 
-void init_rng(u32 seed = 0) {
+inline void init_rng(u32 seed = 0) {
     lock_guard<mutex> lock(init_rng_mutex);
     if (seed == 0) {
         seed = u32(time_since(execution_start));
@@ -94,30 +97,30 @@ void init_rng(u32 seed = 0) {
     rng.seed(seed);
 }
 
-thread_local array<uniform_int_distribution<u32>, 20> dists = {
-        uniform_int_distribution<u32>(0, 0), // should never be used
-        uniform_int_distribution<u32>(0, 0),
-        uniform_int_distribution<u32>(0, 1),
-        uniform_int_distribution<u32>(0, 2),
-        uniform_int_distribution<u32>(0, 3),
-        uniform_int_distribution<u32>(0, 4),
-        uniform_int_distribution<u32>(0, 5),
-        uniform_int_distribution<u32>(0, 6),
-        uniform_int_distribution<u32>(0, 7),
-        uniform_int_distribution<u32>(0, 8),
-        uniform_int_distribution<u32>(0, 9),
-        uniform_int_distribution<u32>(0, 10),
-        uniform_int_distribution<u32>(0, 11),
-        uniform_int_distribution<u32>(0, 12),
-        uniform_int_distribution<u32>(0, 13),
-        uniform_int_distribution<u32>(0, 14),
-        uniform_int_distribution<u32>(0, 15),
-        uniform_int_distribution<u32>(0, 16),
-        uniform_int_distribution<u32>(0, 17),
-        uniform_int_distribution<u32>(0, 18),
+inline thread_local array<uniform_int_distribution<u32>, 20> dists = {
+    uniform_int_distribution<u32>(0, 0), // should never be used
+    uniform_int_distribution<u32>(0, 0),
+    uniform_int_distribution<u32>(0, 1),
+    uniform_int_distribution<u32>(0, 2),
+    uniform_int_distribution<u32>(0, 3),
+    uniform_int_distribution<u32>(0, 4),
+    uniform_int_distribution<u32>(0, 5),
+    uniform_int_distribution<u32>(0, 6),
+    uniform_int_distribution<u32>(0, 7),
+    uniform_int_distribution<u32>(0, 8),
+    uniform_int_distribution<u32>(0, 9),
+    uniform_int_distribution<u32>(0, 10),
+    uniform_int_distribution<u32>(0, 11),
+    uniform_int_distribution<u32>(0, 12),
+    uniform_int_distribution<u32>(0, 13),
+    uniform_int_distribution<u32>(0, 14),
+    uniform_int_distribution<u32>(0, 15),
+    uniform_int_distribution<u32>(0, 16),
+    uniform_int_distribution<u32>(0, 17),
+    uniform_int_distribution<u32>(0, 18),
 };
 
-u32 random(const u32 n) {
+inline u32 random(const u32 n) {
     return dists[n](rng);
 }
 
@@ -162,7 +165,7 @@ constexpr r_t conf_rad(const u64 sum, const u64 sum_squared, const u64 n) {
     return z * st_dev(sum, sum_squared, n) / sqrt(r_t(n));
 }
 
-void save_array(const string &filename, const char *arr, const size_t size) {
+inline void save_array(const string &filename, const char *arr, const size_t size) {
     cout << "Saving " << filename << " started" << endl;
     auto start = time_now();
     ofstream file(filename, ios::binary);
@@ -175,7 +178,7 @@ void save_array(const string &filename, const char *arr, const size_t size) {
     cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
 }
 
-void load_array(const string &filename, char *arr, const size_t size) {
+inline void load_array(const string &filename, char *arr, const size_t size) {
     cout << "Loading " << filename << " started" << endl;
     auto start = time_now();
     ifstream file(filename, ios::binary);
@@ -188,7 +191,7 @@ void load_array(const string &filename, char *arr, const size_t size) {
     cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
 }
 
-string get_time_str() {
+inline string get_time_str() {
     auto ts = time(nullptr);
     auto local_ts = *localtime(&ts);
     ostringstream temp;
@@ -197,7 +200,7 @@ string get_time_str() {
 }
 
 
-void print_dir(const Dir dir) {
+inline void print_dir(const Dir dir) {
     switch (dir) {
         case Left:
             cout << "Left";
@@ -217,7 +220,7 @@ void print_dir(const Dir dir) {
     }
 }
 
-void print_cell(const u8 cell) {
+inline void print_cell(const u8 cell) {
     if (cell == 0) {
         cout << "-";
     } else if (cell < 10) {
@@ -227,7 +230,7 @@ void print_cell(const u8 cell) {
     }
 }
 
-void print_board(const u64 board) {
+inline void print_board(const u64 board) {
     for (u8 y = 0; y < 4; ++y) {
         for (u8 x = 0; x < 4; ++x) {
             print_cell((board >> (y * 16 + x * 4)) & 0xFu);
@@ -240,7 +243,7 @@ void print_board(const u64 board) {
 
 const string indent = "    ";
 
-struct run_stats_t {
+inline struct run_stats_t {
     u64 fill_board_counter = 0;
     u64 reward_board_counter = 0;
     u64 move_board_counter = 0;
@@ -282,7 +285,7 @@ struct run_stats_t {
     }
 } run_stats;
 
-struct game_stats_t {
+inline struct game_stats_t {
     u64 game_counter = 0;
     u64 score_counter = 0;
     u64 score_squared_counter = 0;
@@ -382,5 +385,5 @@ struct game_stats_t {
     }
 } training_stats, testing_stats;
 
-u64 cnt = 0;
-u64 cnt_2 = 0;
+inline u64 cnt = 0;
+inline u64 cnt_2 = 0;
