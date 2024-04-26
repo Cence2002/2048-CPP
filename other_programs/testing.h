@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../board.h"
+#include "../board_all.h"
 #include "general_board.h"
 
 template<int N, int BASE>

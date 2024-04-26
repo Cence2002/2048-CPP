@@ -69,7 +69,7 @@ void COMPARE_LINES(const array<u8, 4> &items, const array<u8, 4> &left_items, co
     left.load_array(left_items);
     right.load_array(right_items);
 
-    EXPECT_EQ(line.reward(), reward);
+    EXPECT_EQ(line.get_reward(), reward);
 
     line.left();
     EXPECT_EQ(line.get_array(), left.get_array());
@@ -85,7 +85,7 @@ void MATCH_LINES(const array<u8, 4> &items) {
 
     line_1.load_array(items);
     line_2.load_array(items);
-    EXPECT_EQ(line_1.reward(), line_2.reward());
+    EXPECT_EQ(line_1.get_reward(), line_2.get_reward());
 
     line_1.load_array(items);
     line_2.load_array(items);
@@ -112,47 +112,47 @@ TEST(LINES, BASE_CASES) {
 
     line.load_array({0, 0, 0, 0});
     moved.load_array({0, 0, 0, 0});
-    EXPECT_EQ(line.reward(), 0);
+    EXPECT_EQ(line.get_reward(), 0);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 
     line.load_array({2, 4, 6, 0});
     moved.load_array({2, 4, 6, 0});
-    EXPECT_EQ(line.reward(), 0);
+    EXPECT_EQ(line.get_reward(), 0);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 
     line.load_array({0, 2, 0, 4});
     moved.load_array({2, 4, 0, 0});
-    EXPECT_EQ(line.reward(), 0);
+    EXPECT_EQ(line.get_reward(), 0);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 
     line.load_array({2, 2, 0, 0});
     moved.load_array({3, 0, 0, 0});
-    EXPECT_EQ(line.reward(), 8);
+    EXPECT_EQ(line.get_reward(), 8);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 
     line.load_array({0, 2, 0, 2});
     moved.load_array({3, 0, 0, 0});
-    EXPECT_EQ(line.reward(), 8);
+    EXPECT_EQ(line.get_reward(), 8);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 
     line.load_array({2, 2, 4, 4});
     moved.load_array({3, 5, 0, 0});
-    EXPECT_EQ(line.reward(), 40);
+    EXPECT_EQ(line.get_reward(), 40);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 
     line.load_array({2, 2, 2, 2});
     moved.load_array({3, 3, 0, 0});
-    EXPECT_EQ(line.reward(), 16);
+    EXPECT_EQ(line.get_reward(), 16);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
     moved.load_array({4, 0, 0, 0});
-    EXPECT_EQ(line.reward(), 16);
+    EXPECT_EQ(line.get_reward(), 16);
     line.left();
     EXPECT_EQ(line.get_array(), moved.get_array());
 }
@@ -169,8 +169,8 @@ TEST(LINES, SPECIAL_CASES) {
     line_32.load_array({F, F, 0, 0});
     moved_16.load_array({F, F, 0, 0});
     moved_32.load_array({G, 0, 0, 0});
-    EXPECT_EQ(line_16.reward(), 0);
-    EXPECT_EQ(line_32.reward(), E(G));
+    EXPECT_EQ(line_16.get_reward(), 0);
+    EXPECT_EQ(line_32.get_reward(), E(G));
     line_16.left();
     line_32.left();
     EXPECT_EQ(line_16.get_array(), moved_16.get_array());
@@ -180,8 +180,8 @@ TEST(LINES, SPECIAL_CASES) {
     line_32.load_array({0, F, 0, F});
     moved_16.load_array({F, F, 0, 0});
     moved_32.load_array({G, 0, 0, 0});
-    EXPECT_EQ(line_16.reward(), 0);
-    EXPECT_EQ(line_32.reward(), E(G));
+    EXPECT_EQ(line_16.get_reward(), 0);
+    EXPECT_EQ(line_32.get_reward(), E(G));
     line_16.left();
     line_32.left();
     EXPECT_EQ(line_16.get_array(), moved_16.get_array());
@@ -191,8 +191,8 @@ TEST(LINES, SPECIAL_CASES) {
     line_32.load_array({F, F, F, F});
     moved_16.load_array({F, F, F, F});
     moved_32.load_array({G, G, 0, 0});
-    EXPECT_EQ(line_16.reward(), 0);
-    EXPECT_EQ(line_32.reward(), E(G) + E(G));
+    EXPECT_EQ(line_16.get_reward(), 0);
+    EXPECT_EQ(line_32.get_reward(), E(G) + E(G));
     line_16.left();
     line_32.left();
     EXPECT_EQ(line_16.get_array(), moved_16.get_array());
@@ -200,7 +200,7 @@ TEST(LINES, SPECIAL_CASES) {
 
     line_32.load_array({0, G, 0, G});
     moved_32.load_array({H, 0, 0, 0});
-    EXPECT_EQ(line_32.reward(), E(H));
+    EXPECT_EQ(line_32.get_reward(), E(H));
     line_32.left();
     EXPECT_EQ(line_32.get_array(), moved_32.get_array());
 }
@@ -212,7 +212,7 @@ TEST(LINES, MATCH_BASE_CASES) {
 
         line_16.load_array(line);
         line_32.load_array(line);
-        EXPECT_EQ(line_16.reward(), line_32.reward());
+        EXPECT_EQ(line_16.get_reward(), line_32.get_reward());
 
         line_16.load_array(line);
         line_32.load_array(line);
@@ -263,10 +263,10 @@ TEST(BOARDS, BASE_CASES) {
                                    {0, 0, 0, 0},
                                    {0, 3, 3, 0}
                            }});
-    EXPECT_EQ(board.reward(Left), 16);
-    EXPECT_EQ(board.reward(Right), 16);
-    EXPECT_EQ(board.reward(Up), 16);
-    EXPECT_EQ(board.reward(Down), 16);
+    EXPECT_EQ(board.get_reward(Left), 16);
+    EXPECT_EQ(board.get_reward(Right), 16);
+    EXPECT_EQ(board.get_reward(Up), 16);
+    EXPECT_EQ(board.get_reward(Down), 16);
 
     (left = board).slide(Left);
     (right = board).slide(Right);
@@ -307,10 +307,10 @@ TEST(BOARDS, BASE_CASES) {
                                    {1, 3, 0, 1},
                                    {2, 1, 3, 2}
                            }});
-    EXPECT_EQ(board.reward(Left), 24);
-    EXPECT_EQ(board.reward(Right), 24);
-    EXPECT_EQ(board.reward(Up), 24);
-    EXPECT_EQ(board.reward(Down), 24);
+    EXPECT_EQ(board.get_reward(Left), 24);
+    EXPECT_EQ(board.get_reward(Right), 24);
+    EXPECT_EQ(board.get_reward(Up), 24);
+    EXPECT_EQ(board.get_reward(Down), 24);
 
     (left = board).slide(Left);
     (right = board).slide(Right);
@@ -397,10 +397,10 @@ TEST(BOARDS, SPECIAL_CASES) {
                                       {F, G, F, G}
                               }});
 
-    EXPECT_EQ(board_16.reward(Left), 0);
-    EXPECT_EQ(board_16.reward(Right), 0);
-    EXPECT_EQ(board_16.reward(Up), 0);
-    EXPECT_EQ(board_16.reward(Down), 0);
+    EXPECT_EQ(board_16.get_reward(Left), 0);
+    EXPECT_EQ(board_16.get_reward(Right), 0);
+    EXPECT_EQ(board_16.get_reward(Up), 0);
+    EXPECT_EQ(board_16.get_reward(Down), 0);
 
     (left_16 = board_16).slide(Left);
     (right_16 = board_16).slide(Right);
@@ -411,10 +411,10 @@ TEST(BOARDS, SPECIAL_CASES) {
     EXPECT_EQ(up_16.get_matrix(), up_goal_16.get_matrix());
     EXPECT_EQ(down_16.get_matrix(), down_goal_16.get_matrix());
 
-    EXPECT_EQ(board_32.reward(Left), E(G) * 3);
-    EXPECT_EQ(board_32.reward(Right), E(G) * 3);
-    EXPECT_EQ(board_32.reward(Up), E(G) * 3);
-    EXPECT_EQ(board_32.reward(Down), E(G) * 3);
+    EXPECT_EQ(board_32.get_reward(Left), E(G) * 3);
+    EXPECT_EQ(board_32.get_reward(Right), E(G) * 3);
+    EXPECT_EQ(board_32.get_reward(Up), E(G) * 3);
+    EXPECT_EQ(board_32.get_reward(Down), E(G) * 3);
 
     (left_32 = board_32).slide(Left);
     (right_32 = board_32).slide(Right);
@@ -457,10 +457,10 @@ TEST(BOARDS, SPECIAL_CASES) {
                                       {F, G, H, F}
                               }});
 
-    EXPECT_EQ(board_32.reward(Left), E(G) * 2);
-    EXPECT_EQ(board_32.reward(Right), E(G) * 2);
-    EXPECT_EQ(board_32.reward(Up), E(G) * 2 + E(H));
-    EXPECT_EQ(board_32.reward(Down), E(G) * 2 + E(H));
+    EXPECT_EQ(board_32.get_reward(Left), E(G) * 2);
+    EXPECT_EQ(board_32.get_reward(Right), E(G) * 2);
+    EXPECT_EQ(board_32.get_reward(Up), E(G) * 2 + E(H));
+    EXPECT_EQ(board_32.get_reward(Down), E(G) * 2 + E(H));
 
     (left_32 = board_32).slide(Left);
     (right_32 = board_32).slide(Right);
@@ -485,22 +485,22 @@ TEST(BOARDS, MATCH_BASE_CASES) {
         board_arr_32.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
-        EXPECT_EQ(board_mat.reward(Left), board_arr_16.reward(Left));
-        EXPECT_EQ(board_mat.reward(Left), board_arr_32.reward(Left));
-        EXPECT_EQ(board_mat.reward(Left), board_64.reward(Left));
-        EXPECT_EQ(board_mat.reward(Left), board_opt.reward(Left));
-        EXPECT_EQ(board_mat.reward(Right), board_arr_16.reward(Right));
-        EXPECT_EQ(board_mat.reward(Right), board_arr_32.reward(Right));
-        EXPECT_EQ(board_mat.reward(Right), board_64.reward(Right));
-        EXPECT_EQ(board_mat.reward(Right), board_opt.reward(Right));
-        EXPECT_EQ(board_mat.reward(Up), board_arr_16.reward(Up));
-        EXPECT_EQ(board_mat.reward(Up), board_arr_32.reward(Up));
-        EXPECT_EQ(board_mat.reward(Up), board_64.reward(Up));
-        EXPECT_EQ(board_mat.reward(Up), board_opt.reward(Up));
-        EXPECT_EQ(board_mat.reward(Down), board_arr_16.reward(Down));
-        EXPECT_EQ(board_mat.reward(Down), board_arr_32.reward(Down));
-        EXPECT_EQ(board_mat.reward(Down), board_64.reward(Down));
-        EXPECT_EQ(board_mat.reward(Down), board_opt.reward(Down));
+        EXPECT_EQ(board_mat.get_reward(Left), board_arr_16.get_reward(Left));
+        EXPECT_EQ(board_mat.get_reward(Left), board_arr_32.get_reward(Left));
+        EXPECT_EQ(board_mat.get_reward(Left), board_64.get_reward(Left));
+        EXPECT_EQ(board_mat.get_reward(Left), board_opt.get_reward(Left));
+        EXPECT_EQ(board_mat.get_reward(Right), board_arr_16.get_reward(Right));
+        EXPECT_EQ(board_mat.get_reward(Right), board_arr_32.get_reward(Right));
+        EXPECT_EQ(board_mat.get_reward(Right), board_64.get_reward(Right));
+        EXPECT_EQ(board_mat.get_reward(Right), board_opt.get_reward(Right));
+        EXPECT_EQ(board_mat.get_reward(Up), board_arr_16.get_reward(Up));
+        EXPECT_EQ(board_mat.get_reward(Up), board_arr_32.get_reward(Up));
+        EXPECT_EQ(board_mat.get_reward(Up), board_64.get_reward(Up));
+        EXPECT_EQ(board_mat.get_reward(Up), board_opt.get_reward(Up));
+        EXPECT_EQ(board_mat.get_reward(Down), board_arr_16.get_reward(Down));
+        EXPECT_EQ(board_mat.get_reward(Down), board_arr_32.get_reward(Down));
+        EXPECT_EQ(board_mat.get_reward(Down), board_64.get_reward(Down));
+        EXPECT_EQ(board_mat.get_reward(Down), board_opt.get_reward(Down));
 
         board_mat.load_matrix(board);
         board_arr_16.load_matrix(board);
@@ -573,14 +573,14 @@ TEST(BOARDS, MATCH_SPECIAL_CASES) {
         board_arr_16.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
-        EXPECT_EQ(board_arr_16.reward(Left), board_64.reward(Left));
-        EXPECT_EQ(board_arr_16.reward(Left), board_opt.reward(Left));
-        EXPECT_EQ(board_arr_16.reward(Right), board_64.reward(Right));
-        EXPECT_EQ(board_arr_16.reward(Right), board_opt.reward(Right));
-        EXPECT_EQ(board_arr_16.reward(Up), board_64.reward(Up));
-        EXPECT_EQ(board_arr_16.reward(Up), board_opt.reward(Up));
-        EXPECT_EQ(board_arr_16.reward(Down), board_64.reward(Down));
-        EXPECT_EQ(board_arr_16.reward(Down), board_opt.reward(Down));
+        EXPECT_EQ(board_arr_16.get_reward(Left), board_64.get_reward(Left));
+        EXPECT_EQ(board_arr_16.get_reward(Left), board_opt.get_reward(Left));
+        EXPECT_EQ(board_arr_16.get_reward(Right), board_64.get_reward(Right));
+        EXPECT_EQ(board_arr_16.get_reward(Right), board_opt.get_reward(Right));
+        EXPECT_EQ(board_arr_16.get_reward(Up), board_64.get_reward(Up));
+        EXPECT_EQ(board_arr_16.get_reward(Up), board_opt.get_reward(Up));
+        EXPECT_EQ(board_arr_16.get_reward(Down), board_64.get_reward(Down));
+        EXPECT_EQ(board_arr_16.get_reward(Down), board_opt.get_reward(Down));
 
         board_arr_16.load_matrix(board);
         board_64.load_matrix(board);
@@ -624,10 +624,10 @@ TEST(BOARDS, MATCH_SPECIAL_CASES) {
 
         board_mat.load_matrix(board);
         board_arr_32.load_matrix(board);
-        EXPECT_EQ(board_mat.reward(Left), board_arr_32.reward(Left));
-        EXPECT_EQ(board_mat.reward(Right), board_arr_32.reward(Right));
-        EXPECT_EQ(board_mat.reward(Up), board_arr_32.reward(Up));
-        EXPECT_EQ(board_mat.reward(Down), board_arr_32.reward(Down));
+        EXPECT_EQ(board_mat.get_reward(Left), board_arr_32.get_reward(Left));
+        EXPECT_EQ(board_mat.get_reward(Right), board_arr_32.get_reward(Right));
+        EXPECT_EQ(board_mat.get_reward(Up), board_arr_32.get_reward(Up));
+        EXPECT_EQ(board_mat.get_reward(Down), board_arr_32.get_reward(Down));
 
         board_mat.load_matrix(board);
         board_arr_32.load_matrix(board);

@@ -2,14 +2,12 @@
 #include "algorithm.h"
 //#include "testing.h"
 //#include "stats.h"
+#include "learn.h"
 
 void init() {
     auto start = time_now();
 
     init_rng(SEED);
-    init_zeroes();
-    init_moves_0();
-    init_moves_123();
 
     cout << "Threads: " << thread::hardware_concurrency() << endl;
 
@@ -64,22 +62,22 @@ void perf_test_general(u64 n) {
 void perf_test_eval(const u64 n) {
     auto start = time_now();
     u64 moves = 0;
-    r_t sum = 0;
+    u64 sum = 0;
     for (u32 i = 0; i < n; ++i) {
-        u64 board = 0;
-        fill_board(board);
-        fill_board(board);
+        b_t board = 0;
+        board.spawn();
+        board.spawn();
         while (true) {
-            Eval eval = eval_state(board, tuples_4_stage_1);
+            const Eval eval = eval_state(board, tuples_4_stage_1);
             if (eval.dir == None) { break; }
             ++moves;
             sum += eval.reward;
             board = eval.afterstate;
-            fill_board(board);
+            board.spawn();
         }
     }
-    cout << "Average moves: " << moves / r_t(n) << endl;
-    cout << "Average score: " << sum / r_t(n) << endl;
+    cout << "Average moves: " << r_t(moves) / r_t(n) << endl;
+    cout << "Average score: " << r_t(sum) / r_t(n) << endl;
     cout << "Time: " << time_since(start) / 1e6 << endl << endl;
 }
 
@@ -408,8 +406,9 @@ void run3() {
     //endgames.push_back(Endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull, 0x0FFFFF80F0000000ull, 0x0FFFF8FF00000000ull}));
     //endgames[0].load_values("8-9-eval-5");
 
-    run_algorithm_episodes(100, 10, [](const u64 board, const NTuple &tuples) {
-        return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
+    run_algorithm_episodes(100, 10, [](const b_t board, const NTuple &tuples) {
+        //return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
+        return eval_state(board, tuples).dir;
     });
 
     /*run_algorithm_episodes(75, 75, [](const u64 board, NTuple &tuples) {
@@ -419,6 +418,9 @@ void run3() {
 
 int main() {
     srand(42);
+
+    b_t::init_tables();
+
     if (REDIRECT) {
         ofstream file("../output.log", ios_base::out | ios_base::trunc);
         streambuf *consoleBuffer = cout.rdbuf();
@@ -434,7 +436,7 @@ int main() {
     } else {
         //run();
         //run2();
-        //run3();
+        run3();
     }
 
     return 0;

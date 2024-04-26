@@ -5,13 +5,13 @@
 Game_stat training_episode(NTuple &tuples) {
     vector<r_t> evals;
     vector<s_t> rewards;
-    vector<u64> afterstates;
+    vector<b_t> afterstates;
 
-    u64 board = 0;
+    b_t board = 0;
     s_t score = 0;
 
-    fill_board(board);
-    fill_board(board);
+    board.spawn();
+    board.spawn();
     while (true) {
         const auto [dir, eval, reward, afterstate] = eval_state(board, tuples);
         if (dir == None) { break; }
@@ -21,7 +21,7 @@ Game_stat training_episode(NTuple &tuples) {
         score += reward;
 
         board = afterstate;
-        fill_board(board);
+        board.spawn();
     }
     const u32 moves = evals.size();
 
@@ -42,12 +42,12 @@ Game_stat training_episode(NTuple &tuples) {
 }
 
 Game_stat testing_episode(const NTuple &tuples) {
-    u64 board = 0;
+    b_t board = 0;
     s_t score = 0;
     u32 moves = 0;
 
-    fill_board(board);
-    fill_board(board);
+    board.spawn();
+    board.spawn();
     while (true) {
         const auto [dir, eval, reward, afterstate]
                 = eval_state(board, tuples);
@@ -56,7 +56,7 @@ Game_stat testing_episode(const NTuple &tuples) {
         ++moves;
 
         board = afterstate;
-        fill_board(board);
+        board.spawn();
     }
 
     return {board, score, moves};
@@ -93,7 +93,7 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
     }
     training_stats = {};
     for (const auto &game_stats: games_stats) {
-        training_stats.update_board_stats(game_stats.board, game_stats.score, game_stats.moves);
+        training_stats.update_board_stats(game_stats.board.get_bits(), game_stats.score, game_stats.moves);
     }
     r_t elapsed = time_since(start);
 
@@ -148,7 +148,7 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tupl
     }
     testing_stats = {};
     for (const auto &game_stats: games_stats) {
-        testing_stats.update_board_stats(game_stats.board, game_stats.score, game_stats.moves);
+        testing_stats.update_board_stats(game_stats.board.get_bits(), game_stats.score, game_stats.moves);
     }
     r_t elapsed = time_since(start);
 

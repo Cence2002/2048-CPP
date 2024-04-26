@@ -20,6 +20,7 @@
 
 #define REDIRECT 0
 #define SEED 0
+#define DEBUG 0
 
 using namespace std;
 
@@ -39,24 +40,6 @@ enum Dir : u8 {
     Down = 4,
 };
 
-struct Eval {
-    Dir dir;
-    r_t eval;
-    s_t reward;
-    u64 afterstate;
-
-    static constexpr Eval None() {
-        return {Dir::None, 0, 0, 0};
-    }
-};
-
-
-struct Game_stat {
-    u64 board;
-    s_t score;
-    u32 moves;
-};
-
 constexpr Dir DIRS[4] = {
         Left,
         Up,
@@ -73,6 +56,7 @@ constexpr u64 E(const u8 n) { return u64(1) << n; }
 inline auto time_now() {
     return chrono::high_resolution_clock::now();
 }
+inline const auto execution_start = time_now();
 
 inline r_t time_since(chrono::high_resolution_clock::time_point start) {
     const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
@@ -83,7 +67,6 @@ inline void wait(const r_t time) {
     this_thread::sleep_for(chrono::seconds(u32(time)));
 }
 
-inline const auto execution_start = time_now();
 inline mutex init_rng_mutex;
 inline thread_local mt19937 rng;
 
@@ -92,7 +75,6 @@ inline void init_rng(u32 seed = 0) {
     if (seed == 0) {
         seed = u32(time_since(execution_start));
     }
-    //cout << "Thread " << this_thread::get_id() << " seed: " << seed << endl;
     cout << "T-" << this_thread::get_id() << " seed: " << seed << endl;
     rng.seed(seed);
 }
@@ -132,7 +114,7 @@ inline u64 pext(const u64 x, const u64 m) { return _pext_u64(x, m); }
 
 inline u64 pdep(const u64 x, const u64 m) { return _pdep_u64(x, m); }
 
-constexpr u64 power(u64 base, u8 exp) {
+inline u64 power(u64 base, u8 exp) {
     u64 res = 1;
     while (exp > 0) {
         if (exp & 1) {

@@ -21,7 +21,7 @@ struct line_base {
 
     virtual void right() = 0;
 
-    virtual s_t reward() const = 0;
+    virtual s_t get_reward() const = 0;
 
     std::string to_string() const {
         std::string str;
@@ -116,7 +116,7 @@ public:
         line = right_table[line];
     }
 
-    s_t reward() const override {
+    s_t get_reward() const override {
         return reward_table[line];
     }
 
@@ -238,7 +238,7 @@ public:
         line = right_table[line];
     }
 
-    s_t reward() const override {
+    s_t get_reward() const override {
         return reward_table[line];
     }
 
@@ -315,7 +315,7 @@ struct board_base {
 
     virtual void slide(Dir dir) = 0;
 
-    virtual s_t reward(Dir dir) const = 0;
+    virtual s_t get_reward(Dir dir) const = 0;
 
 
     std::string to_string() const {
@@ -424,7 +424,7 @@ public:
         }
     }
 
-    s_t reward(const Dir dir) const override {
+    s_t get_reward(const Dir dir) const override {
         switch (dir) {
             case Left:
             case Right: {
@@ -434,7 +434,7 @@ public:
                     for (u8 x = 0; x < 4; x++) {
                         line.set_item(x, get_cell(x, y));
                     }
-                    reward += line.reward();
+                    reward += line.get_reward();
                 }
                 return reward;
             }
@@ -446,7 +446,7 @@ public:
                     for (u8 y = 0; y < 4; y++) {
                         line.set_item(y, get_cell(x, y));
                     }
-                    reward += line.reward();
+                    reward += line.get_reward();
                 }
                 return reward;
             }
@@ -664,13 +664,13 @@ public:
         }
     }
 
-    s_t reward(const Dir dir) const override {
+    s_t get_reward(const Dir dir) const override {
         switch (dir) {
             case Left:
             case Right: {
                 s_t reward = 0;
                 for (u8 y = 0; y < 4; y++) {
-                    reward += board[y].reward();
+                    reward += board[y].get_reward();
                 }
                 return reward;
             }
@@ -682,7 +682,7 @@ public:
                     for (u8 y = 0; y < 4; y++) {
                         line.set_item(y, get_cell(x, y));
                     }
-                    reward += line.reward();
+                    reward += line.get_reward();
                 }
                 return reward;
             }
@@ -776,14 +776,14 @@ public:
         }
     }
 
-    s_t reward(const Dir dir) const override {
+    s_t get_reward(const Dir dir) const override {
         switch (dir) {
             case Left:
             case Right: {
                 s_t reward = 0;
                 for (u8 y = 0; y < 4; y++) {
                     l_t_16 line(u16(board >> (y * 16)));
-                    reward += line.reward();
+                    reward += line.get_reward();
                 }
                 return reward;
             }
@@ -792,7 +792,7 @@ public:
                 s_t reward = 0;
                 for (u8 x = 0; x < 4; x++) {
                     l_t_16 line(pext(board, 0x000F000F000F000Full << (x * 4)));
-                    reward += line.reward();
+                    reward += line.get_reward();
                 }
                 return reward;
             }
@@ -882,6 +882,14 @@ public:
         return *this;
     }
 
+    inline bool operator==(const b_t_opt &other) const {
+        return board == other.board;
+    }
+
+    inline b_t_opt operator|(const u64 &mask) const {
+        return board | mask;
+    }
+
     inline u64 get_bits() const {
         return board;
     }
@@ -959,7 +967,7 @@ public:
         board |= place << (random(10) == 0);
     }
 
-    inline s_t reward(const Dir dir) const override {
+    inline s_t get_reward(const Dir dir) const override {
         if (dir & 1) {
             return reward_table[get_row<0>()] +
                    reward_table[get_row<1>()] +
@@ -1164,3 +1172,20 @@ s_t b_t_opt::reward_table[E(16)] = {};
 
 using l_t = l_t_16;
 using b_t = b_t_opt;
+
+struct Eval {
+    Dir dir;
+    r_t eval;
+    s_t reward;
+    b_t afterstate;
+
+    Eval() : dir(Dir::None), eval(0), reward(0), afterstate() {}
+
+    Eval(Dir dir, r_t eval, s_t reward, const b_t afterstate) : dir(dir), eval(eval), reward(reward), afterstate(afterstate) {}
+};
+
+struct Game_stat {
+    b_t board;
+    s_t score;
+    u32 moves;
+};

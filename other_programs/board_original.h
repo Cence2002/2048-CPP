@@ -1,6 +1,6 @@
 #pragma once
 
-#include "assets.h"
+#include "../assets.h"
 
 constexpr u16 from_array(const array<u8, 4> &cells) {
     u16 line = 0;

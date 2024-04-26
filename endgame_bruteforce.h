@@ -1,6 +1,6 @@
 #pragma once
 
-#include "board.h"
+#include "board_all.h"
 #include "eval.h"
 
 // E D C B
@@ -61,15 +61,15 @@ public:
 
 class Table {
 private:
-    const u64 BASE;
+    const b_t BASE;
     const u8 GOAL;
     const u64 SIZE;
     vector<r_t> VALUES;
 
-    static u8 get_goal(const u64 board) {
+    static u8 get_goal(const b_t board) {
         u8 G = 0;
         for (u8 i = 0; i < 16; ++i) {
-            const u8 cell = get_cell(board, i);
+            const u8 cell = board.get_cell(i);
             if (cell == 0 || cell == 0xFu) { continue; }
             if (G != 0) { return 0; }
             G = cell;
@@ -77,15 +77,15 @@ private:
         return G;
     }
 
-    static u64 get_size(const u64 board) {
-        return power(get_goal(board) + 1, count_empty(board));
+    static u64 get_size(const b_t board) {
+        return power(get_goal(board) + 1, board.empty_count());
     }
 
-    u64 get_hash(const u64 board) const {
+    u64 get_hash(const b_t board) const {
         u64 hash = 0;
         for (u8 i = 0; i < 16; ++i) {
-            const u8 base = get_cell(BASE, i);
-            const u8 cell = get_cell(board, i);
+            const u8 base = BASE.get_cell(i);
+            const u8 cell = board.get_cell(i);
             if (base == 0 && cell > GOAL) { return 0; }
             if (base == GOAL && cell != GOAL) { return 0; }
             if (base == 0xFu && cell <= GOAL) { return 0; }
@@ -98,7 +98,7 @@ private:
         array<u8, 16> cells{};
         u8 index = 0;
         for (u8 i = 0; i < 16; ++i) {
-            const u8 base = get_cell(BASE, i);
+            const u8 base = BASE.get_cell(i);
             if (base == 0) {
                 cells[index++] = hash % (GOAL + 1);
                 hash /= GOAL + 1;
@@ -106,7 +106,7 @@ private:
         }
         u64 board = 0;
         for (u8 i = 0; i < 16; ++i) {
-            const u8 base = get_cell(BASE, i);
+            const u8 base = BASE.get_cell(i);
             u8 cell;
             if (base == 0) { cell = cells[--index]; }
             if (base == GOAL) { cell = GOAL; }
@@ -117,10 +117,10 @@ private:
         return board;
     }
 
-    bool is_goal(const u64 board) const {
+    bool is_goal(const b_t board) const {
         for (u8 i = 0; i < 16; ++i) {
-            const u8 base = get_cell(BASE, i);
-            const u8 cell = get_cell(board, i);
+            const u8 base = BASE.get_cell(i);
+            const u8 cell = board.get_cell(i);
             if (base == 0 && cell > GOAL) { return false; }
             if (base == GOAL && cell != GOAL + 1) { return false; }
             if (base == 0xFu && cell <= GOAL) { return false; }
@@ -128,9 +128,9 @@ private:
         return true;
     }
 
-    bool is_goal_state(const u64 state) const {
+    bool is_goal_state(const b_t state) const {
         for (const Dir dir: DIRS) {
-            const u64 afterstate = moved_board(state, dir);
+            const b_t afterstate = state.slid(dir);
             if (afterstate == state) { continue; }
             if (is_goal(afterstate)) { return true; }
         }
@@ -140,7 +140,7 @@ private:
 public:
     explicit Table(const u64 base) : BASE(base), GOAL(get_goal(base)), SIZE(get_size(base)) {
         cout << "Goal: " << u32(GOAL) << endl;
-        cout << "Space: " << u32(count_empty(BASE)) << endl;
+        cout << "Space: " << u32(BASE.empty_count()) << endl;
         cout << "Size: " << SIZE << endl;
         cout << "GBs: " << r_t(SIZE) * sizeof(r_t) / 1e9 << endl;
         auto start = time_now();
@@ -148,7 +148,7 @@ public:
         cout << "Allocation finished: " << time_since(start) / 1e6 << " s" << endl;
     }
 
-    u64 get_base() const {
+    b_t get_base() const {
         return BASE;
     }
 
@@ -164,7 +164,7 @@ public:
         cout << "Goal state init finished: " << time_since(start) / 1e6 << " s" << endl;
     }
 
-    r_t get_state_value(const u64 board) const {
+    r_t get_state_value(const b_t board) const {
         const u64 hash = get_hash(board);
         if (hash == 0) { return Special::get_undefined(); }
         return VALUES[hash];
@@ -177,7 +177,7 @@ public:
         return UNDEFINED;*/
     }
 
-    void set_state_value(const u64 board, const r_t value) {
+    void set_state_value(const b_t board, const r_t value) {
         const u64 hash = get_hash(board);
         if (hash == 0) { return; }
         VALUES[hash] = value;
@@ -227,9 +227,9 @@ private:
         return UNDEFINED;
     }*/
 
-    r_t eval_state(const u64 board) {
+    r_t eval_state(const b_t board) {
         r_t max_max_eval = Special::get_undefined();
-        for (const u64 state: get_transformations(board)) {
+        for (const b_t state: board.get_transformations()) {
             for (auto &table: tables) {
                 const r_t value = table.get_state_value(state);
                 if (Special::is_undefined(value)) { continue; }
@@ -241,9 +241,9 @@ private:
                 }
                 r_t max_eval = 0;
                 for (const Dir dir: DIRS) {
-                    const u64 afterstate = moved_board(state, dir);
+                    const b_t afterstate = state.slid(dir);
                     if (afterstate == state) { continue; }
-                    r_t reward = r_t(get_reward(state, dir));
+                    r_t reward = r_t(state.get_reward(dir));
                     //reward = 0;
                     const r_t eval = reward + eval_afterstate(afterstate);
                     max_eval = max(max_eval, eval);
@@ -257,13 +257,13 @@ private:
         return max_max_eval;
     }
 
-    r_t eval_afterstate(const u64 afterstate) {
-        const u64 empty = empty_mask(afterstate);
-        const u8 empty_count = popcnt(empty);
+    r_t eval_afterstate(const b_t afterstate) {
+        const u64 empty_mask = afterstate.empty_mask();
+        const u8 empty_count = b_t::empty_count(empty_mask);
         u64 mask = 1;
         r_t avg_eval = 0;
         for (u8 i = 0; i < empty_count; mask <<= 4) {
-            if (empty & mask) {
+            if (empty_mask & mask) {
                 for (const auto &[shift, prob]: SHIFTS) {
                     const r_t eval = eval_state(afterstate | (mask << shift));
                     if (Special::is_undefined(eval)) { return Special::get_undefined(); }
@@ -301,19 +301,19 @@ public:
         return eval_state(board);
     }
 
-    r_t get_afterstate_value(const u64 board) {
+    r_t get_afterstate_value(const b_t board) {
         return eval_afterstate(board);
     }
 
-    Eval eval_board(const u64 board) {
-        Eval best = Eval::None();
+    Eval eval_board(const b_t board) {
+        Eval best{};
         for (const Dir dir: DIRS) {
-            const u64 afterstate = moved_board(board, dir);
+            const b_t afterstate = board.slid(dir);
             if (afterstate == board) { continue; }
             const r_t eval = get_afterstate_value(afterstate);
             if (Special::is_undefined(eval)) { continue; }
             if (eval > best.eval) {
-                best = {dir, eval, get_reward(board, dir), afterstate};
+                best = {dir, eval, board.get_reward(dir), afterstate};
             }
         }
         return best;
@@ -357,7 +357,7 @@ public:
     void print_known_ratios() {
         for (const auto &table: tables) {
             cout << "Known ratio: " << table.get_known_ratio() << endl;
-            print_board(table.get_base());
+            cout << table.get_base() << endl;
         }
     }
 };

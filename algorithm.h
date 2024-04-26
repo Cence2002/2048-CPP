@@ -2,44 +2,41 @@
 
 #include "eval.h"
 
-inline u8 highest_tile(u64 board) {
+inline u8 highest_tile(b_t board) {
     u8 highest = 0;
-    while (board) {
-        highest = max(highest, u8(board & 0xFu));
-        board >>= 4;
+    for (u8 i = 0; i < 16; ++i) {
+        highest = max(highest, board.get_cell(i));
     }
     return highest;
 }
 
-inline Game_stat algorithm_episode(Dir (*algorithm)(const u64, const NTuple &)) {
-    u64 board = 0;
+inline Game_stat algorithm_episode(Dir (*algorithm)(const b_t, const NTuple &)) {
+    b_t board = 0;
     s_t score = 0;
     u32 moves = 0;
 
-    fill_board(board);
-    fill_board(board);
+    board.spawn();
+    board.spawn();
     bool next_stage = false;
     while (true) {
         const Dir dir = algorithm(board, next_stage ? tuples_4_stage_2 : tuples_4_stage_1);
         if (dir == None) { break; }
-        score += get_reward(board, dir);
+        score += board.get_reward(dir);
         ++moves;
-        //if (moves > 100) { break; }
-        //cout << moves << endl;
 
-        move_board(board, dir);
-        fill_board(board);
+        board.slide(dir);
+        board.spawn();
         next_stage |= highest_tile(board) >= 14;
     }
     //cout << "Game " << ++cnt << " (T-" << this_thread::get_id() << ") score: " << score << endl;
     ostringstream oss;
-    oss << "Game " << ++cnt << " => score=" << score << " moves=" << moves << " board=" << hex << board << dec << endl;
+    oss << "Game " << ++cnt << " => score=" << score << " moves=" << moves << " board=" << hex << board.get_bits() << dec << endl;
     cout << oss.str();
 
     return {board, score, moves};
 }
 
-inline vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const u64, const NTuple &)) {
+inline vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const b_t, const NTuple &)) {
     srand(42);
 
     run_stats = {};
@@ -61,16 +58,16 @@ inline vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*alg
                 }
             });
         }
-        for (auto &thread : all_threads) {
+        for (auto &thread: all_threads) {
             thread.join();
         }
-        for (const auto &thread_stats : threads_stats) {
+        for (const auto &thread_stats: threads_stats) {
             games_stats.insert(games_stats.end(), thread_stats.begin(), thread_stats.end());
         }
     }
     testing_stats = {};
-    for (const auto &game_stats : games_stats) {
-        testing_stats.update_board_stats(game_stats.board, game_stats.score, game_stats.moves);
+    for (const auto &game_stats: games_stats) {
+        testing_stats.update_board_stats(game_stats.board.get_bits(), game_stats.score, game_stats.moves);
     }
     r_t elapsed = time_since(start);
 
