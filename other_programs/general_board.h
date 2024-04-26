@@ -1,6 +1,6 @@
 #pragma once
 
-#include "assets.h"
+#include "../assets.h"
 
 template<int N>
 class Line {

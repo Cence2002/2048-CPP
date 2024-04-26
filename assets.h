@@ -58,14 +58,14 @@ struct Game_stat {
 };
 
 constexpr Dir DIRS[4] = {
-    Left,
-    Up,
-    Right,
-    Down
+        Left,
+        Up,
+        Right,
+        Down
 };
 constexpr pair<u8, r_t> SHIFTS[2] = {
-    {0, 0.9},
-    {1, 0.1}
+        {0, 0.9},
+        {1, 0.1}
 };
 
 constexpr u64 E(const u8 n) { return u64(1) << n; }
@@ -97,27 +97,29 @@ inline void init_rng(u32 seed = 0) {
     rng.seed(seed);
 }
 
-inline thread_local array<uniform_int_distribution<u32>, 20> dists = {
-    uniform_int_distribution<u32>(0, 0), // should never be used
-    uniform_int_distribution<u32>(0, 0),
-    uniform_int_distribution<u32>(0, 1),
-    uniform_int_distribution<u32>(0, 2),
-    uniform_int_distribution<u32>(0, 3),
-    uniform_int_distribution<u32>(0, 4),
-    uniform_int_distribution<u32>(0, 5),
-    uniform_int_distribution<u32>(0, 6),
-    uniform_int_distribution<u32>(0, 7),
-    uniform_int_distribution<u32>(0, 8),
-    uniform_int_distribution<u32>(0, 9),
-    uniform_int_distribution<u32>(0, 10),
-    uniform_int_distribution<u32>(0, 11),
-    uniform_int_distribution<u32>(0, 12),
-    uniform_int_distribution<u32>(0, 13),
-    uniform_int_distribution<u32>(0, 14),
-    uniform_int_distribution<u32>(0, 15),
-    uniform_int_distribution<u32>(0, 16),
-    uniform_int_distribution<u32>(0, 17),
-    uniform_int_distribution<u32>(0, 18),
+inline thread_local array<uniform_int_distribution<u32>, 22> dists = {
+        uniform_int_distribution<u32>(0, 0), // should never be used
+        uniform_int_distribution<u32>(0, 0),
+        uniform_int_distribution<u32>(0, 1),
+        uniform_int_distribution<u32>(0, 2),
+        uniform_int_distribution<u32>(0, 3),
+        uniform_int_distribution<u32>(0, 4),
+        uniform_int_distribution<u32>(0, 5),
+        uniform_int_distribution<u32>(0, 6),
+        uniform_int_distribution<u32>(0, 7),
+        uniform_int_distribution<u32>(0, 8),
+        uniform_int_distribution<u32>(0, 9),
+        uniform_int_distribution<u32>(0, 10),
+        uniform_int_distribution<u32>(0, 11),
+        uniform_int_distribution<u32>(0, 12),
+        uniform_int_distribution<u32>(0, 13),
+        uniform_int_distribution<u32>(0, 14),
+        uniform_int_distribution<u32>(0, 15),
+        uniform_int_distribution<u32>(0, 16),
+        uniform_int_distribution<u32>(0, 17),
+        uniform_int_distribution<u32>(0, 18),
+        uniform_int_distribution<u32>(0, 19),
+        uniform_int_distribution<u32>(0, 20),
 };
 
 inline u32 random(const u32 n) {
@@ -219,6 +221,11 @@ inline void print_dir(const Dir dir) {
             break;
     }
 }
+
+std::array<char, 20> cell_str = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'
+};
 
 inline void print_cell(const u8 cell) {
     if (cell == 0) {
