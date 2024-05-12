@@ -38,10 +38,10 @@ std::vector<std::array<u8, 4>> generate_all_lines() {
 }
 
 template<u8 MIN, u8 MAX>
-vector<array<array<u8, 4>, 4>> generate_boards(u32 count) {
-    vector<array<array<u8, 4>, 4>> boards;
+std::vector<std::array<std::array<u8, 4>, 4>> generate_boards(u32 count) {
+    std::vector<std::array<std::array<u8, 4>, 4>> boards;
     for (u32 t = 0; t < count; ++t) {
-        array<array<u8, 4>, 4> board{};
+        std::array<std::array<u8, 4>, 4> board{};
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 if (random(4) == 0) {
@@ -58,12 +58,12 @@ vector<array<array<u8, 4>, 4>> generate_boards(u32 count) {
 }
 
 template<u8 MAX>
-vector<array<array<u8, 4>, 4>> generate_boards(u32 count) {
+std::vector<std::array<std::array<u8, 4>, 4>> generate_boards(u32 count) {
     return generate_boards<0, MAX>(count);
 }
 
 template<line_concept line_type>
-void COMPARE_LINES(const array<u8, 4> &items, const array<u8, 4> &left_items, const array<u8, 4> &right_items, u32 reward) {
+void COMPARE_LINES(const std::array<u8, 4> &items, const std::array<u8, 4> &left_items, const std::array<u8, 4> &right_items, u32 reward) {
     line_type line, left, right;
     line.load_array(items);
     left.load_array(left_items);
@@ -79,7 +79,7 @@ void COMPARE_LINES(const array<u8, 4> &items, const array<u8, 4> &left_items, co
 }
 
 template<line_concept line_type_1 = l_t_16, line_concept line_type_2 = l_t_32>
-void MATCH_LINES(const array<u8, 4> &items) {
+void MATCH_LINES(const std::array<u8, 4> &items) {
     line_type_1 line_1;
     line_type_2 line_2;
 
@@ -100,7 +100,7 @@ void MATCH_LINES(const array<u8, 4> &items) {
     EXPECT_EQ(line_1.get_array(), line_2.get_array());
 }
 
-template<typename T = array<array<u8, 4>, 4>>
+template<typename T = std::array<std::array<u8, 4>, 4>>
 void EXPECT_EQS(const std::vector<T> &elements) {
     for (size_t i = 1; i < elements.size(); i++) {
         EXPECT_EQ(elements[i], elements[0]);
@@ -474,93 +474,108 @@ TEST(BOARDS, SPECIAL_CASES) {
 
 TEST(BOARDS, MATCH_BASE_CASES) {
     for (const auto &board: generate_boards<14>(1000000)) {
-        b_t_mat board_mat; // used as reference
+        b_t_sim board_sim; // used as reference
+        b_t_mat board_mat;
         b_t_arr<l_t_16> board_arr_16;
         b_t_arr<l_t_32> board_arr_32;
         b_t_64 board_64;
         b_t_opt board_opt;
 
+        board_sim.load_matrix(board);
         board_mat.load_matrix(board);
         board_arr_16.load_matrix(board);
         board_arr_32.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
-        EXPECT_EQ(board_mat.get_reward(Left), board_arr_16.get_reward(Left));
-        EXPECT_EQ(board_mat.get_reward(Left), board_arr_32.get_reward(Left));
-        EXPECT_EQ(board_mat.get_reward(Left), board_64.get_reward(Left));
-        EXPECT_EQ(board_mat.get_reward(Left), board_opt.get_reward(Left));
-        EXPECT_EQ(board_mat.get_reward(Right), board_arr_16.get_reward(Right));
-        EXPECT_EQ(board_mat.get_reward(Right), board_arr_32.get_reward(Right));
-        EXPECT_EQ(board_mat.get_reward(Right), board_64.get_reward(Right));
-        EXPECT_EQ(board_mat.get_reward(Right), board_opt.get_reward(Right));
-        EXPECT_EQ(board_mat.get_reward(Up), board_arr_16.get_reward(Up));
-        EXPECT_EQ(board_mat.get_reward(Up), board_arr_32.get_reward(Up));
-        EXPECT_EQ(board_mat.get_reward(Up), board_64.get_reward(Up));
-        EXPECT_EQ(board_mat.get_reward(Up), board_opt.get_reward(Up));
-        EXPECT_EQ(board_mat.get_reward(Down), board_arr_16.get_reward(Down));
-        EXPECT_EQ(board_mat.get_reward(Down), board_arr_32.get_reward(Down));
-        EXPECT_EQ(board_mat.get_reward(Down), board_64.get_reward(Down));
-        EXPECT_EQ(board_mat.get_reward(Down), board_opt.get_reward(Down));
+        EXPECT_EQ(board_sim.get_reward(Left), board_mat.get_reward(Left));
+        EXPECT_EQ(board_sim.get_reward(Left), board_arr_16.get_reward(Left));
+        EXPECT_EQ(board_sim.get_reward(Left), board_arr_32.get_reward(Left));
+        EXPECT_EQ(board_sim.get_reward(Left), board_64.get_reward(Left));
+        EXPECT_EQ(board_sim.get_reward(Left), board_opt.get_reward(Left));
+        EXPECT_EQ(board_sim.get_reward(Right), board_arr_16.get_reward(Right));
+        EXPECT_EQ(board_sim.get_reward(Right), board_arr_32.get_reward(Right));
+        EXPECT_EQ(board_sim.get_reward(Right), board_64.get_reward(Right));
+        EXPECT_EQ(board_sim.get_reward(Right), board_opt.get_reward(Right));
+        EXPECT_EQ(board_sim.get_reward(Up), board_arr_16.get_reward(Up));
+        EXPECT_EQ(board_sim.get_reward(Up), board_arr_32.get_reward(Up));
+        EXPECT_EQ(board_sim.get_reward(Up), board_64.get_reward(Up));
+        EXPECT_EQ(board_sim.get_reward(Up), board_opt.get_reward(Up));
+        EXPECT_EQ(board_sim.get_reward(Down), board_arr_16.get_reward(Down));
+        EXPECT_EQ(board_sim.get_reward(Down), board_arr_32.get_reward(Down));
+        EXPECT_EQ(board_sim.get_reward(Down), board_64.get_reward(Down));
+        EXPECT_EQ(board_sim.get_reward(Down), board_opt.get_reward(Down));
 
+        board_sim.load_matrix(board);
         board_mat.load_matrix(board);
         board_arr_16.load_matrix(board);
         board_arr_32.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
+        board_sim.slide(Left);
         board_mat.slide(Left);
         board_arr_16.slide(Left);
         board_arr_32.slide(Left);
         board_64.slide(Left);
         board_opt.slide(Left);
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_16.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_32.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_64.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_opt.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_mat.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_16.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_32.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_64.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_opt.get_matrix());
 
+        board_sim.load_matrix(board);
         board_mat.load_matrix(board);
         board_arr_16.load_matrix(board);
         board_arr_32.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
+        board_sim.slide(Right);
         board_mat.slide(Right);
         board_arr_16.slide(Right);
         board_arr_32.slide(Right);
         board_64.slide(Right);
         board_opt.slide(Right);
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_16.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_32.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_64.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_opt.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_mat.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_16.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_32.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_64.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_opt.get_matrix());
 
+        board_sim.load_matrix(board);
         board_mat.load_matrix(board);
         board_arr_16.load_matrix(board);
         board_arr_32.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
+        board_sim.slide(Up);
         board_mat.slide(Up);
         board_arr_16.slide(Up);
         board_arr_32.slide(Up);
         board_64.slide(Up);
         board_opt.slide(Up);
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_16.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_32.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_64.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_opt.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_mat.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_16.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_32.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_64.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_opt.get_matrix());
 
+        board_sim.load_matrix(board);
         board_mat.load_matrix(board);
         board_arr_16.load_matrix(board);
         board_arr_32.load_matrix(board);
         board_64.load_matrix(board);
         board_opt.load_matrix(board);
+        board_sim.slide(Down);
         board_mat.slide(Down);
         board_arr_16.slide(Down);
         board_arr_32.slide(Down);
         board_64.slide(Down);
         board_opt.slide(Down);
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_16.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_arr_32.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_64.get_matrix());
-        EXPECT_EQ(board_mat.get_matrix(), board_opt.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_mat.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_16.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_arr_32.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_64.get_matrix());
+        EXPECT_EQ(board_sim.get_matrix(), board_opt.get_matrix());
     }
 }
 

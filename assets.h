@@ -15,14 +15,10 @@
 #include <random>
 #include <mutex>
 #include <cassert>
-//#include <unordered_map>
-//#include <unordered_set>
 
-#define REDIRECT 0
-#define SEED 0
-#define DEBUG 0
+constexpr bool DEBUG_PRINT = false;
 
-using namespace std;
+//using namespace std;
 
 using u8 = uint8_t;
 using u16 = uint16_t;
@@ -40,13 +36,9 @@ enum Dir : u8 {
     Down = 4,
 };
 
-constexpr Dir DIRS[4] = {
-        Left,
-        Up,
-        Right,
-        Down
-};
-constexpr pair<u8, r_t> SHIFTS[2] = {
+constexpr auto DIRS = {Left, Up, Right, Down};
+
+constexpr std::pair<u8, r_t> SHIFTS[2] = {
         {0, 0.9},
         {1, 0.1}
 };
@@ -54,57 +46,55 @@ constexpr pair<u8, r_t> SHIFTS[2] = {
 constexpr u64 E(const u8 n) { return u64(1) << n; }
 
 inline auto time_now() {
-    return chrono::high_resolution_clock::now();
+    return std::chrono::high_resolution_clock::now();
 }
 inline const auto execution_start = time_now();
 
-inline r_t time_since(chrono::high_resolution_clock::time_point start) {
-    const auto duration = chrono::duration_cast<chrono::microseconds>(time_now() - start);
+inline r_t time_since(std::chrono::high_resolution_clock::time_point start) {
+    const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_now() - start);
     return r_t(duration.count());
 }
 
 inline void wait(const r_t time) {
-    this_thread::sleep_for(chrono::seconds(u32(time)));
+    std::this_thread::sleep_for(std::chrono::seconds(u32(time)));
 }
 
-inline mutex init_rng_mutex;
-inline thread_local mt19937 rng;
+inline std::mutex init_rng_mutex;
+inline thread_local std::mt19937 rng;
 
 inline void init_rng(u32 seed = 0) {
-    lock_guard<mutex> lock(init_rng_mutex);
+    std::lock_guard<std::mutex> lock(init_rng_mutex);
     if (seed == 0) {
         seed = u32(time_since(execution_start));
     }
-    cout << "T-" << this_thread::get_id() << " seed: " << seed << endl;
+    std::cout << "T-" << std::this_thread::get_id() << " seed: " << seed << std::endl;
     rng.seed(seed);
 }
 
-inline thread_local array<uniform_int_distribution<u32>, 22> dists = {
-        uniform_int_distribution<u32>(0, 0), // should never be used
-        uniform_int_distribution<u32>(0, 0),
-        uniform_int_distribution<u32>(0, 1),
-        uniform_int_distribution<u32>(0, 2),
-        uniform_int_distribution<u32>(0, 3),
-        uniform_int_distribution<u32>(0, 4),
-        uniform_int_distribution<u32>(0, 5),
-        uniform_int_distribution<u32>(0, 6),
-        uniform_int_distribution<u32>(0, 7),
-        uniform_int_distribution<u32>(0, 8),
-        uniform_int_distribution<u32>(0, 9),
-        uniform_int_distribution<u32>(0, 10),
-        uniform_int_distribution<u32>(0, 11),
-        uniform_int_distribution<u32>(0, 12),
-        uniform_int_distribution<u32>(0, 13),
-        uniform_int_distribution<u32>(0, 14),
-        uniform_int_distribution<u32>(0, 15),
-        uniform_int_distribution<u32>(0, 16),
-        uniform_int_distribution<u32>(0, 17),
-        uniform_int_distribution<u32>(0, 18),
-        uniform_int_distribution<u32>(0, 19),
-        uniform_int_distribution<u32>(0, 20),
+inline thread_local std::array<std::uniform_int_distribution<u8>, 20> dists = {
+        std::uniform_int_distribution<u8>(0, 0), // should never be used
+        std::uniform_int_distribution<u8>(0, 0),
+        std::uniform_int_distribution<u8>(0, 1),
+        std::uniform_int_distribution<u8>(0, 2),
+        std::uniform_int_distribution<u8>(0, 3),
+        std::uniform_int_distribution<u8>(0, 4),
+        std::uniform_int_distribution<u8>(0, 5),
+        std::uniform_int_distribution<u8>(0, 6),
+        std::uniform_int_distribution<u8>(0, 7),
+        std::uniform_int_distribution<u8>(0, 8),
+        std::uniform_int_distribution<u8>(0, 9),
+        std::uniform_int_distribution<u8>(0, 10),
+        std::uniform_int_distribution<u8>(0, 11),
+        std::uniform_int_distribution<u8>(0, 12),
+        std::uniform_int_distribution<u8>(0, 13),
+        std::uniform_int_distribution<u8>(0, 14),
+        std::uniform_int_distribution<u8>(0, 15),
+        std::uniform_int_distribution<u8>(0, 16),
+        std::uniform_int_distribution<u8>(0, 17),
+        std::uniform_int_distribution<u8>(0, 18),
 };
 
-inline u32 random(const u32 n) {
+inline u8 random(const u8 n) {
     return dists[n](rng);
 }
 
@@ -149,37 +139,37 @@ constexpr r_t conf_rad(const u64 sum, const u64 sum_squared, const u64 n) {
     return z * st_dev(sum, sum_squared, n) / sqrt(r_t(n));
 }
 
-inline void save_array(const string &filename, const char *arr, const size_t size) {
-    cout << "Saving " << filename << " started" << endl;
+inline void save_array(const std::string &filename, const char *arr, const size_t size) {
+    std::cout << "Saving " << filename << " started" << std::endl;
     auto start = time_now();
-    ofstream file(filename, ios::binary);
+    std::ofstream file(filename, std::ios::binary);
     if (!file.is_open()) {
-        cout << "Error opening: " << filename << endl;
+        std::cout << "Error opening: " << filename << std::endl;
         return;
     }
-    file.write(arr, streamsize(size));
+    file.write(arr, std::streamsize(size));
     file.close();
-    cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
+    std::cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << std::endl;
 }
 
-inline void load_array(const string &filename, char *arr, const size_t size) {
-    cout << "Loading " << filename << " started" << endl;
+inline void load_array(const std::string &filename, char *arr, const size_t size) {
+    std::cout << "Loading " << filename << " started" << std::endl;
     auto start = time_now();
-    ifstream file(filename, ios::binary);
+    std::ifstream file(filename, std::ios::binary);
     if (!file.is_open()) {
-        cout << "Error opening: " << filename << endl;
+        std::cout << "Error opening: " << filename << std::endl;
         return;
     }
-    file.read(arr, streamsize(size));
+    file.read(arr, std::streamsize(size));
     file.close();
-    cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
+    std::cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << std::endl;
 }
 
-inline string get_time_str() {
+inline std::string get_time_str() {
     auto ts = time(nullptr);
     auto local_ts = *localtime(&ts);
-    ostringstream temp;
-    temp << put_time(&local_ts, "%m%d_%H%M%S");
+    std::ostringstream temp;
+    temp << std::put_time(&local_ts, "%m%d_%H%M%S");
     return temp.str();
 }
 
@@ -187,19 +177,19 @@ inline string get_time_str() {
 inline void print_dir(const Dir dir) {
     switch (dir) {
         case Left:
-            cout << "Left";
+            std::cout << "Left";
             break;
         case Up:
-            cout << "Up";
+            std::cout << "Up";
             break;
         case Right:
-            cout << "Right";
+            std::cout << "Right";
             break;
         case Down:
-            cout << "Down";
+            std::cout << "Down";
             break;
         default:
-            cout << "None";
+            std::cout << "None";
             break;
     }
 }
@@ -211,11 +201,11 @@ std::array<char, 20> cell_str = {
 
 inline void print_cell(const u8 cell) {
     if (cell == 0) {
-        cout << "-";
+        std::cout << "-";
     } else if (cell < 10) {
-        cout << to_string(cell);
+        std::cout << std::to_string(cell);
     } else {
-        cout << char('A' + (cell - 10));
+        std::cout << char('A' + (cell - 10));
     }
 }
 
@@ -223,14 +213,14 @@ inline void print_board(const u64 board) {
     for (u8 y = 0; y < 4; ++y) {
         for (u8 x = 0; x < 4; ++x) {
             print_cell((board >> (y * 16 + x * 4)) & 0xFu);
-            cout << " ";
+            std::cout << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
-const string indent = "    ";
+const std::string indent = "    ";
 
 inline struct run_stats_t {
     u64 fill_board_counter = 0;
@@ -262,15 +252,15 @@ inline struct run_stats_t {
     }
 
     void print_board_operation_stats(r_t elapsed) const {
-        cout << indent << "Fill board:     \t" << r_t(fill_board_counter) / elapsed << " / us" << endl;
-        cout << indent << "Reward board:   \t" << r_t(reward_board_counter) / elapsed << " / us" << endl;
-        cout << indent << "Move board:     \t" << r_t(move_board_counter) / elapsed << " / us" << endl;
+        std::cout << indent << "Fill board:     \t" << r_t(fill_board_counter) / elapsed << " / us" << std::endl;
+        std::cout << indent << "Reward board:   \t" << r_t(reward_board_counter) / elapsed << " / us" << std::endl;
+        std::cout << indent << "Move board:     \t" << r_t(move_board_counter) / elapsed << " / us" << std::endl;
     }
 
     void print_eval_operation_stats(r_t elapsed) const {
-        cout << indent << "Eval board:     \t" << r_t(eval_board_counter) / elapsed << " / us" << endl;
-        cout << indent << "Update weights: \t" << r_t(update_weights_counter) / elapsed << " / us" << endl;
-        cout << indent << "Eval moves:     \t" << r_t(eval_moves_counter) / elapsed << " / us" << endl;
+        std::cout << indent << "Eval board:     \t" << r_t(eval_board_counter) / elapsed << " / us" << std::endl;
+        std::cout << indent << "Update weights: \t" << r_t(update_weights_counter) / elapsed << " / us" << std::endl;
+        std::cout << indent << "Eval moves:     \t" << r_t(eval_moves_counter) / elapsed << " / us" << std::endl;
     }
 } run_stats;
 
@@ -296,7 +286,7 @@ inline struct game_stats_t {
     static u32 get_max_cell(u64 board) {
         u32 result = 0;
         while (board) {
-            result = max(result, u32(board & 0xFu));
+            result = std::max(result, u32(board & 0xFu));
             board >>= 4;
         }
         return result;
@@ -307,11 +297,11 @@ inline struct game_stats_t {
         score_counter += score;
         score_squared_counter += u64(score) * u64(score);
         moves_counter += moves;
-        max_moves = max(max_moves, moves);
-        max_score = max(max_score, score);
+        max_moves = std::max(max_moves, moves);
+        max_score = std::max(max_score, score);
 
         u32 highest_cell = get_max_cell(board);
-        max_cell = max(max_cell, highest_cell);
+        max_cell = std::max(max_cell, highest_cell);
 
         if (highest_cell < 10) { return; }
         ++score_A_counter;
@@ -336,9 +326,9 @@ inline struct game_stats_t {
         score_counter += stats.score_counter;
         score_squared_counter += stats.score_squared_counter;
         moves_counter += stats.moves_counter;
-        max_moves = max(max_moves, stats.max_moves);
-        max_score = max(max_score, stats.max_score);
-        max_cell = max(max_cell, stats.max_cell);
+        max_moves = std::max(max_moves, stats.max_moves);
+        max_score = std::max(max_score, stats.max_score);
+        max_cell = std::max(max_cell, stats.max_cell);
         score_A_counter += stats.score_A_counter;
         score_B_counter += stats.score_B_counter;
         score_C_counter += stats.score_C_counter;
@@ -350,29 +340,26 @@ inline struct game_stats_t {
     }
 
     void print_average_game_stats() const {
-        cout << indent << "Average score   \t" << r_t(score_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Confidence rad  \t" << conf_rad(score_counter, score_squared_counter, game_counter) << endl;
-        cout << indent << "St dev score    \t" << st_dev(score_counter, score_squared_counter, game_counter) << endl;
-        cout << indent << "Average moves   \t" << r_t(moves_counter) / r_t(game_counter) << " / game" << endl;
+        std::cout << indent << "Average score   \t" << r_t(score_counter) / r_t(game_counter) << " / game" << std::endl;
+        std::cout << indent << "Confidence rad  \t" << conf_rad(score_counter, score_squared_counter, game_counter) << std::endl;
+        std::cout << indent << "St dev score    \t" << st_dev(score_counter, score_squared_counter, game_counter) << std::endl;
+        std::cout << indent << "Average moves   \t" << r_t(moves_counter) / r_t(game_counter) << " / game" << std::endl;
     }
 
     void print_max_game_stats() const {
-        cout << indent << "Max score:      \t" << max_score << endl;
-        cout << indent << "Max moves:      \t" << max_moves << endl;
-        cout << indent << "Max cell:       \t" << max_cell << endl;
+        std::cout << indent << "Max score:      \t" << max_score << std::endl;
+        std::cout << indent << "Max moves:      \t" << max_moves << std::endl;
+        std::cout << indent << "Max cell:       \t" << max_cell << std::endl;
     }
 
     void print_score_cell_stats() const {
-        cout << indent << "Score A:        \t" << r_t(score_A_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score B:        \t" << r_t(score_B_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score C:        \t" << r_t(score_C_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score D:        \t" << r_t(score_D_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score E:        \t" << r_t(score_E_counter) / r_t(game_counter) << " / game" << endl;
-        cout << indent << "Score F:        \t" << r_t(score_F_counter) / r_t(game_counter) << " / game" << endl;
-        //cout << indent << "Score G:        \t" << r_t(score_G_counter) / r_t(game_counter) << " / game" << endl;
-        //cout << indent << "Score H:        \t" << r_t(score_H_counter) / r_t(game_counter) << " / game" << endl;
+        std::cout << indent << "Score A:        \t" << r_t(score_A_counter) / r_t(game_counter) << " / game" << std::endl;
+        std::cout << indent << "Score B:        \t" << r_t(score_B_counter) / r_t(game_counter) << " / game" << std::endl;
+        std::cout << indent << "Score C:        \t" << r_t(score_C_counter) / r_t(game_counter) << " / game" << std::endl;
+        std::cout << indent << "Score D:        \t" << r_t(score_D_counter) / r_t(game_counter) << " / game" << std::endl;
+        std::cout << indent << "Score E:        \t" << r_t(score_E_counter) / r_t(game_counter) << " / game" << std::endl;
+        std::cout << indent << "Score F:        \t" << r_t(score_F_counter) / r_t(game_counter) << " / game" << std::endl;
+        //std::cout << indent << "Score G:        \t" << r_t(score_G_counter) / r_t(game_counter) << " / game" << std::endl;
+        //std::cout << indent << "Score H:        \t" << r_t(score_H_counter) / r_t(game_counter) << " / game" << std::endl;
     }
 } training_stats, testing_stats;
-
-inline u64 cnt = 0;
-inline u64 cnt_2 = 0;

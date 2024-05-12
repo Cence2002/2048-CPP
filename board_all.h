@@ -1,303 +1,12 @@
 #pragma once
 
 #include "assets.h"
-
-struct line_base {
-    line_base() = default;
-
-    virtual void load_array(const array<u8, 4> &cells) = 0;
-
-    virtual array<u8, 4> get_array() const = 0;
-
-    virtual u8 get_item(u8 i) const = 0;
-
-    virtual void set_item(u8 i, u8 cell) = 0;
-
-    virtual void reverse() = 0;
-
-    virtual u8 empty_count() const = 0;
-
-    virtual void left() = 0;
-
-    virtual void right() = 0;
-
-    virtual s_t get_reward() const = 0;
-
-    std::string to_string() const {
-        std::string str;
-        for (u8 i = 0; i < 4; i++) {
-            str.push_back(cell_str[get_item(i)]);
-            str += " ";
-        }
-        str += "\n";
-        return str;
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const line_base &line) {
-        os << line.to_string();
-        return os;
-    }
-};
-
-template<typename T>
-concept line_concept = std::is_base_of_v<line_base, T> &&
-                       std::is_default_constructible_v<T> &&
-                       std::is_copy_constructible_v<T> &&
-                       std::is_copy_assignable_v<T> &&
-                       std::is_assignable_v<T, T> && requires() {
-    { T::init_tables() } -> std::same_as<void>;
-};
-
-struct l_t_16 : public line_base {
-private:
-    u16 line;
-
-public:
-    l_t_16() : line(0) {}
-
-    l_t_16(const u16 line) : line(line) {}
-
-    l_t_16(const l_t_16 &line) : line(line.line) {}
-
-    l_t_16 &operator=(const l_t_16 &other) {
-        line = other.line;
-        return *this;
-    }
-
-    u16 get_bits() const {
-        return line;
-    }
-
-    void load_array(const array<u8, 4> &cells) override {
-        line = 0;
-        for (u8 i = 0; i < 4; i++) {
-            line |= u16(cells[i] & 0xFu) << (i * 4);
-        }
-    }
-
-    array<u8, 4> get_array() const override {
-        array<u8, 4> cells{};
-        for (u8 i = 0; i < 4; i++) {
-            cells[i] = (line >> (i * 4)) & 0xFu;
-        }
-        return cells;
-    }
-
-    u8 get_item(const u8 i) const override {
-        return (line >> (i * 4)) & 0xFu;
-    }
-
-    void set_item(const u8 i, const u8 cell) override {
-        line &= ~(0xFu << (i * 4));
-        line |= u16(cell & 0xFu) << (i * 4);
-    }
-
-    void reverse() override {
-        for (u8 i = 0; i < 2; i++) {
-            const u8 temp = get_item(i);
-            set_item(i, get_item(3 - i));
-            set_item(3 - i, temp);
-        }
-    }
-
-    u8 empty_count() const override {
-        u8 count = 0;
-        for (u8 i = 0; i < 4; i++) {
-            count += get_item(i) == 0;
-        }
-        return count;
-    }
-
-    void left() override {
-        line = left_table[line];
-    }
-
-    void right() override {
-        line = right_table[line];
-    }
-
-    s_t get_reward() const override {
-        return reward_table[line];
-    }
-
-    static void init_tables() {
-        for (u16 bits = E(16) - 1; bits > 0; --bits) {
-            array<u8, 4> cells{};
-            l_t_16 line;
-            l_t_16 reversed_line;
-            for (u8 i = 0; i < 4; i++) {
-                const u8 cell = (bits >> (i * 4)) & 0xFu;
-                cells[i] = cell;
-                line.set_item(i, cell);
-                reversed_line.set_item(3 - i, cell);
-            }
-            s_t reward = 0;
-            u8 to = 0;
-            bool can_merge = true;
-            for (u8 from = 0; from < 4; ++from) {
-                if (cells[from] == 0) {
-                    continue;
-                }
-                if (to > 0 && cells[from] == cells[to - 1] && can_merge
-                    && cells[from] != 0xFu) {
-                    ++cells[to - 1];
-                    cells[from] = 0;
-                    reward += E(cells[to - 1]);
-                    can_merge = false;
-                } else {
-                    if (to != from) {
-                        cells[to] = cells[from];
-                        cells[from] = 0;
-                    }
-                    ++to;
-                    can_merge = true;
-                }
-            }
-            reward_table[bits] = reward;
-
-            l_t_16 moved_line = 0;
-            l_t_16 moved_reversed_line = 0;
-            for (u8 i = 0; i < 4; i++) {
-                const u8 cell = cells[i];
-                moved_line.set_item(i, cell);
-                moved_reversed_line.set_item(3 - i, cell);
-            }
-            left_table[line.get_bits()] = moved_line.get_bits();
-            right_table[reversed_line.get_bits()] = moved_reversed_line.get_bits();
-        }
-    }
-
-private:
-    static u16 left_table[E(16)];
-    static u16 right_table[E(16)];
-    static s_t reward_table[E(16)];
-};
-
-struct l_t_32 : public line_base {
-private:
-    u32 line;
-public:
-    l_t_32() : line(0) {}
-    l_t_32(const u32 line) : line(line) {}
-    l_t_32(const l_t_32 &line) : line(line.line) {}
-
-    l_t_32 &operator=(const l_t_32 &other) {
-        line = other.line;
-        return *this;
-    }
-
-    u32 get_bits() const {
-        return line;
-    }
-
-    void load_array(const array<u8, 4> &cells) override {
-        line = 0;
-        for (u8 i = 0; i < 4; i++) {
-            line |= u32(cells[i] & 0x1Fu) << (i * 5);
-        }
-    }
-
-    array<u8, 4> get_array() const override {
-        array<u8, 4> cells{};
-        for (u8 i = 0; i < 4; i++) {
-            cells[i] = (line >> (i * 5)) & 0x1Fu;
-        }
-        return cells;
-    }
-
-    u8 get_item(const u8 i) const override {
-        return (line >> (i * 5)) & 0x1Fu;
-    }
-
-    void set_item(const u8 i, const u8 cell) override {
-        line &= ~(0x1Fu << (i * 5));
-        line |= u32(cell & 0x1Fu) << (i * 5);
-    }
-
-    void reverse() override {
-        for (u8 i = 0; i < 2; i++) {
-            const u8 temp = get_item(i);
-            set_item(i, get_item(3 - i));
-            set_item(3 - i, temp);
-        }
-    }
-
-    u8 empty_count() const override {
-        u8 count = 0;
-        for (u8 i = 0; i < 4; i++) {
-            count += get_item(i) == 0;
-        }
-        return count;
-    }
-
-    void left() override {
-        line = left_table[line];
-    }
-
-    void right() override {
-        line = right_table[line];
-    }
-
-    s_t get_reward() const override {
-        return reward_table[line];
-    }
-
-    static void init_tables() {
-        for (u32 bits = E(20) - 1; bits > 0; --bits) {
-            array<u8, 4> cells{};
-            l_t_32 line;
-            l_t_32 reversed_line;
-            for (u8 i = 0; i < 4; i++) {
-                const u8 cell = (bits >> (i * 5)) & 0x1Fu;
-                cells[i] = cell;
-                line.set_item(i, cell);
-                reversed_line.set_item(3 - i, cell);
-            }
-            s_t reward = 0;
-            u8 to = 0;
-            bool can_merge = true;
-            for (u8 from = 0; from < 4; ++from) {
-                if (cells[from] == 0) {
-                    continue;
-                }
-                if (to > 0 && cells[from] == cells[to - 1] && can_merge) {
-                    ++cells[to - 1];
-                    cells[from] = 0;
-                    reward += E(cells[to - 1]);
-                    can_merge = false;
-                } else {
-                    if (to != from) {
-                        cells[to] = cells[from];
-                        cells[from] = 0;
-                    }
-                    ++to;
-                    can_merge = true;
-                }
-            }
-            reward_table[line.get_bits()] = reward;
-
-            l_t_32 moved_line = 0;
-            l_t_32 moved_reversed_line = 0;
-            for (u8 i = 0; i < 4; i++) {
-                const u8 cell = cells[i];
-                moved_line.set_item(i, cell);
-                moved_reversed_line.set_item(3 - i, cell);
-            }
-            left_table[line.get_bits()] = moved_line.get_bits();
-            right_table[reversed_line.get_bits()] = moved_reversed_line.get_bits();
-        }
-    }
-
-private:
-    static u32 left_table[E(20)];
-    static u32 right_table[E(20)];
-    static s_t reward_table[E(20)];
-};
+#include "lines.h"
 
 struct board_base {
-    virtual void load_matrix(const array<array<u8, 4>, 4> &cells) = 0;
+    virtual void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) = 0;
 
-    virtual array<array<u8, 4>, 4> get_matrix() const = 0;
+    virtual std::array<std::array<u8, 4>, 4> get_matrix() const = 0;
 
 
     virtual u8 get_cell(u8 x, u8 y) const = 0;
@@ -308,14 +17,22 @@ struct board_base {
 
     virtual void set_cell(u8 i, u8 cell) = 0;
 
+    inline u8 get_max_cell() const {
+        u8 max_cell = 0;
+        for (u8 i = 0; i < 16; i++) {
+            max_cell = std::max(max_cell, get_cell(i));
+        }
+        return max_cell;
+    }
+
 
     virtual u8 empty_count() const = 0;
 
     virtual void spawn() = 0;
 
-    virtual void slide(Dir dir) = 0;
-
     virtual s_t get_reward(Dir dir) const = 0;
+
+    virtual void slide(Dir dir) = 0;
 
 
     std::string to_string() const {
@@ -338,6 +55,320 @@ struct board_base {
     }
 };
 
+template<typename T>
+concept board_concept = std::is_base_of_v<board_base, T> &&
+                        std::is_default_constructible_v<T> &&
+                        std::is_copy_constructible_v<T> &&
+                        std::is_copy_assignable_v<T>
+                        && requires() {{ T::init_tables() } -> std::same_as<void>; }
+                        && requires(T board, Dir dir) {{ board.slid(dir) } -> std::same_as<T>; }
+                        && requires(T board, T other) {
+    { board == other } -> std::same_as<bool>;
+    { board != other } -> std::same_as<bool>;
+};
+
+struct b_t_sim : public board_base {
+private:
+    std::array<std::array<u8, 4>, 4> board;
+
+public:
+    b_t_sim() : board{{{0, 0, 0, 0},
+                       {0, 0, 0, 0},
+                       {0, 0, 0, 0},
+                       {0, 0, 0, 0}}} {}
+
+    b_t_sim(const b_t_sim &other) : board{{{other.board[0][0], other.board[0][1], other.board[0][2], other.board[0][3]},
+                                           {other.board[1][0], other.board[1][1], other.board[1][2], other.board[1][3]},
+                                           {other.board[2][0], other.board[2][1], other.board[2][2], other.board[2][3]},
+                                           {other.board[3][0], other.board[3][1], other.board[3][2], other.board[3][3]}}} {}
+
+    b_t_sim &operator=(const b_t_sim &other) {
+        if (this == &other) { return *this; }
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                board[y][x] = other.board[y][x];
+            }
+        }
+        return *this;
+    }
+
+    bool operator==(const b_t_sim &other) const {
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                if (board[y][x] != other.board[y][x]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    bool operator!=(const b_t_sim &other) const {
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                if (board[y][x] != other.board[y][x]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) override {
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                board[y][x] = cells[y][x];
+            }
+        }
+    }
+
+    std::array<std::array<u8, 4>, 4> get_matrix() const override {
+        std::array<std::array<u8, 4>, 4> cells{};
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                cells[y][x] = board[y][x];
+            }
+        }
+        return cells;
+    }
+
+    u8 get_cell(const u8 x, const u8 y) const override {
+        return board[y][x];
+    }
+
+    u8 get_cell(const u8 i) const override {
+        return board[i / 4][i % 4];
+    }
+
+    void set_cell(const u8 x, const u8 y, const u8 cell) override {
+        board[y][x] = cell;
+    }
+
+    void set_cell(const u8 i, const u8 cell) override {
+        board[i / 4][i % 4] = cell;
+    }
+
+    u8 empty_count() const override {
+        u8 count = 0;
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                count += get_cell(x, y) == 0;
+            }
+        }
+        return count;
+    }
+
+    void spawn() override {
+        int empties = empty_count();
+        if (empties == 0) [[unlikely]] { return; }
+        int target_index = random(empties);
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 4; x++) {
+                if (get_cell(x, y) != 0) {
+                    continue;
+                }
+                if (target_index == 0) {
+                    if (random(10) == 0) [[unlikely]] {
+                        set_cell(x, y, 2);
+                    } else [[likely]] {
+                        set_cell(x, y, 1);
+                    }
+                    return;
+                }
+                target_index--;
+            }
+        }
+    }
+
+    void spawn_2() {
+        int empties = empty_count();
+        if (empties == 0) { return; }
+        int target_index = random(empties);
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 4; x++) {
+                if (get_cell(x, y) != 0) { continue; }
+                if (target_index == 0) {
+                    set_cell(x, y, random(10) == 0 ? 2 : 1);
+                    return;
+                }
+                target_index--;
+            }
+        }
+    }
+
+    s_t get_reward(const Dir dir) const override {
+        switch (dir) {
+            case Left:
+            case Right: {
+                s_t reward = 0;
+                for (u8 y = 0; y < 4; y++) {
+                    u8 prev = 0;
+                    for (u8 x = 0; x < 4; x++) {
+                        const u8 cell = get_cell(x, y);
+                        if (cell == 0) { continue; }
+                        if (prev == cell) {
+                            prev = 0;
+                            reward += E(cell + 1);
+                        } else {
+                            prev = cell;
+                        }
+                    }
+                }
+                return reward;
+            }
+            case Up:
+            case Down: {
+                s_t reward = 0;
+                for (u8 x = 0; x < 4; x++) {
+                    u8 prev = 0;
+                    for (u8 y = 0; y < 4; y++) {
+                        const u8 cell = get_cell(x, y);
+                        if (cell == 0) { continue; }
+                        if (prev == cell) {
+                            prev = 0;
+                            reward += E(cell + 1);
+                        } else {
+                            prev = cell;
+                        }
+                    }
+                }
+                return reward;
+            }
+            default:
+                return 0;
+        }
+    }
+
+    void left() {
+        for (u8 y = 0; y < 4; y++) {
+            u8 to_x = 0;
+            bool can_merge = true;
+            for (u8 from_x = 0; from_x < 4; ++from_x) {
+                if (get_cell(from_x, y) == 0) { continue; }
+                if (to_x > 0
+                    && get_cell(from_x, y) == get_cell(to_x - 1, y)
+                    && can_merge) [[unlikely]] {
+                    ++board[y][to_x - 1];
+                    board[y][from_x] = 0;
+                    can_merge = false;
+                } else [[likely]] {
+                    if (to_x != from_x) {
+                        board[y][to_x] = board[y][from_x];
+                        board[y][from_x] = 0;
+                    }
+                    ++to_x;
+                    can_merge = true;
+                }
+            }
+        }
+    }
+
+    void right() {
+        for (u8 y = 0; y < 4; y++) {
+            u8 to_x = 3;
+            bool can_merge = true;
+            for (u8 from_x = 3; from_x < 4; --from_x) {
+                if (get_cell(from_x, y) == 0) {
+                    continue;
+                }
+                if (to_x < 3
+                    && get_cell(from_x, y) == get_cell(to_x + 1, y)
+                    && can_merge) [[unlikely]] {
+                    ++board[y][to_x + 1];
+                    board[y][from_x] = 0;
+                    can_merge = false;
+                } else [[likely]] {
+                    if (to_x != from_x) {
+                        board[y][to_x] = board[y][from_x];
+                        board[y][from_x] = 0;
+                    }
+                    --to_x;
+                    can_merge = true;
+                }
+            }
+        }
+    }
+
+    void up() {
+        for (u8 x = 0; x < 4; x++) {
+            u8 to_y = 0;
+            bool can_merge = true;
+            for (u8 from_y = 0; from_y < 4; ++from_y) {
+                if (get_cell(x, from_y) == 0) {
+                    continue;
+                }
+                if (to_y > 0
+                    && get_cell(x, from_y) == get_cell(x, to_y - 1)
+                    && can_merge) [[unlikely]] {
+                    ++board[to_y - 1][x];
+                    board[from_y][x] = 0;
+                    can_merge = false;
+                } else [[likely]] {
+                    if (to_y != from_y) {
+                        board[to_y][x] = board[from_y][x];
+                        board[from_y][x] = 0;
+                    }
+                    ++to_y;
+                    can_merge = true;
+                }
+            }
+        }
+    }
+
+    void down() {
+        for (u8 x = 0; x < 4; x++) {
+            u8 to_y = 3;
+            bool can_merge = true;
+            for (u8 from_y = 3; from_y < 4; --from_y) {
+                if (get_cell(x, from_y) == 0) {
+                    continue;
+                }
+                if (to_y < 3
+                    && get_cell(x, from_y) == get_cell(x, to_y + 1)
+                    && can_merge) [[unlikely]] {
+                    ++board[to_y + 1][x];
+                    board[from_y][x] = 0;
+                    can_merge = false;
+                } else [[likely]] {
+                    if (to_y != from_y) {
+                        board[to_y][x] = board[from_y][x];
+                        board[from_y][x] = 0;
+                    }
+                    --to_y;
+                    can_merge = true;
+                }
+            }
+        }
+    }
+
+    void slide(const Dir dir) override {
+        switch (dir) {
+            case Left:
+                left();
+                break;
+            case Right:
+                right();
+                break;
+            case Up:
+                up();
+                break;
+            case Down:
+                down();
+                break;
+            default:
+                break;
+        }
+    }
+
+    b_t_sim slid(const Dir dir) const {
+        b_t_sim new_board = *this;
+        new_board.slide(dir);
+        return new_board;
+    }
+
+    static void init_tables() {}
+};
+
 struct b_t_mat : public board_base {
 private:
     u8 board[4][4]{};
@@ -348,10 +379,10 @@ public:
                       {0, 0, 0, 0},
                       {0, 0, 0, 0}} {}
 
-    b_t_mat(const b_t_mat &board) : board{{board.board[0][0], board.board[0][1], board.board[0][2], board.board[0][3]},
-                                          {board.board[1][0], board.board[1][1], board.board[1][2], board.board[1][3]},
-                                          {board.board[2][0], board.board[2][1], board.board[2][2], board.board[2][3]},
-                                          {board.board[3][0], board.board[3][1], board.board[3][2], board.board[3][3]}} {}
+    b_t_mat(const b_t_mat &other) : board{{other.board[0][0], other.board[0][1], other.board[0][2], other.board[0][3]},
+                                          {other.board[1][0], other.board[1][1], other.board[1][2], other.board[1][3]},
+                                          {other.board[2][0], other.board[2][1], other.board[2][2], other.board[2][3]},
+                                          {other.board[3][0], other.board[3][1], other.board[3][2], other.board[3][3]}} {}
 
     b_t_mat &operator=(const b_t_mat &other) {
         if (this == &other) { return *this; }
@@ -363,7 +394,29 @@ public:
         return *this;
     }
 
-    void load_matrix(const array<array<u8, 4>, 4> &cells) override {
+    bool operator==(const b_t_mat &other) const {
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                if (board[y][x] != other.board[y][x]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    bool operator!=(const b_t_mat &other) const {
+        for (u8 y = 0; y < 4; y++) {
+            for (u8 x = 0; x < 4; x++) {
+                if (board[y][x] != other.board[y][x]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) override {
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 board[y][x] = cells[y][x];
@@ -371,8 +424,8 @@ public:
         }
     }
 
-    array<array<u8, 4>, 4> get_matrix() const override {
-        array<array<u8, 4>, 4> cells{};
+    std::array<std::array<u8, 4>, 4> get_matrix() const override {
+        std::array<std::array<u8, 4>, 4> cells{};
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 cells[y][x] = board[y][x];
@@ -414,10 +467,12 @@ public:
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 if (get_cell(x, y) == 0) {
-                    if (index-- == 0) {
+                    if (index == 0) {
                         const u8 cell = random(10) > 0 ? 1 : 2;
                         set_cell(x, y, cell);
                         return;
+                    } else {
+                        index--;
                     }
                 }
             }
@@ -526,12 +581,18 @@ public:
         }
     }
 
+    b_t_mat slid(const Dir dir) const {
+        b_t_mat new_board = *this;
+        new_board.slide(dir);
+        return new_board;
+    }
+
     static void init_tables() {
         l_t_32::init_tables();
     }
 };
 
-template<line_concept line_type = l_t_32>
+template<line_concept line_type>
 struct b_t_arr : public board_base {
 private:
     line_type board[4];
@@ -539,9 +600,9 @@ private:
 public:
     b_t_arr() : board{0, 0, 0, 0} {}
 
-    b_t_arr(const b_t_arr &board) : board{board.board[0], board.board[1], board.board[2], board.board[3]} {}
+    b_t_arr(const b_t_arr<line_type> &other) : board{other.board[0], other.board[1], other.board[2], other.board[3]} {}
 
-    b_t_arr &operator=(const b_t_arr &other) {
+    b_t_arr<line_type> &operator=(const b_t_arr<line_type> &other) {
         if (this == &other) { return *this; }
         for (u8 y = 0; y < 4; y++) {
             board[y] = other.board[y];
@@ -549,7 +610,25 @@ public:
         return *this;
     }
 
-    void load_matrix(const array<array<u8, 4>, 4> &cells) override {
+    bool operator==(const b_t_arr<line_type> &other) const {
+        for (u8 y = 0; y < 4; y++) {
+            if (board[y] != other.board[y]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool operator!=(const b_t_arr<line_type> &other) const {
+        for (u8 y = 0; y < 4; y++) {
+            if (board[y] != other.board[y]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) override {
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 board[y].set_item(x, cells[y][x]);
@@ -557,8 +636,8 @@ public:
         }
     }
 
-    array<array<u8, 4>, 4> get_matrix() const override {
-        array<array<u8, 4>, 4> cells{};
+    std::array<std::array<u8, 4>, 4> get_matrix() const override {
+        std::array<std::array<u8, 4>, 4> cells{};
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 cells[y][x] = board[y].get_item(x);
@@ -598,12 +677,41 @@ public:
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 if (get_cell(x, y) == 0) {
-                    if (index-- == 0) {
+                    if (index == 0) {
                         set_cell(x, y, random(10) == 0 ? 2 : 1);
                         return;
+                    } else {
+                        index--;
                     }
                 }
             }
+        }
+    }
+
+    s_t get_reward(const Dir dir) const override {
+        switch (dir) {
+            case Left:
+            case Right: {
+                s_t reward = 0;
+                for (u8 y = 0; y < 4; y++) {
+                    reward += board[y].get_reward();
+                }
+                return reward;
+            }
+            case Down:
+            case Up: {
+                s_t reward = 0;
+                for (u8 x = 0; x < 4; x++) {
+                    line_type line;
+                    for (u8 y = 0; y < 4; y++) {
+                        line.set_item(y, get_cell(x, y));
+                    }
+                    reward += line.get_reward();
+                }
+                return reward;
+            }
+            default:
+                return 0;
         }
     }
 
@@ -664,31 +772,10 @@ public:
         }
     }
 
-    s_t get_reward(const Dir dir) const override {
-        switch (dir) {
-            case Left:
-            case Right: {
-                s_t reward = 0;
-                for (u8 y = 0; y < 4; y++) {
-                    reward += board[y].get_reward();
-                }
-                return reward;
-            }
-            case Down:
-            case Up: {
-                s_t reward = 0;
-                for (u8 x = 0; x < 4; x++) {
-                    line_type line;
-                    for (u8 y = 0; y < 4; y++) {
-                        line.set_item(y, get_cell(x, y));
-                    }
-                    reward += line.get_reward();
-                }
-                return reward;
-            }
-            default:
-                return 0;
-        }
+    b_t_arr<line_type> slid(const Dir dir) const {
+        b_t_arr<line_type> temp = *this;
+        temp.slide(dir);
+        return temp;
     }
 
     static void init_tables() {
@@ -705,7 +792,7 @@ public:
 
     b_t_64(u64 board) : board(board) {}
 
-    b_t_64(const b_t_64 &board) : board(board.board) {}
+    b_t_64(const b_t_64 &other) : board(other.board) {}
 
     b_t_64 &operator=(const b_t_64 &other) {
         if (this == &other) { return *this; }
@@ -713,11 +800,19 @@ public:
         return *this;
     }
 
+    bool operator==(const b_t_64 &other) const {
+        return board == other.board;
+    }
+
+    bool operator!=(const b_t_64 &other) const {
+        return board != other.board;
+    }
+
     u64 get_bits() const {
         return board;
     }
 
-    void load_matrix(const array<array<u8, 4>, 4> &cells) override {
+    void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) override {
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 set_cell(x, y, cells[y][x]);
@@ -725,8 +820,8 @@ public:
         }
     }
 
-    array<array<u8, 4>, 4> get_matrix() const override {
-        array<array<u8, 4>, 4> cells{};
+    std::array<std::array<u8, 4>, 4> get_matrix() const override {
+        std::array<std::array<u8, 4>, 4> cells{};
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 cells[y][x] = get_cell(x, y);
@@ -860,6 +955,12 @@ public:
         }
     }
 
+    b_t_64 slid(const Dir dir) const {
+        b_t_64 temp = *this;
+        temp.slide(dir);
+        return temp;
+    }
+
     static void init_tables() {
         l_t_16::init_tables();
     }
@@ -869,12 +970,30 @@ struct b_t_opt : public board_base {
 private:
     u64 board{};
 
+    static s_t reward_table[E(16)];
+    static u64 left_table_0[E(16)];
+    static u64 left_table_1[E(16)];
+    static u64 left_table_2[E(16)];
+    static u64 left_table_3[E(16)];
+    static u64 right_table_0[E(16)];
+    static u64 right_table_1[E(16)];
+    static u64 right_table_2[E(16)];
+    static u64 right_table_3[E(16)];
+    static u64 up_table_0[E(16)];
+    static u64 up_table_1[E(16)];
+    static u64 up_table_2[E(16)];
+    static u64 up_table_3[E(16)];
+    static u64 down_table_0[E(16)];
+    static u64 down_table_1[E(16)];
+    static u64 down_table_2[E(16)];
+    static u64 down_table_3[E(16)];
+
 public:
     inline b_t_opt() : board(0) {}
 
     inline b_t_opt(u64 board) : board(board) {}
 
-    inline b_t_opt(const b_t_opt &board) : board(board.board) {}
+    inline b_t_opt(const b_t_opt &other) : board(other.board) {}
 
     inline b_t_opt &operator=(const b_t_opt &other) {
         if (this == &other) { return *this; }
@@ -886,6 +1005,10 @@ public:
         return board == other.board;
     }
 
+    inline bool operator!=(const b_t_opt &other) const {
+        return board != other.board;
+    }
+
     inline b_t_opt operator|(const u64 &mask) const {
         return board | mask;
     }
@@ -894,7 +1017,7 @@ public:
         return board;
     }
 
-    inline void load_matrix(const array<array<u8, 4>, 4> &cells) override {
+    inline void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) override {
         board = 0;
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
@@ -903,8 +1026,8 @@ public:
         }
     }
 
-    inline array<array<u8, 4>, 4> get_matrix() const override {
-        array<array<u8, 4>, 4> cells{};
+    inline std::array<std::array<u8, 4>, 4> get_matrix() const override {
+        std::array<std::array<u8, 4>, 4> cells{};
         for (u8 y = 0; y < 4; y++) {
             for (u8 x = 0; x < 4; x++) {
                 cells[y][x] = get_cell(x, y);
@@ -942,10 +1065,10 @@ public:
     }
 
     inline u64 empty_mask() const {
-        return ~(board
-                 | (board >> 1)
-                 | (board >> 2)
-                 | (board >> 3)
+        return ~(board |
+                 (board >> 1) |
+                 (board >> 2) |
+                 (board >> 3)
         ) & 0x1111111111111111ull;
     }
 
@@ -961,10 +1084,8 @@ public:
         const u64 empty = empty_mask();
         u8 index = random(empty_count());
         u64 place = 0x1ull;
-        while (!(empty & place) || index-- != 0) {
-            place <<= 4;
-        }
-        board |= place << (random(10) == 0);
+        while (!(empty & place) || index-- != 0) { place <<= 4; }
+        board |= place << (__builtin_expect(random(10) == 0, true) ? 1 : 0);
     }
 
     inline s_t get_reward(const Dir dir) const override {
@@ -1039,7 +1160,7 @@ public:
                (pext(board, 0xF000F000F000F000ull) << 48);
     }
 
-    inline array<b_t_opt, 8> get_transformations() const {
+    inline std::array<b_t_opt, 8> get_transformations() const {
         const b_t_opt transposed(this->transposed());
         const b_t_opt reversed_rows(this->reversed_rows());
         const b_t_opt reversed_rows_transposed(transposed.reversed_rows());
@@ -1053,7 +1174,7 @@ public:
 
     static void init_tables() {
         for (u16 bits = E(16) - 1; bits > 0; --bits) {
-            array<u8, 4> cells{};
+            std::array<u8, 4> cells{};
             l_t_16 line;
             l_t_16 reversed_line;
             for (u8 i = 0; i < 4; i++) {
@@ -1117,58 +1238,25 @@ public:
             down_table_3[bits] = down_table_2[bits] << 4;
         }
     }
-
-private:
-    static u64 left_table_0[E(16)];
-    static u64 left_table_1[E(16)];
-    static u64 left_table_2[E(16)];
-    static u64 left_table_3[E(16)];
-    static u64 right_table_0[E(16)];
-    static u64 right_table_1[E(16)];
-    static u64 right_table_2[E(16)];
-    static u64 right_table_3[E(16)];
-    static u64 up_table_0[E(16)];
-    static u64 up_table_1[E(16)];
-    static u64 up_table_2[E(16)];
-    static u64 up_table_3[E(16)];
-    static u64 down_table_0[E(16)];
-    static u64 down_table_1[E(16)];
-    static u64 down_table_2[E(16)];
-    static u64 down_table_3[E(16)];
-    static s_t reward_table[E(16)];
 };
 
-u32 l_t_32::left_table[E(20)] = {};
-u32 l_t_32::right_table[E(20)] = {};
-s_t l_t_32::reward_table[E(20)] = {};
-
-
-s_t l_t_16::reward_table[E(16)] = {};
-u16 l_t_16::left_table[E(16)] = {};
-u16 l_t_16::right_table[E(16)] = {};
-
-
-u64 b_t_opt::left_table_0[E(16)] = {};
-u64 b_t_opt::left_table_1[E(16)] = {};
-u64 b_t_opt::left_table_2[E(16)] = {};
-u64 b_t_opt::left_table_3[E(16)] = {};
-
-u64 b_t_opt::right_table_0[E(16)] = {};
-u64 b_t_opt::right_table_1[E(16)] = {};
-u64 b_t_opt::right_table_2[E(16)] = {};
-u64 b_t_opt::right_table_3[E(16)] = {};
-
-u64 b_t_opt::up_table_0[E(16)] = {};
-u64 b_t_opt::up_table_1[E(16)] = {};
-u64 b_t_opt::up_table_2[E(16)] = {};
-u64 b_t_opt::up_table_3[E(16)] = {};
-
-u64 b_t_opt::down_table_0[E(16)] = {};
-u64 b_t_opt::down_table_1[E(16)] = {};
-u64 b_t_opt::down_table_2[E(16)] = {};
-u64 b_t_opt::down_table_3[E(16)] = {};
-
-s_t b_t_opt::reward_table[E(16)] = {};
+s_t b_t_opt::reward_table[E(16)];
+u64 b_t_opt::left_table_0[E(16)];
+u64 b_t_opt::left_table_1[E(16)];
+u64 b_t_opt::left_table_2[E(16)];
+u64 b_t_opt::left_table_3[E(16)];
+u64 b_t_opt::right_table_0[E(16)];
+u64 b_t_opt::right_table_1[E(16)];
+u64 b_t_opt::right_table_2[E(16)];
+u64 b_t_opt::right_table_3[E(16)];
+u64 b_t_opt::up_table_0[E(16)];
+u64 b_t_opt::up_table_1[E(16)];
+u64 b_t_opt::up_table_2[E(16)];
+u64 b_t_opt::up_table_3[E(16)];
+u64 b_t_opt::down_table_0[E(16)];
+u64 b_t_opt::down_table_1[E(16)];
+u64 b_t_opt::down_table_2[E(16)];
+u64 b_t_opt::down_table_3[E(16)];
 
 using l_t = l_t_16;
 using b_t = b_t_opt;

@@ -2,54 +2,45 @@
 
 #include "eval.h"
 
-inline u8 highest_tile(b_t board) {
-    u8 highest = 0;
-    for (u8 i = 0; i < 16; ++i) {
-        highest = max(highest, board.get_cell(i));
-    }
-    return highest;
-}
+u32 game_counter = 0;
 
-inline Game_stat algorithm_episode(Dir (*algorithm)(const b_t, const NTuple &)) {
+inline Game_stat algorithm_episode(Dir (*algorithm)(const b_t)) {
     b_t board = 0;
     s_t score = 0;
     u32 moves = 0;
 
     board.spawn();
     board.spawn();
-    bool next_stage = false;
     while (true) {
-        const Dir dir = algorithm(board, next_stage ? tuples_4_stage_2 : tuples_4_stage_1);
+        const Dir dir = algorithm(board);
         if (dir == None) { break; }
         score += board.get_reward(dir);
         ++moves;
 
         board.slide(dir);
         board.spawn();
-        next_stage |= highest_tile(board) >= 14;
     }
-    //cout << "Game " << ++cnt << " (T-" << this_thread::get_id() << ") score: " << score << endl;
-    ostringstream oss;
-    oss << "Game " << ++cnt << " => score=" << score << " moves=" << moves << " board=" << hex << board.get_bits() << dec << endl;
-    cout << oss.str();
+    std::ostringstream oss;
+    oss << "Game " << ++game_counter << " => score=" << score << " moves=" << moves << " board=" << std::hex << board.get_bits() << std::dec << std::endl;
+    std::cout << oss.str();
 
     return {board, score, moves};
 }
 
-inline vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const b_t, const NTuple &)) {
+inline std::vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir (*algorithm)(const b_t)) {
     srand(42);
 
     run_stats = {};
-    vector<Game_stat> games_stats;
+    std::vector<Game_stat> games_stats;
     auto start = time_now();
     if (threads == 0) {
         for (u32 i = 0; i < games; i++) {
             games_stats.push_back(algorithm_episode(algorithm));
         }
     } else {
-        vector<thread> all_threads;
+        std::vector<std::thread> all_threads;
         const u32 threads_games = games / threads;
-        vector<vector<Game_stat>> threads_stats(threads);
+        std::vector<std::vector<Game_stat>> threads_stats(threads);
         for (u8 t = 0; t < threads; ++t) {
             all_threads.emplace_back([t, threads_games, &threads_stats, algorithm]() {
                 init_rng();

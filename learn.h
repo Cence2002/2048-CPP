@@ -3,9 +3,9 @@
 #include "eval.h"
 
 Game_stat training_episode(NTuple &tuples) {
-    vector<r_t> evals;
-    vector<s_t> rewards;
-    vector<b_t> afterstates;
+    std::vector<r_t> evals;
+    std::vector<s_t> rewards;
+    std::vector<b_t> afterstates;
 
     b_t board = 0;
     s_t score = 0;
@@ -32,10 +32,6 @@ Game_stat training_episode(NTuple &tuples) {
     for (u32 t = moves - 1; t < moves; --t) {
         const r_t error = target - add_weights(afterstates[t], tuples);
         target = r_t(rewards[t]) + update_weights(afterstates[t], error * scaled_learning_rate, tuples);
-
-        //const r_t error = target - evals[t];
-        //update_weights(afterstates[t], error * scaled_learning_rate);
-        //target = r_t(rewards[t]) + evals[t];
     }
 
     return {board, score, moves};
@@ -62,21 +58,21 @@ Game_stat testing_episode(const NTuple &tuples) {
     return {board, score, moves};
 }
 
-vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
+std::vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
     srand(42);
-    cout << "Training started (" << games << " games)" << endl;
+    std::cout << "Training started (" << games << " games)" << std::endl;
 
     run_stats = {};
-    vector<Game_stat> games_stats;
+    std::vector<Game_stat> games_stats;
     auto start = time_now();
     if (threads == 0) {
         for (u32 i = 0; i < games; i++) {
             games_stats.push_back(training_episode(tuples));
         }
     } else {
-        vector<thread> all_threads;
+        std::vector<std::thread> all_threads;
         const u32 threads_games = games / threads;
-        vector<vector<Game_stat>> threads_stats(threads);
+        std::vector<std::vector<Game_stat>> threads_stats(threads);
         for (u8 t = 0; t < threads; ++t) {
             all_threads.emplace_back([t, threads_games, &threads_stats, &tuples]() {
                 for (u32 i = 0; i < threads_games; ++i) {
@@ -97,7 +93,7 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
     }
     r_t elapsed = time_since(start);
 
-    if (DEBUG) {
+    if (DEBUG_PRINT) {
         run_stats.print_board_operation_stats(elapsed);
         run_stats.print_eval_operation_stats(elapsed);
 
@@ -105,33 +101,33 @@ vector<Game_stat> run_training_episodes(u32 games, u8 threads, NTuple &tuples) {
         training_stats.print_max_game_stats();
         training_stats.print_score_cell_stats();
     } else {
-        //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
-        //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
-        //cout << indent << "Update per us:  \t" << r_t(run_stats.update_weights_counter) / elapsed << endl;
-        cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(training_stats.game_counter) << endl;
-        cout << indent << "Move per game:  \t" << r_t(training_stats.moves_counter) / r_t(training_stats.game_counter) << endl;
+        //std::cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << std::endl;
+        //std::cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << std::endl;
+        //std::cout << indent << "Update per us:  \t" << r_t(run_stats.update_weights_counter) / elapsed << std::endl;
+        std::cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(training_stats.game_counter) << std::endl;
+        std::cout << indent << "Move per game:  \t" << r_t(training_stats.moves_counter) / r_t(training_stats.game_counter) << std::endl;
     }
 
-    cout << "Training finished (" << time_since(start) / 1e6 << " s)" << endl;
+    std::cout << "Training finished (" << time_since(start) / 1e6 << " s)" << std::endl;
 
     return games_stats;
 }
 
-vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tuples) {
+std::vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tuples) {
     srand(42);
-    cout << "Testing started (" << games << " games)" << endl;
+    std::cout << "Testing started (" << games << " games)" << std::endl;
 
     run_stats = {};
-    vector<Game_stat> games_stats;
+    std::vector<Game_stat> games_stats;
     auto start = time_now();
     if (threads == 0) {
         for (u32 i = 0; i < games; i++) {
             games_stats.push_back(testing_episode(tuples));
         }
     } else {
-        vector<thread> all_threads;
+        std::vector<std::thread> all_threads;
         const u32 threads_games = games / threads;
-        vector<vector<Game_stat>> threads_stats(threads);
+        std::vector<std::vector<Game_stat>> threads_stats(threads);
         for (u8 t = 0; t < threads; ++t) {
             all_threads.emplace_back([t, threads_games, &threads_stats, &tuples]() {
                 for (u32 i = 0; i < threads_games; ++i) {
@@ -152,7 +148,7 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tupl
     }
     r_t elapsed = time_since(start);
 
-    if (DEBUG) {
+    if (DEBUG_PRINT) {
         run_stats.print_board_operation_stats(elapsed);
         run_stats.print_eval_operation_stats(elapsed);
 
@@ -161,31 +157,31 @@ vector<Game_stat> run_testing_episodes(u32 games, u8 threads, const NTuple &tupl
         testing_stats.print_score_cell_stats();
     } else {
         testing_stats.print_score_cell_stats();
-        //cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << endl;
-        //cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << endl;
-        cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << endl;
-        cout << indent << "Move per game:  \t" << r_t(testing_stats.moves_counter) / r_t(testing_stats.game_counter) << endl;
-        cout << indent << "Score per game: \t" << r_t(testing_stats.score_counter) / r_t(testing_stats.game_counter) << endl;
+        //std::cout << indent << "Move per us:    \t" << r_t(run_stats.move_board_counter) / elapsed << std::endl;
+        //std::cout << indent << "Eval per us:    \t" << r_t(run_stats.eval_board_counter) / elapsed << std::endl;
+        std::cout << indent << "Ms per game:    \t" << (elapsed / 1e3) / r_t(testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Move per game:  \t" << r_t(testing_stats.moves_counter) / r_t(testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score per game: \t" << r_t(testing_stats.score_counter) / r_t(testing_stats.game_counter) << std::endl;
     }
 
-    cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << endl;
+    std::cout << "Testing finished (" << time_since(start) / 1e6 << " s)" << std::endl;
 
     return games_stats;
 }
 
 void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 threads, NTuple &tuples) {
-    cout << "Learning started (" << episodes << " episodes, LR=" << learning_rate << ")" << endl;
+    std::cout << "Learning started (" << episodes << " episodes, LR=" << learning_rate << ")" << std::endl;
 
     run_stats_t all_run_stats = {};
     game_stats_t all_training_stats = {};
     game_stats_t all_testing_stats = {};
 
     run_testing_episodes(testing_games, threads, tuples);
-    cout << endl;
+    std::cout << std::endl;
 
     auto start = time_now();
     for (u32 i = 0; i < episodes; i++) {
-        cout << "Episode " << i + 1 << endl;
+        std::cout << "Episode " << i + 1 << std::endl;
 
         run_training_episodes(training_games, threads, tuples);
         all_training_stats.append_stats(training_stats);
@@ -195,63 +191,63 @@ void run_learning(u32 episodes, u32 training_games, u32 testing_games, u8 thread
         all_run_stats.append_stats(run_stats);
         all_testing_stats.append_stats(testing_stats);
 
-        cout << endl;
+        std::cout << std::endl;
     }
     r_t elapsed = time_since(start);
 
-    if (DEBUG) {
-        /*cout << "Overall run stats per s" << endl;
-        cout << indent << "Fill board:     \t" << r_t(all_run_stats.fill_board_counter) / elapsed << endl;
-        cout << indent << "Reward board:   \t" << r_t(all_run_stats.reward_board_counter) / elapsed << endl;
-        cout << indent << "Move board:     \t" << r_t(all_run_stats.move_board_counter) / elapsed << endl;
-        cout << indent << "Eval board:     \t" << r_t(all_run_stats.eval_board_counter) / elapsed << endl;
-        cout << indent << "Update weights: \t" << r_t(all_run_stats.update_weights_counter) / elapsed << endl;
-        cout << indent << "Eval moves:     \t" << r_t(all_run_stats.eval_moves_counter) / elapsed << endl;
+    if (DEBUG_PRINT) {
+        /*std::cout << "Overall run stats per s" << std::endl;
+        std::cout << indent << "Fill board:     \t" << r_t(all_run_stats.fill_board_counter) / elapsed << std::endl;
+        std::cout << indent << "Reward board:   \t" << r_t(all_run_stats.reward_board_counter) / elapsed << std::endl;
+        std::cout << indent << "Move board:     \t" << r_t(all_run_stats.move_board_counter) / elapsed << std::endl;
+        std::cout << indent << "Eval board:     \t" << r_t(all_run_stats.eval_board_counter) / elapsed << std::endl;
+        std::cout << indent << "Update weights: \t" << r_t(all_run_stats.update_weights_counter) / elapsed << std::endl;
+        std::cout << indent << "Eval moves:     \t" << r_t(all_run_stats.eval_moves_counter) / elapsed << std::endl;
 
-        cout << "Overall training stats per game (" << all_training_stats.game_counter << " games)" << endl;
-        cout << indent << "Score per game: \t" << r_t(all_training_stats.score_counter) / r_t(all_training_stats.game_counter) << endl;
-        cout << indent << "Moves per game: \t" << r_t(all_training_stats.moves_counter) / r_t(all_training_stats.game_counter) << endl;
+        std::cout << "Overall training stats per game (" << all_training_stats.game_counter << " games)" << std::endl;
+        std::cout << indent << "Score per game: \t" << r_t(all_training_stats.score_counter) / r_t(all_training_stats.game_counter) << std::endl;
+        std::cout << indent << "Moves per game: \t" << r_t(all_training_stats.moves_counter) / r_t(all_training_stats.game_counter) << std::endl;
 
-        cout << "Overall testing stats per game (" << all_testing_stats.game_counter << " games)" << endl;
-        cout << indent << "Score per game: \t" << r_t(all_testing_stats.score_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Moves per game: \t" << r_t(all_testing_stats.moves_counter) / r_t(all_testing_stats.game_counter) << endl;
+        std::cout << "Overall testing stats per game (" << all_testing_stats.game_counter << " games)" << std::endl;
+        std::cout << indent << "Score per game: \t" << r_t(all_testing_stats.score_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Moves per game: \t" << r_t(all_testing_stats.moves_counter) / r_t(all_testing_stats.game_counter) << std::endl;
 
-        cout << indent << "Max moves:      \t" << all_testing_stats.max_moves << endl;
-        cout << indent << "Max score:      \t" << all_testing_stats.max_score << endl;
-        cout << indent << "Max cell:       \t" << all_testing_stats.max_cell << endl;
-        cout << indent << "Score A:        \t" << r_t(all_testing_stats.score_A_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score B:        \t" << r_t(all_testing_stats.score_B_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score C:        \t" << r_t(all_testing_stats.score_C_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score D:        \t" << r_t(all_testing_stats.score_D_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score E:        \t" << r_t(all_testing_stats.score_E_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score F:        \t" << r_t(all_testing_stats.score_F_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score G:        \t" << r_t(all_testing_stats.score_G_counter) / r_t(all_testing_stats.game_counter) << endl;
-        cout << indent << "Score H:        \t" << r_t(all_testing_stats.score_H_counter) / r_t(all_testing_stats.game_counter) << endl;*/
+        std::cout << indent << "Max moves:      \t" << all_testing_stats.max_moves << std::endl;
+        std::cout << indent << "Max score:      \t" << all_testing_stats.max_score << std::endl;
+        std::cout << indent << "Max cell:       \t" << all_testing_stats.max_cell << std::endl;
+        std::cout << indent << "Score A:        \t" << r_t(all_testing_stats.score_A_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score B:        \t" << r_t(all_testing_stats.score_B_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score C:        \t" << r_t(all_testing_stats.score_C_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score D:        \t" << r_t(all_testing_stats.score_D_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score E:        \t" << r_t(all_testing_stats.score_E_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score F:        \t" << r_t(all_testing_stats.score_F_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score G:        \t" << r_t(all_testing_stats.score_G_counter) / r_t(all_testing_stats.game_counter) << std::endl;
+        std::cout << indent << "Score H:        \t" << r_t(all_testing_stats.score_H_counter) / r_t(all_testing_stats.game_counter) << std::endl;*/
 
-        cout << "Overall run stats (" << elapsed << " us)" << endl;
+        std::cout << "Overall run stats (" << elapsed << " us)" << std::endl;
         all_run_stats.print_board_operation_stats(elapsed);
         all_run_stats.print_eval_operation_stats(elapsed);
 
-        cout << "Overall training stats (" << all_training_stats.game_counter << " games)" << endl;
+        std::cout << "Overall training stats (" << all_training_stats.game_counter << " games)" << std::endl;
         all_training_stats.print_average_game_stats();
         all_training_stats.print_max_game_stats();
         all_training_stats.print_score_cell_stats();
 
-        cout << "Overall testing stats (" << all_testing_stats.game_counter << " games)" << endl;
+        std::cout << "Overall testing stats (" << all_testing_stats.game_counter << " games)" << std::endl;
         all_testing_stats.print_average_game_stats();
         all_testing_stats.print_max_game_stats();
         all_testing_stats.print_score_cell_stats();
     }
 
-    cout << "Learning finished (" << elapsed / 1e6 << " s)" << endl;
-    cout << endl;
+    std::cout << "Learning finished (" << elapsed / 1e6 << " s)" << std::endl;
+    std::cout << std::endl;
 }
 
 void fixed_learn(r_t LR, u32 episodes, u32 training_games, u32 testing_games, u8 threads, NTuple &tuples) {
     learning_rate = LR;
     run_learning(episodes, training_games, testing_games, threads, tuples);
-    string ts_str = get_time_str();
-    cout << "Timestamp: " << ts_str << endl;
+    std::string ts_str = get_time_str();
+    std::cout << "Timestamp: " << ts_str << std::endl;
     save_packed_weights(ts_str, tuples);
-    cout << endl;
+    std::cout << std::endl;
 }

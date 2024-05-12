@@ -1,419 +1,248 @@
 #include "endgame_bruteforce.h"
+#include "board_all.h"
 #include "algorithm.h"
-//#include "testing.h"
-//#include "stats.h"
 #include "learn.h"
+#include <variant>
+
+constexpr int SEED_OVERRIDE = 0;
+constexpr bool REDIRECT_OUTPUT = false;
+
+constexpr NTuple &ntuple = ntuple_bence_stage_1;
+
+constexpr bool TWO_STAGE = true;
+constexpr NTuple &ntuple_stage_2 = ntuple_bence_stage_2;
+
+struct testing_params {
+    const enum eval_mode : int {
+        Direct_eval = 0,
+        Limited_depth_prob = 1,
+        Limited_evals = 2,
+    } mode;
+
+    const int games;
+    const int threads;
+    const bool downgrade;
+
+    const int depth_limit;
+    const float probability_limit;
+
+    const int evals_limit;
+    const float ratio_limit;
+};
+
+constexpr testing_params TEST_SETTINGS = {testing_params::Direct_eval, 100, 10, false};
+//constexpr testing_params TEST_SETTINGS = {testing_params::Limited_depth_prob, 100, 10, false, 3, 0.02};
+//constexpr testing_params TEST_SETTINGS = {testing_params::Limited_evals, 100, 10, false, 0, 0, 1000, 0.01};
+
+struct training_params {
+    int epochs;
+    int training_games;
+    int testing_games;
+    float learning_rate;
+    int threads;
+};
+
+constexpr auto TRAIN_SETTINGS = {
+        training_params{80, 1000000, 100000, 0.1, 20},
+        training_params{40, 1000000, 100000, 0.01, 20},
+        training_params{10, 1000000, 100000, 0.001, 20},
+};
 
 void init() {
     auto start = time_now();
 
-    init_rng(SEED);
+    init_rng(SEED_OVERRIDE);
 
-    cout << "Threads: " << thread::hardware_concurrency() << endl;
-
-    cout << "Init time: " << time_since(start) / 1e6 << " s" << endl << endl;
+    std::cout << "Threads: " << std::thread::hardware_concurrency() << std::endl;
 }
 
-/*s_t play_random_game() {
-    u64 board = 0;
+template<board_concept board_type>
+std::pair<s_t, u32> play_random_game() {
+    board_type board{};
     s_t score = 0;
-    fill_board(board);
-    fill_board(board);
-    while (!game_over(board)) {
-        Dir d = Dir(random(4) + 1);
-        u64 afterstate = moved_board(board, d);
-        if (afterstate == board) { continue; }
-        score += get_reward(board, d);
-        board = afterstate;
-        fill_board(board);
-    }
-    return score;
-}
-
-template<u8 N>
-s_t play_random_game_general() {
-    Game<N> game;
-    while (!game.is_over()) {
-        game.move(Dir(random(4) + 1));
-    }
-    return game.score;
-}
-
-void perf_test(u64 n) {
-    auto start = time_now();
-    r_t sum = 0;
-    for (u32 i = 0; i < n; ++i) {
-        sum += r_t(play_random_game());
-    }
-    cout << "Average score: " << sum / r_t(n) << endl;
-    cout << "Time: " << time_since(start) / 1e6 << endl << endl;
-}
-
-void perf_test_general(u64 n) {
-    auto start = time_now();
-    r_t sum = 0;
-    for (u32 i = 0; i < n; ++i) {
-        sum += r_t(play_random_game_general<4>());
-    }
-    cout << "Average score: " << sum / r_t(n) << endl;
-    cout << "Time: " << time_since(start) / 1e6 << endl << endl;
-}*/
-
-void perf_test_eval(const u64 n) {
-    auto start = time_now();
-    u64 moves = 0;
-    u64 sum = 0;
-    for (u32 i = 0; i < n; ++i) {
-        b_t board = 0;
+    u32 moves = 0;
+    board.spawn();
+    board.spawn();
+    while ((board.slid(Left) != board) ||
+           (board.slid(Up) != board) ||
+           (board.slid(Right) != board) ||
+           (board.slid(Down) != board)) {
+        const Dir d = Dir(random(4) + 1);
+        if (board.slid(d) == board) { continue; }
+        score += board.get_reward(d);
+        ++moves;
+        board.slide(d);
         board.spawn();
-        board.spawn();
-        while (true) {
-            const Eval eval = eval_state(board, tuples_4_stage_1);
-            if (eval.dir == None) { break; }
-            ++moves;
-            sum += eval.reward;
-            board = eval.afterstate;
+    }
+    return {score, moves};
+}
+
+template<board_concept board_type>
+void performance_test_random_games(const u32 games) {
+    board_type::init_tables();
+    auto start = time_now();
+    u64 total_score = 0;
+    u64 total_moves = 0;
+    for (u32 i = 0; i < games; ++i) {
+        const auto [score, moves] = play_random_game<board_type>();
+        total_score += score;
+        total_moves += moves;
+    }
+    std::cout << "Average score: " << r_t(total_score) / r_t(games) << std::endl;
+    std::cout << "Average moves: " << r_t(total_moves) / r_t(games) << std::endl;
+    std::cout << "Moves per second: " << r_t(total_moves) / (time_since(start) / 1e6) << std::endl << std::endl;
+}
+
+template<board_concept board_type>
+void performance_test_random_moves(const u32 moves) {
+    board_type::init_tables();
+    auto start = time_now();
+    board_type board{};
+    u64 total_score = 0;
+    for (u32 i = 0; i < moves; ++i) {
+        const Dir d = Dir((i & 0b11u) + 1);
+        total_score += board.get_reward(d);
+        board.slide(d);
+        if (board.empty_count() == 0) {
+            board = {};
+        } else if ((i & 0xFFu) == 0) {
             board.spawn();
         }
     }
-    cout << "Average moves: " << r_t(moves) / r_t(n) << endl;
-    cout << "Average score: " << r_t(sum) / r_t(n) << endl;
-    cout << "Time: " << time_since(start) / 1e6 << endl << endl;
+    std::cout << "Total score: " << total_score << std::endl;
+    std::cout << "Moves per second: " << moves / (time_since(start) / 1e6) << std::endl << std::endl;
 }
 
-void run() {
-    init();
-
-    //run_tests();
-    //cout << endl;
-    //perf_test(10000);
-    //perf_test_general(10000);
-
-    //load_packed_weights("final");
-    //const u32 threads = thread::hardware_concurrency();
-    //run_testing_episodes(1000, threads);
-
-    /*Endgame eg(0xFFFFFFF700000000ull);
-    u64 b = 0x101012007FFFFFFFull;
-    eg.init_goals(10);
-    eg.bruteforce_states();
-    u8 b_i = eg.transform_index(b);
-    print_board(0xFFFFFFF700000000ull);
-    print_board(b);
-    cout << (int) b_i << endl;
-    cout << eg.general_state_eval(b, b_i) << endl;*/
-
-    /*r_t avg = 0;
-    for (u32 i = 0; i < 10; ++i) {
-        avg += play_game();
+std::pair<s_t, u32> play_eval_game() {
+    b_t board{};
+    s_t score = 0;
+    u32 moves = 0;
+    board.spawn();
+    board.spawn();
+    while (true) {
+        const Dir d = eval_state(board, ntuple).dir;
+        if (d == None) { break; }
+        score += board.get_reward(d);
+        ++moves;
+        board.slide(d);
+        board.spawn();
     }
-    cout << "Average score: " << avg / 10 << endl;*/
+    return {score, moves};
+}
 
-    /*auto start = time_now();
-    Endgame eg(0xFFFFFFF700000000ull);
-    eg.init_goals(threads);
-    cout << "Init time: " << time_since(start) / 1e6 << endl;
-    start = time_now();
-    eg.eval_all_states();
-    cout << "Eval time: " << time_since(start) / 1e6 << endl;
-    eg.play_game();*/
-
-    //load_packed_weights("stage1", tuples_4_stage_1);
-    //load_packed_weights("stage2", tuples_4_stage_2);
+void performance_test_eval_games(const u32 games) {
+    b_t::init_tables();
+    auto start = time_now();
+    u64 total_score = 0;
+    u64 total_moves = 0;
+    for (u32 i = 0; i < games; ++i) {
+        const auto [score, moves] = play_eval_game();
+        total_score += score;
+        total_moves += moves;
+    }
+    std::cout << "Average score: " << r_t(total_score) / r_t(games) << std::endl;
+    std::cout << "Average moves: " << r_t(total_moves) / r_t(games) << std::endl;
+    std::cout << "Moves per second: " << r_t(total_moves) / (time_since(start) / 1e6) << std::endl << std::endl;
 }
 
 r_t get_goal_value(const r_t cumulative_score_gain, const r_t reaching_prob, const r_t scale) {
     return cumulative_score_gain / reaching_prob * scale;
 }
 
-void endgameG8S9_prob() {
-    /*Endgame endgame({
-                            0xFFFFFF8000000000ull,
-                            0xFFF0FF8F00000000ull,
-                            0x0FFFFF80F0000000ull,
-                            0x0FF0FF8FF0000000ull,
-                            0xFFFF8FF000000000ull,
-                            0xFFF08FFF00000000ull,
-                            0x0FFFFFF080000000ull,
-                    }); // 0.841903*/
-    /*Endgame endgame({
-                            0xFFFFFF8000000000ull,
-                            0xFFF0FF8F00000000ull,
-                            0x0FFFFF80F0000000ull,
-                            0x0FF0FF8FF0000000ull,
-                            0xFFFF8FF000000000ull,
-                            0xFFF08FFF00000000ull,
-                    }); // 0.841902*/
-    Endgame endgame({
-                            0xFFFFFF8000000000ull,
-                            0xFFFF8FF000000000ull,
-                            0xFFF08FFF00000000ull,
-                            0x0FFFFF80F0000000ull,
-                            0x0FFFF8FF00000000ull
-                    }); // 0.841384
-    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull}); // 0.815005
-    //Endgame endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull}); // 0.752513
-    //Endgame endgame({0xFFFFFF8000000000ull}); // 0.733328
-    endgame.load_values("8-9-prob-5");
-    //endgame.init_goal_states(1);
-    //endgame.bruteforce_values();
-    cout << endgame.get_state_value(0xFFFFFF8000000120ull) << endl;
-    cout << endgame.get_state_value(0xFFFF8FF000000120ull) << endl;
-    //endgame.save_values("8-9-prob-7");
-    //endgame.print_known_ratios();
+void run_performance_testing(const u32 games = 10000, const u32 moves = 1000000) {
+    std::cout << "Running " << games << " random games:" << std::endl;
+
+    std::cout << "Using type:\tb_t_sim" << std::endl;
+    performance_test_random_games<b_t_sim>(games);
+
+    std::cout << "Using type:\tb_t_mat" << std::endl;
+    performance_test_random_games<b_t_mat>(games);
+
+    std::cout << "Using type:\tb_t_arr_32" << std::endl;
+    performance_test_random_games<b_t_arr<l_t_32>>(games);
+
+    std::cout << "Using type:\tb_t_arr_16" << std::endl;
+    performance_test_random_games<b_t_arr<l_t_16>>(games);
+
+    std::cout << "Using type:\tb_t_64" << std::endl;
+    performance_test_random_games<b_t_64>(games);
+
+    std::cout << "Using type:\tb_t_opt" << std::endl;
+    performance_test_random_games<b_t_opt>(games);
+
+
+    std::cout << "Running " << moves << " random moves:" << std::endl;
+
+    std::cout << "Using type:\tb_t_sim" << std::endl;
+    performance_test_random_moves<b_t_sim>(moves);
+
+    std::cout << "Using type:\tb_t_mat" << std::endl;
+    performance_test_random_moves<b_t_mat>(moves);
+
+    std::cout << "Using type:\tb_t_arr_32" << std::endl;
+    performance_test_random_moves<b_t_arr<l_t_32>>(moves);
+
+    std::cout << "Using type:\tb_t_arr_16" << std::endl;
+    performance_test_random_moves<b_t_arr<l_t_16>>(moves);
+
+    std::cout << "Using type:\tb_t_64" << std::endl;
+    performance_test_random_moves<b_t_64>(moves);
+
+    std::cout << "Using type:\tb_t_opt" << std::endl;
+    performance_test_random_moves<b_t_opt>(moves);
 }
 
-void endgame_G8S10_prob() {
-    Endgame endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull});
-    //Endgame endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull}); // 0.986459
-    //Endgame endgame({0xFFFFF80000000000ull}); // 0.98588
-    //endgame.load_values("8-10-prob-2");
-    endgame.init_goal_states(1);
-    endgame.bruteforce_values();
-    cout << endgame.get_state_value(0xFFFFF82100000120ull) << endl;
-    cout << endgame.get_state_value(0xFFFF2F8100000120ull) << endl;
-    endgame.save_values("8-10-prob-3");
-}
+void run_performance_testing_eval_games(const u32 games = 10) {
+    load_packed_weights("stage1", ntuple_bence_stage_1);
 
-void endgameG8S9_eval() {
-    Endgame endgame({
-                            0xFFFFFF8000000000ull,
-                            0xFFFF8FF000000000ull,
-                            0xFFF08FFF00000000ull,
-                            0x0FFFFF80F0000000ull,
-                            0x0FFFF8FF00000000ull
-                    });
-    //endgame.load_values("8-9-eval-5");
-    const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
-    cout << goal_value << endl;
-    endgame.init_goal_states(goal_value);
-    endgame.bruteforce_values();
-    cout << endgame.get_state_value(0xFFFFFF8000000120ull) << endl;
-    cout << endgame.get_state_value(0xFFFF8FF000000120ull) << endl;
-    endgame.save_values("8-9-eval-5");
+    std::cout << "Running " << games << " actual games with direct evaluation:" << std::endl;
+    performance_test_eval_games(games);
 }
 
 void endgame_G8S10_eval() {
     Endgame endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull});
-    //endgame.load_values("8-10-prob-2");
     const r_t goal_value = get_goal_value(410887, 0.5682, 1.2);
-    cout << goal_value << endl;
+    std::cout << goal_value << std::endl;
     endgame.init_goal_states(goal_value);
     endgame.bruteforce_values();
-    cout << endgame.get_state_value(0xFFFFF82100000120ull) << endl;
-    cout << endgame.get_state_value(0xFFFF2F8100000120ull) << endl;
+    std::cout << endgame.get_state_value(0xFFFFF82100000120ull) << std::endl;
+    std::cout << endgame.get_state_value(0xFFFF2F8100000120ull) << std::endl;
     endgame.save_values("8-10-eval-2");
 }
 
-vector<Endgame> endgames;
+std::vector<Endgame> endgames;
 
-void run2() {
+void run_algorithm_testing() {
     init();
 
-    load_packed_weights("stage1", tuples_4_stage_1);
-    load_packed_weights("stage2", tuples_4_stage_2);
-    cout << endl;
+    load_packed_weights("stage1", ntuple_bence_stage_1);
+    load_packed_weights("stage2", ntuple_bence_stage_2);
 
-    //endgames.push_back(Endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull, 0x0FFFFF80F0000000ull, 0x0FFFF8FF00000000ull}));
-    //endgames[0].load_values("8-9-prob-5");
-    //endgames.push_back(Endgame({0xFFFFF80000000000ull, 0xFFFF0F8000000000ull}));
-    //endgames[1].load_values("8-10-prob-2");
-
-    /*auto start = time_now();
-    r_t asd = 0;
-    u32 n = 10000000;
-    for (u32 t = 0; t < 1; ++t) {
-        asd += expectimax_limited_evals(0x12344321ull, 10000000, 0.01, tuples_4_stage_2).eval;
-    }
-    //print average time per eval in ns
-    cout << time_since(start) / n * 1e3 << endl;
-    cout << asd << endl;
-    return;*/
-
-    /*auto start = time_now();
-    u32 n = 10000000;
-    u64 b = 0x1234001234;
-    for (u32 i = 0; i < n; ++i) {
-        //move_board(b, Dir((i & 3) + 1));
-        fill_board(b);
-        b &= 0xFFFF'FFFF'FFFF'FFF0ull;
-        //cnt += popcnt(b);
-    }
-    cout << r_t(n) / time_since(start) << endl;
-    cout << cnt << endl;
-    print_board(b);
-    return;*/
-
-    //perf_test_eval(100000);
-
-    /*run_algorithm_episodes(10, 10, [](const u64 board, NTuple &tuples) {
-        //print_board(board);
-        for (auto &endgame: endgames) {
-            Eval eval = endgame.eval_board(board);
-            if (eval.dir == None) { continue; }
-            if (eval.eval <= 0.01 || eval.eval >= 0.99) { continue; }
-            return eval.dir;
+    run_algorithm_episodes(TEST_SETTINGS.games, TEST_SETTINGS.threads, [](b_t board) {
+        if constexpr (TEST_SETTINGS.downgrade) {
+            board = downgraded(board);
         }
-        //const u32 states = u32(importance(sum_cells(board)));
-        //return expectimax_limited_states(downgraded(board), states, 0.01, tuples).dir;
-        return expectimax_limited_evals(downgraded(board), 15000, 0.02, tuples).dir;
-        //return eval_state((board), tuples).dir;
-    });*/
-
-    //endgameG8S9_eval();
-    //endgame_G8S10_eval();
-
-    /*r_t avg = 0;
-    for (u32 i = 0; i < remaining_scores.size(); ++i) {
-        cout << i << ": " << remaining_scores[i].first << " " << remaining_scores[i].second << " " << importance(remaining_scores[i].first) << endl;
-        avg += importance(remaining_scores[i].first);
-    }
-    cout << avg / remaining_scores.size() << endl;
-    return;*/
-
-    //endgame_G8S10();
-
-    /*//Endgame endgame({0xFFFFF90000000000ull, 0xFFFF0F9000000000ull}); //0.72751
-    //Endgame endgame({0xFFFFF90000000000ull, 0x0FFFF900F0000000ull}); // 0.721984
-    //Endgame endgame({0xFFFFF90000000000ull, 0xFFF0F90F00000000ull}); // 0.721983
-    //Endgame endgame({0xFFFFF90000000000ull}); // 0.721983
-    Endgame endgame({0xFFF0FF9000000000ull}); // 0.833637
-    endgame.load_values("9-10-prob-1B");
-    //endgame.init_goal_states(1);
-    //endgame.bruteforce_values();
-    //cout << endgame.get_state_value(0xFFFFF92100000120ull) << endl;
-    //cout << endgame.get_afterstate_value(0xFFFFF90000000010ull) << endl;
-    //cout << endgame.get_state_value(0xFFFF2F9100000010ull) << endl;
-    cout << endgame.get_state_value(0xFFF0FF9000010100ull) << endl;
-    //endgame.save_values("9-10-prob-1B");*/
-
-    /*print_change_success_bases(100, 100, 32000, 8, [](const u64 board, NTuple &tuples) {
-        //return eval_state(board, tuples).dir;
-        return expectimax_limited_states(board, 100, 0.01, tuples).dir;
-    });*/
-
-    /*run_algorithm_episodes(1, 0, [](const u64 board, NTuple &tuples) {
-        //cout << get_large_tiles_mask(board, large_th) << endl;
-        return expectimax_limited_states(board, 100, 0.01, tuples).dir;
-    });*/
-
-    //print_reach_probs();
-    //print_all_prob_score_stuff();
-
-
-    //print largest weight in tuples_4_stage_2
-    /*r_t max_weight = 0;
-    r_t min_weight = 1e6;
-    for (const auto &tuple: tuples_4_stage_2) {
-        for (const auto &weight: tuple.weights) {
-            max_weight = max(max_weight, weight);
-            min_weight = min(min_weight, weight);
+        const bool next_stage = board.get_max_cell() >= 14;
+        const NTuple &current_ntuple = (TWO_STAGE && next_stage) ? ntuple_stage_2 : ntuple;
+        switch (TEST_SETTINGS.mode) {
+            case testing_params::Direct_eval:
+                return eval_state(board, current_ntuple).dir;
+            case testing_params::Limited_depth_prob:
+                return expectimax_limited_depth_prob(board, TEST_SETTINGS.depth_limit, TEST_SETTINGS.probability_limit, current_ntuple).dir;
+            case testing_params::Limited_evals:
+                return expectimax_limited_evals(board, TEST_SETTINGS.evals_limit, TEST_SETTINGS.ratio_limit, current_ntuple).dir;
         }
-    }
-    cout << max_weight << endl;
-    cout << min_weight << endl;*/
-
-    //endgame.load_packed_evals("8-9-prob");
-
-    /*run_algorithm_episodes(100, 10, [](const u64 board, NTuple &tuples) {
-        return eval_state(board, tuples).dir;
-        //return expectimax_limited_states(board, 100, 0.01, tuples).dir;
-        //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
-    });*/
-
-    /*run_algorithm_episodes(10000, 10, [](const u64 board, NTuple &tuples) {
-        Eval eval = endgame.eval_board(board);
-        if (eval.dir != None && eval.eval > 0.01) {
-            return eval.dir;
-        }
-        return eval_state(board, tuples).dir;
-        //return eval_state(board, tuples).dir;
-        //return expectimax_limited_states(board, 100, 0.01, tuples).dir;
-        //return expectimax_limited_states(board, 500, 0.01, tuples).dir;
-    });*/
-
-    /*auto start = time_now();
-    Endgame eg(0xFFFFFF8000000000ull);
-    cout << endl;
-
-    if (0) {
-        eg.init_goal_states();
-        cout << endl;
-        cnt = 0;
-        eg.bruteforce_states();
-        cout << cnt << endl;
-        cout << endl;
-        eg.save_packed_evals("8-9-eval");
-        cout << endl;
-    } else {
-        eg.load_packed_evals("8-9-prob");
-        cout << endl;
-    }
-    //eg.print_evals();
-    //cout << endl;
-    cout << eg.get_state_eval(0x1220100008FFFFFFull) << endl;
-    cout << eg.get_afterstate_eval(0x1220100008FFFFFFull) << endl;
-    //cout << add_weights(0xEBCDA98700000001ull, tuples_4_stage_2) << endl;
-    //cout << expectimax_limited_states(0xEBCDA98700000001ull, 1000000, 0.01, tuples_4_stage_2).eval << endl;*/
-
-    /*cnt = 0;
-    u64 total_score = 0;
-    for (u32 i = 0; i < 100000; ++i) {
-        u64 b = 0xEBCDA98700000001ull;
-        u32 score = 0;
-        while (true) {
-            Dir d = eg.best_dir(b);
-            score += get_reward(b, d);
-            u64 b2 = moved_board(b, d);
-            if (b2 == b) { break; }
-            b = b2;
-            fill_board(b);
-            if (eg.is_goal_state_2(b)) {
-                ++cnt;
-                break;
-            }
-        }
-        total_score += score;
-    }
-    cout << r_t(cnt) / 100000 << endl;
-    cout << r_t(total_score) / 100000 << endl;*/
-
-
-    //cout << get_newtiles_score(0, 10, 32) << endl;
-    //cout << get_newtiles_score(0, 6, 1024) << endl;
-    //cout << get_newtiles_score(65344, 6, 3) << endl;
-    //cout << endl;
-    //print_newtile_score_for_all_additions(6);
-    // [\d]+\s[\d]*\.[\d]*\n
-    // ->[\d]+: [\d.]*
-
-    //print_all_prob_score_stuff();
-
-    // space_perf_test(40);
-
-    //cout << (int) calculate_space(0b011101100000000ull, 8) << endl;
-
-    //print_all_bruteforces(42);
+        return None;
+    });
 }
 
-void run3() {
+void run_training() {
     init();
 
-    load_packed_weights("stage1", tuples_4_stage_1);
-    load_packed_weights("stage2", tuples_4_stage_2);
-    cout << endl;
-
-    //endgames.push_back(Endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull, 0x0FFFFF80F0000000ull, 0x0FFFF8FF00000000ull}));
-    //endgames[0].load_values("8-9-eval-5");
-
-    run_algorithm_episodes(100, 10, [](const b_t board, const NTuple &tuples) {
-        //return expectimax_limited_evals(downgraded(board), 100, 0.02, tuples).dir;
-        return eval_state(board, tuples).dir;
-    });
-
-    /*run_algorithm_episodes(75, 75, [](const u64 board, NTuple &tuples) {
-        return expectimax_limited_evals(downgraded(board), 1000000, 0.02, tuples).dir;
-    });*/
+    load_packed_weights("stage1", ntuple_bence_stage_1);
+    for (const auto &params: TRAIN_SETTINGS) {
+        fixed_learn(params.learning_rate, params.epochs, params.training_games, params.testing_games, params.threads, ntuple);
+    }
 }
 
 int main() {
@@ -421,22 +250,21 @@ int main() {
 
     b_t::init_tables();
 
-    if (REDIRECT) {
-        ofstream file("../output.log", ios_base::out | ios_base::trunc);
-        streambuf *consoleBuffer = cout.rdbuf();
-        streambuf *fileBuffer = file.rdbuf();
-        cout.rdbuf(fileBuffer);
+    if constexpr (REDIRECT_OUTPUT) {
+        std::ofstream file("../output.log", std::ios_base::out | std::ios_base::trunc);
+        std::streambuf *consoleBuffer = std::cout.rdbuf();
+        std::streambuf *fileBuffer = file.rdbuf();
+        std::cout.rdbuf(fileBuffer);
 
-        //run();
-        //run2();
-        //run3();
+        run_algorithm_testing();
 
-        cout.rdbuf(consoleBuffer);
+        std::cout.rdbuf(consoleBuffer);
         file.close();
     } else {
-        //run();
-        //run2();
-        run3();
+        run_algorithm_testing();
+        //run_performance_testing(10000, 10000000);
+        //run_performance_testing_eval_games(1000);
+        //run_performance_testing(10000, 10000000);
     }
 
     return 0;

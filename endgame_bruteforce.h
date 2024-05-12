@@ -43,8 +43,8 @@
 
 class Special {
 private:
-    static constexpr r_t UNDEFINED = numeric_limits<r_t>::quiet_NaN();
-    static constexpr r_t UNKNOWN = numeric_limits<r_t>::lowest();
+    static constexpr r_t UNDEFINED = std::numeric_limits<r_t>::quiet_NaN();
+    static constexpr r_t UNKNOWN = std::numeric_limits<r_t>::lowest();
     static constexpr u64 CHUNK_SIZE = E(25);
 
 public:
@@ -54,7 +54,7 @@ public:
 
     static constexpr u64 get_chunk_size() { return CHUNK_SIZE; }
 
-    static constexpr bool is_undefined(const r_t value) { return isnan(value); }
+    static constexpr bool is_undefined(const r_t value) { return std::isnan(value); }
 
     static constexpr bool is_unknown(const r_t value) { return value == UNKNOWN; }
 };
@@ -64,7 +64,7 @@ private:
     const b_t BASE;
     const u8 GOAL;
     const u64 SIZE;
-    vector<r_t> VALUES;
+    std::vector<r_t> VALUES;
 
     static u8 get_goal(const b_t board) {
         u8 G = 0;
@@ -95,7 +95,7 @@ private:
     }
 
     u64 get_board(u64 hash) const {
-        array<u8, 16> cells{};
+        std::array<u8, 16> cells{};
         u8 index = 0;
         for (u8 i = 0; i < 16; ++i) {
             const u8 base = BASE.get_cell(i);
@@ -139,13 +139,13 @@ private:
 
 public:
     explicit Table(const u64 base) : BASE(base), GOAL(get_goal(base)), SIZE(get_size(base)) {
-        cout << "Goal: " << u32(GOAL) << endl;
-        cout << "Space: " << u32(BASE.empty_count()) << endl;
-        cout << "Size: " << SIZE << endl;
-        cout << "GBs: " << r_t(SIZE) * sizeof(r_t) / 1e9 << endl;
+        std::cout << "Goal: " << u32(GOAL) << std::endl;
+        std::cout << "Space: " << u32(BASE.empty_count()) << std::endl;
+        std::cout << "Size: " << SIZE << std::endl;
+        std::cout << "GBs: " << r_t(SIZE) * sizeof(r_t) / 1e9 << std::endl;
         auto start = time_now();
         VALUES.resize(get_size(BASE), Special::get_unknown());
-        cout << "Allocation finished: " << time_since(start) / 1e6 << " s" << endl;
+        std::cout << "Allocation finished: " << time_since(start) / 1e6 << " s" << std::endl;
     }
 
     b_t get_base() const {
@@ -155,13 +155,13 @@ public:
     void init_goal_states(const r_t goal_value) {
         auto start = time_now();
         for (u64 hash = 0; hash < SIZE; ++hash) {
-            if (hash % (SIZE / 100) == 0) cout << "Progress: " << r_t(hash) / r_t(SIZE) << endl;
+            if (hash % (SIZE / 100) == 0) std::cout << "Progress: " << r_t(hash) / r_t(SIZE) << std::endl;
             const u64 board = get_board(hash);
             if (is_goal_state(board)) {
                 VALUES[hash] = goal_value;
             }
         }
-        cout << "Goal state init finished: " << time_since(start) / 1e6 << " s" << endl;
+        std::cout << "Goal state init finished: " << time_since(start) / 1e6 << " s" << std::endl;
     }
 
     r_t get_state_value(const b_t board) const {
@@ -183,24 +183,24 @@ public:
         VALUES[hash] = value;
     }
 
-    void save_values(ofstream &file) const {
+    void save_values(std::ofstream &file) const {
         file.write((const char *) &BASE, sizeof(BASE));
         //file.write((const char *) &VALUES[0], streamsize(SIZE * sizeof(VALUES[0])));
         //write in chunks of size Special.CHUNK_SIZE
         //size might not be divisible by Special.CHUNK_SIZE, so handle last chunk smartly
         for (u64 i = 0; i < SIZE; i += Special::get_chunk_size()) {
-            const u64 chunk_size = min(Special::get_chunk_size(), SIZE - i);
-            file.write((const char *) &VALUES[i], streamsize(chunk_size * sizeof(VALUES[0])));
+            const u64 chunk_size = std::min(Special::get_chunk_size(), SIZE - i);
+            file.write((const char *) &VALUES[i], std::streamsize(chunk_size * sizeof(VALUES[0])));
         }
     }
 
-    void load_values(ifstream &file) const {
+    void load_values(std::ifstream &file) const {
         u64 base_buffer;
         file.read((char *) &base_buffer, sizeof(base_buffer));
-        assert(base_buffer == BASE);
+        assert(b_t(base_buffer) == BASE);
         for (u64 i = 0; i < SIZE; i += Special::get_chunk_size()) {
-            const u64 chunk_size = min(Special::get_chunk_size(), SIZE - i);
-            file.read((char *) &VALUES[i], streamsize(chunk_size * sizeof(VALUES[0])));
+            const u64 chunk_size = std::min(Special::get_chunk_size(), SIZE - i);
+            file.read((char *) &VALUES[i], std::streamsize(chunk_size * sizeof(VALUES[0])));
         }
     }
 
@@ -215,7 +215,7 @@ public:
 
 class Endgame {
 private:
-    vector<Table> tables;
+    std::vector<Table> tables;
 
     /*r_t get_state_value(const u64 board) {
         for (const auto &table: tables) {
@@ -246,7 +246,7 @@ private:
                     r_t reward = r_t(state.get_reward(dir));
                     //reward = 0;
                     const r_t eval = reward + eval_afterstate(afterstate);
-                    max_eval = max(max_eval, eval);
+                    max_eval = std::max(max_eval, eval);
                 }
                 table.set_state_value(state, max_eval);
                 if (Special::is_undefined(max_max_eval) || max_eval > max_max_eval) {
@@ -276,7 +276,7 @@ private:
     }
 
 public:
-    explicit Endgame(const vector<u64> &bases) {
+    explicit Endgame(const std::vector<u64> &bases) {
         for (const u64 base: bases) {
             tables.emplace_back(base);
             print_board(base);
@@ -294,7 +294,7 @@ public:
         for (auto &table: tables) {
             eval_afterstate(table.get_base());
         }
-        cout << "Bruteforce finished: " << time_since(start) / 1e6 << " s" << endl;
+        std::cout << "Bruteforce finished: " << time_since(start) / 1e6 << " s" << std::endl;
     }
 
     r_t get_state_value(const u64 board) {
@@ -319,12 +319,12 @@ public:
         return best;
     }
 
-    void save_values(const string &id) {
-        const string filename = "endgame-" + id + ".bin";
+    void save_values(const std::string &id) {
+        const std::string filename = "endgame-" + id + ".bin";
         auto start = time_now();
-        ofstream file("../endgames_backups/" + filename, ios::binary);
+        std::ofstream file("../endgames_backups/" + filename, std::ios::binary);
         if (!file.is_open()) {
-            cout << "Error opening: " << filename << endl;
+            std::cout << "Error opening: " << filename << std::endl;
             return;
         }
         u64 size = tables.size();
@@ -333,15 +333,15 @@ public:
             table.save_values(file);
         }
         file.close();
-        cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
+        std::cout << "Saving " << filename << " finished: " << time_since(start) / 1e6 << " s" << std::endl;
     }
 
-    void load_values(const string &id) {
-        const string filename = "endgame-" + id + ".bin";
+    void load_values(const std::string &id) {
+        const std::string filename = "endgame-" + id + ".bin";
         auto start = time_now();
-        ifstream file("../endgames_backups/" + filename, ios::binary);
+        std::ifstream file("../endgames_backups/" + filename, std::ios::binary);
         if (!file.is_open()) {
-            cout << "Error opening: " << filename << endl;
+            std::cout << "Error opening: " << filename << std::endl;
             return;
         }
         u64 size_buffer;
@@ -351,13 +351,13 @@ public:
             table.load_values(file);
         }
         file.close();
-        cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << endl;
+        std::cout << "Loading " << filename << " finished: " << time_since(start) / 1e6 << " s" << std::endl;
     }
 
     void print_known_ratios() {
         for (const auto &table: tables) {
-            cout << "Known ratio: " << table.get_known_ratio() << endl;
-            cout << table.get_base() << endl;
+            std::cout << "Known ratio: " << table.get_known_ratio() << std::endl;
+            std::cout << table.get_base() << std::endl;
         }
     }
 };

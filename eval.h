@@ -2,25 +2,11 @@
 
 #include "tuple.h"
 
-//u64 cnt_adds = 0;
-
 inline r_t add_weights(const b_t board, const NTuple &tuples) {
     //++run_stats.eval_board_counter;
     r_t sum = 0;
     for (const auto &b: board.get_transformations()) {
         for (const auto &t: tuples) { sum += t[pext(b.get_bits(), t.mask)]; }
-        /*sum += tuples_4_stage_1[0].weights[pext(b, 0xFFF0FFFull)] +
-               tuples_4_stage_1[1].weights[pext(b, 0xFF00FF00FF0ull)] +
-               tuples_4_stage_1[2].weights[pext(b, 0xFFFFFFull)] +
-               tuples_4_stage_1[3].weights[pext(b, 0xFFFFFF0000ull)] +
-               tuples_4_stage_1[4].weights[pext(b, 0xFFFFFF0ull)] +
-               tuples_4_stage_1[5].weights[pext(b, 0xF000FFFFFull)] +
-               tuples_4_stage_1[6].weights[pext(b, 0xF0FFFF000Full)] +
-               tuples_4_stage_1[7].weights[pext(b, 0xF0FFFFF00ull)] +
-               tuples_4_stage_1[8].weights[pext(b, 0xF00FFFFFull)] +
-               tuples_4_stage_1[9].weights[pext(b, 0xFFFF0F0Full)] +
-               tuples_4_stage_1[10].weights[pext(b, 0xF0F0F0FFFull)] +
-               tuples_4_stage_1[11].weights[pext(b, 0xFFFFFF000ull)];*/
     }
     return sum;
 }
@@ -76,7 +62,7 @@ inline r_t expectimax_afterstate(const b_t afterstate, u8 depth, const r_t max_p
     if (evals == 0) { return 0; }
     if (depth == 0 || max_prob < 1) {
         --evals;
-        return max(r_t(0), add_weights(afterstate, tuples));
+        return std::max(r_t(0), add_weights(afterstate, tuples));
     }
     cnt_afterstate++;
     --depth;
@@ -88,7 +74,7 @@ inline r_t expectimax_afterstate(const b_t afterstate, u8 depth, const r_t max_p
     for (u8 i = 0; i < empty_count; mask <<= 4) {
         if (empty_mask & mask) {
             for (const auto &[shift, prob]: SHIFTS) {
-                if (prob * max_prob <= 1) {
+                if (prob * max_prob < 1) {
                     significance += prob;
                     continue;
                 }
@@ -109,7 +95,7 @@ inline r_t expectimax_afterstate(const b_t afterstate, u8 depth, const r_t max_p
 }
 
 inline Eval expectimax_limited_depth_prob(const b_t board, const u8 depth, const r_t prob, const NTuple &tuples) {
-    u64 evals = numeric_limits<u64>::max();
+    u64 evals = std::numeric_limits<u64>::max();
     return expectimax_state(board, depth, prob, evals, tuples);
 }
 
@@ -205,7 +191,7 @@ inline b_t downgraded(b_t board, const u8 threshold = 15) {
 
 //threshold = smallest number that can be modified
 inline b_t upgraded_old(const b_t board, const u8 threshold) {
-    array<u8, 16> counts{};
+    std::array<u8, 16> counts{};
     counts.fill(0);
     for (u8 i = 0; i < 16; ++i) {
         ++counts[board.get_cell(i)];
@@ -217,7 +203,7 @@ inline b_t upgraded_old(const b_t board, const u8 threshold) {
         }
     }
     if (counts[15] == 0 || max_double > 10) { return board; }
-    array<u8, 16> new_cells{};
+    std::array<u8, 16> new_cells{};
     for (u8 i = 0; i < 16; ++i) {
         if (i < threshold) {
             new_cells[i] = i;
@@ -240,7 +226,7 @@ inline b_t upgraded_old(const b_t board, const u8 threshold) {
 }
 
 inline b_t upgraded(const b_t board) {
-    array<u8, 16> counts{};
+    std::array<u8, 16> counts{};
     for (u8 i = 0; i < 16; ++i) {
         ++counts[board.get_cell(i)];
     }
@@ -261,7 +247,7 @@ inline b_t upgraded(const b_t board) {
     return upgraded;
 }
 
-inline vector<pair<u32, r_t>> remaining_scores = {
+inline std::vector<std::pair<u32, r_t>> remaining_scores = {
         {0,     528886},
         {64,    528886},
         {128,   528886},
@@ -1293,8 +1279,8 @@ inline r_t importance(const u32 sum) {
     while (index > 0 && remaining_scores[index].first > sum) {
         index--;
     }
-    const u32 start = index - min(u32(4), index);
-    const u32 end = index + min(u32(4), u32(remaining_scores.size() - 1 - index));
+    const u32 start = index - std::min(u32(4), index);
+    const u32 end = index + std::min(u32(4), u32(remaining_scores.size() - 1 - index));
     const r_t slope = -(remaining_scores[end].second - remaining_scores[start].second) / r_t(remaining_scores[end].first - remaining_scores[start].first);
     return interpolate(10000, 1000000, slope / 100);
 }
