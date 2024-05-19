@@ -30,9 +30,9 @@ struct testing_params {
     const float ratio_limit;
 };
 
-constexpr testing_params TEST_SETTINGS = {testing_params::Direct_eval, 100, 10, false};
-//constexpr testing_params TEST_SETTINGS = {testing_params::Limited_depth_prob, 100, 10, false, 3, 0.02};
-//constexpr testing_params TEST_SETTINGS = {testing_params::Limited_evals, 100, 10, false, 0, 0, 1000, 0.01};
+//constexpr testing_params TEST_SETTINGS = {testing_params::Direct_eval, 4000, 20, true};
+//constexpr testing_params TEST_SETTINGS = {testing_params::Limited_depth_prob, 100, 20, false, 2, 0.05};
+constexpr testing_params TEST_SETTINGS = {testing_params::Limited_evals, 100, 0, true, 0, 0, 10000, 0.05};
 
 struct training_params {
     int epochs;
@@ -145,6 +145,40 @@ void performance_test_eval_games(const u32 games) {
     std::cout << "Moves per second: " << r_t(total_moves) / (time_since(start) / 1e6) << std::endl << std::endl;
 }
 
+r_t play_original_game() {
+    const auto start = time_now();
+    b_t board{};
+    board.spawn();
+    board.spawn();
+    while (true) {
+        const Eval eval = eval_state(board, ntuple);
+        if (eval.dir == None) { return 0; }
+        board = eval.afterstate;
+        if (board.get_max_cell() == 11) {
+            return time_since(start);
+        }
+        board.spawn();
+    }
+}
+
+void performance_test_original_games(const u32 games = 1000) {
+    load_packed_weights("stage1", ntuple_bence_stage_1);
+    load_packed_weights("stage2", ntuple_bence_stage_2);
+
+    b_t::init_tables();
+    r_t total_time = 0;
+    u32 total_wins = 0;
+    for (u32 i = 0; i < games; ++i) {
+        const r_t time = play_original_game();
+        if (time > 0) {
+            total_time += time;
+            ++total_wins;
+        }
+    }
+    std::cout << "Win rate: " << r_t(total_wins) / r_t(games) << std::endl;
+    std::cout << "Average time: " << total_time / r_t(total_wins) << std::endl;
+}
+
 r_t get_goal_value(const r_t cumulative_score_gain, const r_t reaching_prob, const r_t scale) {
     return cumulative_score_gain / reaching_prob * scale;
 }
@@ -218,10 +252,22 @@ void run_algorithm_testing() {
     load_packed_weights("stage1", ntuple_bence_stage_1);
     load_packed_weights("stage2", ntuple_bence_stage_2);
 
+    //endgame_G8S10_eval();
+    //endgames.push_back(Endgame({0xFFFFFF8000000000ull, 0xFFFF8FF000000000ull, 0xFFF08FFF00000000ull, 0x0FFFFF80F0000000ull, 0x0FFFF8FF00000000ull}));
+    //endgames[0].load_values("8-9-eval-500");
+
     run_algorithm_episodes(TEST_SETTINGS.games, TEST_SETTINGS.threads, [](b_t board) {
         if constexpr (TEST_SETTINGS.downgrade) {
             board = downgraded(board);
         }
+
+        for (auto &endgame: endgames) {
+            Eval eval = endgame.eval_board(board);
+            if (eval.dir == None) { continue; }
+            if (eval.eval <= 0.01 || eval.eval >= 0.99) { continue; }
+            return eval.dir;
+        }
+
         const bool next_stage = board.get_max_cell() >= 14;
         const NTuple &current_ntuple = (TWO_STAGE && next_stage) ? ntuple_stage_2 : ntuple;
         switch (TEST_SETTINGS.mode) {
@@ -248,6 +294,7 @@ void run_training() {
 int main() {
     srand(42);
 
+    init();
     b_t::init_tables();
 
     if constexpr (REDIRECT_OUTPUT) {
@@ -265,6 +312,7 @@ int main() {
         //run_performance_testing(10000, 10000000);
         //run_performance_testing_eval_games(1000);
         //run_performance_testing(10000, 10000000);
+        //performance_test_original_games(10000);
     }
 
     return 0;

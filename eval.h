@@ -91,12 +91,12 @@ inline r_t expectimax_afterstate(const b_t afterstate, u8 depth, const r_t max_p
     if (significance > 0) {
         sum += significance * add_weights(afterstate, tuples);
     }
-    return sum / r_t(empty_count);
+    return sum * RECIPROCALS[empty_count];
 }
 
 inline Eval expectimax_limited_depth_prob(const b_t board, const u8 depth, const r_t prob, const NTuple &tuples) {
     u64 evals = std::numeric_limits<u64>::max();
-    return expectimax_state(board, depth, prob, evals, tuples);
+    return expectimax_state(board, depth, r_t(1) / prob, evals, tuples);
 }
 
 inline r_t get_prob(const u8 cnt1, const u8 cnt2) {
@@ -117,7 +117,7 @@ inline r_t get_min_prob(const u8 depth, const r_t min_ratio) {
     r_t max_prob = get_prob(cnt1, cnt2);
     //denominator D can be anything such that 1<D<9
     //because next smallest prob is max_prob/9
-    return max_prob / 2;
+    return max_prob * r_t(0.5);
 }
 
 //threshold = throw away at most that portion of probabilities in total

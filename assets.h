@@ -16,9 +16,7 @@
 #include <mutex>
 #include <cassert>
 
-constexpr bool DEBUG_PRINT = false;
-
-//using namespace std;
+constexpr bool DEBUG_PRINT = true;
 
 using u8 = uint8_t;
 using u16 = uint16_t;
@@ -41,6 +39,14 @@ constexpr auto DIRS = {Left, Up, Right, Down};
 constexpr std::pair<u8, r_t> SHIFTS[2] = {
         {0, 0.9},
         {1, 0.1}
+};
+
+constexpr std::array<r_t, 17> RECIPROCALS = {
+        r_t(0),
+        r_t(1) / 1, r_t(1) / 2, r_t(1) / 3, r_t(1) / 4,
+        r_t(1) / 5, r_t(1) / 6, r_t(1) / 7, r_t(1) / 8,
+        r_t(1) / 9, r_t(1) / 10, r_t(1) / 11, r_t(1) / 12,
+        r_t(1) / 13, r_t(1) / 14, r_t(1) / 15, r_t(1) / 16
 };
 
 constexpr u64 E(const u8 n) { return u64(1) << n; }

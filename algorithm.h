@@ -19,10 +19,13 @@ inline Game_stat algorithm_episode(Dir (*algorithm)(const b_t)) {
 
         board.slide(dir);
         board.spawn();
+        //if (random(10) == 0)std::cout << board.to_string() << std::endl;
     }
     std::ostringstream oss;
     oss << "Game " << ++game_counter << " => score=" << score << " moves=" << moves << " board=" << std::hex << board.get_bits() << std::dec << std::endl;
     std::cout << oss.str();
+
+    //std::cout << board.to_string() << std::endl;
 
     return {board, score, moves};
 }
@@ -63,8 +66,8 @@ inline std::vector<Game_stat> run_algorithm_episodes(u32 games, u8 threads, Dir 
     r_t elapsed = time_since(start);
 
     testing_stats.print_average_game_stats();
-    //testing_stats.print_max_game_stats();
-    //testing_stats.print_score_cell_stats();
+    testing_stats.print_max_game_stats();
+    testing_stats.print_score_cell_stats();
     //cout << indent << "S per game:    \t" << (elapsed / 1e6) / r_t(testing_stats.game_counter) << endl;
     //cout << indent << "Moves per uS:  \t" << r_t(testing_stats.moves_counter) / elapsed << endl;
 
