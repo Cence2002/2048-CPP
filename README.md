@@ -35,6 +35,15 @@ The core objectives of this project were to examine the mathematical properties 
 
 ```./2048```
 
+7. Alternatively, run the other executable to perform validity tests:
+
+```./tests```
+
+8. To clean the build files, run:
+
+```make clean```
+
+
 ## Customisation
 
 The testing and training configurations are intuitively customisable at the top of `main.cpp` where these setting are abstracted into `constexpr` variables to avoid sacrificing performance.
