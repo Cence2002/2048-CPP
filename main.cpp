@@ -4,7 +4,7 @@
 #include "learn.h"
 #include <variant>
 
-constexpr int SEED_OVERRIDE = 0;
+constexpr int SEED_OVERRIDE = 15;
 constexpr bool REDIRECT_OUTPUT = false;
 
 constexpr NTuple &ntuple = ntuple_bence_stage_1;
@@ -30,9 +30,9 @@ struct testing_params {
     const float ratio_limit;
 };
 
-//constexpr testing_params TEST_SETTINGS = {testing_params::Direct_eval, 4000, 20, true};
+//constexpr testing_params TEST_SETTINGS = {testing_params::Direct_eval, 1000, 20, true};
 //constexpr testing_params TEST_SETTINGS = {testing_params::Limited_depth_prob, 100, 20, false, 2, 0.05};
-constexpr testing_params TEST_SETTINGS = {testing_params::Limited_evals, 100, 0, true, 0, 0, 10000, 0.05};
+constexpr testing_params TEST_SETTINGS = {testing_params::Limited_evals, 10, 0, true, 0, 0, 1000, 0.02};
 
 struct training_params {
     int epochs;
@@ -311,8 +311,9 @@ int main() {
         run_algorithm_testing();
         //run_performance_testing(10000, 10000000);
         //run_performance_testing_eval_games(1000);
-        //run_performance_testing(10000, 10000000);
         //performance_test_original_games(10000);
+
+        //run_training();
     }
 
     return 0;
@@ -321,8 +322,8 @@ int main() {
 // To brute force for 3x3:
 // goal of player: maximizing or minimizing (or random)
 // goal of game: maximizing or minimizing or random (with arbitrary probability for 2 instead of 0.9)
-// metrics: score, number of moves, probability of reaching a certain tile (1-10), entropy(?), TODO: extend
-// extra: ratio of reachable positions compared to all
+// metrics: score, number of moves, probability of reaching a certain tile (1-10), some entropy
+// extra: ratio of reachable positions compared to all (3% for 3x3, supposably even less for 4x4)
 
 // Average sum per moves: n/(0.9*2+0.1*4) =>
 // => n/2.2
@@ -332,24 +333,24 @@ int main() {
 // Average score for 2^n: f(2)=36/11,f(n)=2*f(n-1)+2^n =>
 // => (n-13/11)*2^n
 
-// Score for 2 = 4 => 3.3
-// Score for 3 = 8 => 14.5
-// Score for 4 = 16 => 45.1
-// Score for 5 = 32 => 122.2
-// Score for 6 = 64 => 308.4
-// Score for 7 = 128 => 744.7
-// Score for 8 = 256 => 1745.5
-// Score for 9 = 512 => 4002.9
-// Score for A = 1024 => 9029.8
-// Score for B = 2048 => 20107.6
-// Score for C = 4096 => 44311.3
-// Score for D = 8192 => 96814.5
-// Score for E = 16384 => 210013.1
-// Score for F = 32768 => 452794.2
-// Score for G = 65536 => 971124.4
-// Score for H = 131072 => 2073320.7
+// Score for 2 = 4          => 3.3
+// Score for 3 = 8          => 14.5
+// Score for 4 = 16         => 45.1
+// Score for 5 = 32         => 122.2
+// Score for 6 = 64         => 308.4
+// Score for 7 = 128        => 744.7
+// Score for 8 = 256        => 1745.5
+// Score for 9 = 512        => 4002.9
+// Score for A = 1024       => 9029.8
+// Score for B = 2048       => 20107.6
+// Score for C = 4096       => 44311.3
+// Score for D = 8192       => 96814.5
+// Score for E = 16384      => 210013.1
+// Score for F = 32768      => 452794.2
+// Score for G = 65536      => 971124.4
+// Score for H = 131072     => 2073320.7
 
-// Moves for N = 2^N => 2^N/2.2
+// Moves for N = 2^N        => 2^N/2.2
 
 // g++ -g -m64 -mbmi2 -pthread -O2 -o 2024_CPP ../main.cpp
 // valgrind --tool=callgrind --simulate-cache=yes ./2024_CPP

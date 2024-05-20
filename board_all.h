@@ -3,6 +3,7 @@
 #include "assets.h"
 #include "lines.h"
 
+// The `board_base` struct is an abstract base class that defines the interface for a game board.
 struct board_base {
     virtual void load_matrix(const std::array<std::array<u8, 4>, 4> &cells) = 0;
 
@@ -55,6 +56,7 @@ struct board_base {
     }
 };
 
+// The `board_concept` concept specifies the requirements for a type to be considered a game board.
 template<typename T>
 concept board_concept = std::is_base_of_v<board_base, T> &&
                         std::is_default_constructible_v<T> &&
@@ -67,6 +69,8 @@ concept board_concept = std::is_base_of_v<board_base, T> &&
     { board != other } -> std::same_as<bool>;
 };
 
+// The `b_t_sim` struct is a game board implementation that uses a 4x4 matrix to represent
+// This is used as a reference implementation that other board implementations can be compared against.
 struct b_t_sim : public board_base {
 private:
     std::array<std::array<u8, 4>, 4> board;
@@ -369,6 +373,8 @@ public:
     static void init_tables() {}
 };
 
+// The `b_t_mat` struct is a game board implementation that uses a 4x4 matrix to represent the board,
+// but simulates the game logic with table lookups for each row and column.
 struct b_t_mat : public board_base {
 private:
     u8 board[4][4]{};
@@ -592,6 +598,7 @@ public:
     }
 };
 
+// The `b_t_arr` struct is a game board implementation that represents the board as an array of 4 lines.
 template<line_concept line_type>
 struct b_t_arr : public board_base {
 private:
@@ -783,6 +790,7 @@ public:
     }
 };
 
+// The `b_t_64` struct is a game board implementation that uses a single 64-bit integer to represent the board.
 struct b_t_64 : public board_base {
 private:
     u64 board{};
@@ -966,6 +974,7 @@ public:
     }
 };
 
+// The `b_t_opt` struct is the most optimised game board implementation that uses a single 64-bit integer to represent the board.
 struct b_t_opt : public board_base {
 private:
     u64 board{};
@@ -1240,6 +1249,7 @@ public:
     }
 };
 
+// Globally initialise the static tables for the `b_t_opt` struct.
 s_t b_t_opt::reward_table[E(16)];
 u64 b_t_opt::left_table_0[E(16)];
 u64 b_t_opt::left_table_1[E(16)];
@@ -1258,9 +1268,11 @@ u64 b_t_opt::down_table_1[E(16)];
 u64 b_t_opt::down_table_2[E(16)];
 u64 b_t_opt::down_table_3[E(16)];
 
+// For brevity, the `b_t` struct is an alias for the `b_t_opt` struct.
 using l_t = l_t_16;
 using b_t = b_t_opt;
 
+// The `Eval` struct is used to store the evaluation of a move.
 struct Eval {
     Dir dir;
     r_t eval;
@@ -1272,6 +1284,7 @@ struct Eval {
     Eval(Dir dir, r_t eval, s_t reward, const b_t afterstate) : dir(dir), eval(eval), reward(reward), afterstate(afterstate) {}
 };
 
+// The `Game_stat` struct is used to store the game state.
 struct Game_stat {
     b_t board;
     s_t score;

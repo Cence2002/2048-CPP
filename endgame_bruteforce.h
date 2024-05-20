@@ -13,29 +13,6 @@
 // 0 0 0 0
 // 0 0 0 0
 
-
-//
-//
-// phase 1: determine goal positions: new goal is built next to old goal
-//
-//
-//
-//
-// phase 1: determine all bruteforce end positions (new goal can definitely be built)
-//          - sum reaches goal-const
-//          - goal is built next to old goal (99%+) while keeping formation
-//          - otherwise: goal is built next to old goal while breaking formation
-//
-//
-// phase 1: find all definitely goals and set to future scores
-//          - G is built next to old G
-// phase 2: find eval adding rewards
-//          - incrementally set more and more goals (new formations that turn out to be goals)
-//          - potentially allow breaking formation
-//
-//
-//
-
 // value stored in specific table, for specific hash
 
 //static constexpr r_t UNDEFINED = numeric_limits<r_t>::quiet_NaN();
@@ -185,9 +162,6 @@ public:
 
     void save_values(std::ofstream &file) const {
         file.write((const char *) &BASE, sizeof(BASE));
-        //file.write((const char *) &VALUES[0], streamsize(SIZE * sizeof(VALUES[0])));
-        //write in chunks of size Special.CHUNK_SIZE
-        //size might not be divisible by Special.CHUNK_SIZE, so handle last chunk smartly
         for (u64 i = 0; i < SIZE; i += Special::get_chunk_size()) {
             const u64 chunk_size = std::min(Special::get_chunk_size(), SIZE - i);
             file.write((const char *) &VALUES[i], std::streamsize(chunk_size * sizeof(VALUES[0])));
@@ -470,7 +444,6 @@ r_t eval_goal_state(const u64 state) const {
         const u64 afterstate = moved_board(state, dir);
         if (afterstate == state) { continue; }
         r_t reward = r_t(get_reward(state, dir));
-        //TODO remove
         reward = 0;
         const r_t eval = reward + eval_afterstate(afterstate);
         max_eval = max(max_eval, eval);
